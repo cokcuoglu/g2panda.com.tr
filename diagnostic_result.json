@@ -1,0 +1,1932 @@
+{
+  "users": [
+    {
+      "id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "email": "basarili@test.com",
+      "role": "OWNER",
+      "business_name": "Başarılı İşletme"
+    },
+    {
+      "id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "email": "newuser123@test.com",
+      "role": "OWNER",
+      "business_name": "New Biz"
+    },
+    {
+      "id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "email": "testfinal@example.com",
+      "role": "OWNER",
+      "business_name": "Final Biz"
+    },
+    {
+      "id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "email": "simple@test.com",
+      "role": "OWNER",
+      "business_name": "Simple Biz"
+    },
+    {
+      "id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "email": "test@test.com",
+      "role": "OWNER",
+      "business_name": "test"
+    },
+    {
+      "id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "email": "test1@test.com",
+      "role": "OWNER",
+      "business_name": "test"
+    },
+    {
+      "id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "email": "test_6420@example.com",
+      "role": "OWNER",
+      "business_name": "Test Biz"
+    },
+    {
+      "id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "email": "test4@test.com",
+      "role": "OWNER",
+      "business_name": "test4"
+    },
+    {
+      "id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "email": "Alice_99433@test.com",
+      "role": "OWNER",
+      "business_name": "Alice Biz"
+    },
+    {
+      "id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "email": "Bob_37472@test.com",
+      "role": "OWNER",
+      "business_name": "Bob Biz"
+    },
+    {
+      "id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "email": "Alice_127@test.com",
+      "role": "OWNER",
+      "business_name": "Alice Biz"
+    },
+    {
+      "id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "email": "Bob_56655@test.com",
+      "role": "OWNER",
+      "business_name": "Bob Biz"
+    },
+    {
+      "id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "email": "Alice_54240@test.com",
+      "role": "OWNER",
+      "business_name": "Alice Biz"
+    },
+    {
+      "id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "email": "Bob_3836@test.com",
+      "role": "OWNER",
+      "business_name": "Bob Biz"
+    },
+    {
+      "id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "email": "architect_UserA_160487@test.com",
+      "role": "OWNER",
+      "business_name": "UserA Inc"
+    },
+    {
+      "id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "email": "architect_UserB_103963@test.com",
+      "role": "OWNER",
+      "business_name": "UserB Inc"
+    },
+    {
+      "id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "email": "architect_UserA_697733@test.com",
+      "role": "OWNER",
+      "business_name": "UserA Inc"
+    },
+    {
+      "id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "email": "architect_UserB_310312@test.com",
+      "role": "OWNER",
+      "business_name": "UserB Inc"
+    },
+    {
+      "id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "email": "architect_UserA_435243@test.com",
+      "role": "OWNER",
+      "business_name": "UserA Inc"
+    },
+    {
+      "id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "email": "architect_UserB_746522@test.com",
+      "role": "OWNER",
+      "business_name": "UserB Inc"
+    },
+    {
+      "id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "email": "test5@test.com",
+      "role": "OWNER",
+      "business_name": "İşletmem"
+    },
+    {
+      "id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "email": "test6@test.com",
+      "role": "STAFF",
+      "business_name": null
+    },
+    {
+      "id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "email": "test10@test.com",
+      "role": "OWNER",
+      "business_name": "Test10"
+    },
+    {
+      "id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "email": "realtest_9655@test.com",
+      "role": "STAFF",
+      "business_name": null
+    },
+    {
+      "id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "email": "realtest_4604@test.com",
+      "role": "STAFF",
+      "business_name": null
+    },
+    {
+      "id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "email": "appuser_2787@test.com",
+      "role": "STAFF",
+      "business_name": null
+    },
+    {
+      "id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "email": "ozan.demirci28@gmail.com",
+      "role": "OWNER",
+      "business_name": "Chocolate Lab"
+    },
+    {
+      "id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "email": "test11@test.com",
+      "role": "OWNER",
+      "business_name": "test10"
+    },
+    {
+      "id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "email": "dev@dev.com",
+      "role": "superadmin",
+      "business_name": null
+    },
+    {
+      "id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+      "email": "test3@test.com",
+      "role": "OWNER",
+      "business_name": "Chocolate Lab"
+    }
+  ],
+  "summary": [
+    {
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+      "type": "income",
+      "count": "4"
+    },
+    {
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "type": "income",
+      "count": "2"
+    },
+    {
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "type": "expense",
+      "count": "5"
+    },
+    {
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "type": "income",
+      "count": "2"
+    }
+  ],
+  "categories": [
+    {
+      "id": "0944345e-1b95-4765-8697-6703356134f9",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "is_active": true
+    },
+    {
+      "id": "9f6354e9-8934-4313-83c0-343f0f01910c",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "is_active": true
+    },
+    {
+      "id": "42f0df56-d054-4134-9d14-de75295368c4",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "is_active": true
+    },
+    {
+      "id": "04cfbd76-d35b-41c1-ae96-1ac9b2877264",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "is_active": true
+    },
+    {
+      "id": "f075b5f9-5e16-4912-a804-37a8d6bfee8f",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "is_active": true
+    },
+    {
+      "id": "c07072c6-e069-4ae2-b85d-e013bd13fe1e",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "is_active": true
+    },
+    {
+      "id": "fb10107b-6c8a-4305-a7a4-2bb811385c8a",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+      "is_active": true
+    },
+    {
+      "id": "34b18c1f-46a1-4a18-b5e6-b5bbb8d1533b",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "is_active": true
+    },
+    {
+      "id": "32981c6e-790a-4d2c-8c37-6f6518801078",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "is_active": true
+    },
+    {
+      "id": "d2244783-b913-46ce-bfe2-803a6e8cd7ab",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "is_active": true
+    },
+    {
+      "id": "52a21705-3b5b-4235-940d-7060fb142f3f",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "is_active": true
+    },
+    {
+      "id": "9c2b4c65-182b-4624-aaef-576318fe2278",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "is_active": true
+    },
+    {
+      "id": "206960a5-6431-4b0a-bd32-dd6bec84cb95",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "is_active": true
+    },
+    {
+      "id": "1bcf45a5-683c-443a-9af0-d4372b22c7a1",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+      "is_active": true
+    },
+    {
+      "id": "2bc06827-4e11-4691-b36c-a02952f93e9a",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "is_active": true
+    },
+    {
+      "id": "f98f898f-99d7-4bb2-a46b-e95b699df321",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "is_active": true
+    },
+    {
+      "id": "dc18c20c-14b4-421f-b0c3-9e7a0b5944b5",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "is_active": true
+    },
+    {
+      "id": "cd5664e8-1325-4271-b5eb-894406f68b1f",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "is_active": true
+    },
+    {
+      "id": "41040ab2-0cf1-4fbe-a15f-88a53b7edf09",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "is_active": true
+    },
+    {
+      "id": "dbf46c2c-f37b-4a8c-a1b2-7b8aaca0288f",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "is_active": true
+    },
+    {
+      "id": "f9d5c46a-f24e-441e-b29b-07a9c7446aff",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+      "is_active": true
+    },
+    {
+      "id": "e3987bc2-dc29-4b2a-af03-60e7bf5f914d",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "is_active": true
+    },
+    {
+      "id": "36acfd9f-217e-485b-9ed7-8f29d4dfd415",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "is_active": true
+    },
+    {
+      "id": "cf20a529-a9c5-498a-ab5c-cdec41f56ded",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "is_active": true
+    },
+    {
+      "id": "e578318f-7602-44d6-a7e8-7b8633693a2b",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "is_active": true
+    },
+    {
+      "id": "82ce689d-fdd5-4cbb-9af8-df40a5194229",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "is_active": true
+    },
+    {
+      "id": "1566db46-bffc-4893-961e-69b3153930c0",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "is_active": true
+    },
+    {
+      "id": "089bc539-5dbd-4fb0-b0f5-174ce47fe9d1",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "284feb03-d06d-4381-bd73-d9b28f023629",
+      "is_active": true
+    },
+    {
+      "id": "2349423e-00b0-45bd-94f4-bbd161f3eb94",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "is_active": true
+    },
+    {
+      "id": "fecf205b-d511-42e6-a3fa-257bf1f58d8d",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "is_active": true
+    },
+    {
+      "id": "d9512b30-286c-40d2-a687-20f5a1ec857e",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "is_active": true
+    },
+    {
+      "id": "2f8fe40b-5e8c-4d94-825a-3248a65d62bc",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "is_active": true
+    },
+    {
+      "id": "cd242027-6cfb-484e-9836-421d85d3a48a",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "is_active": true
+    },
+    {
+      "id": "45e416d5-a07e-421e-83e6-b081d6b03567",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "is_active": true
+    },
+    {
+      "id": "6c2b5b93-8e03-4590-9991-4dcb347a90ff",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+      "is_active": true
+    },
+    {
+      "id": "3c826f71-f89a-40a0-b98c-e6a8ae5acd4a",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "is_active": true
+    },
+    {
+      "id": "2e7240b0-8ed2-4cd8-8dc9-bc0b2458fd3e",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "is_active": true
+    },
+    {
+      "id": "4b33b051-7ebd-4816-bc67-e5b2aaa4bc3a",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "is_active": true
+    },
+    {
+      "id": "463b0ba2-e8cf-45aa-9326-2502d09ce6ac",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "is_active": true
+    },
+    {
+      "id": "3cead0d7-679f-4a39-bb18-0682de4ce478",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "is_active": true
+    },
+    {
+      "id": "dd2187da-180e-4fce-95b4-ab021dd49b18",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "is_active": true
+    },
+    {
+      "id": "b49563fd-31a5-4f2e-b377-c3b1a7fd6523",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+      "is_active": true
+    },
+    {
+      "id": "ca5a74a7-eabd-4d88-9572-2bc1adb2c8cf",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "is_active": true
+    },
+    {
+      "id": "123b4098-1507-4590-a7ee-b951d9a8c931",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "is_active": true
+    },
+    {
+      "id": "4557e0d5-36ea-4b02-8562-1c392a039484",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "is_active": true
+    },
+    {
+      "id": "808ed29a-da95-4ad7-84d8-d45f231ba9fd",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "is_active": true
+    },
+    {
+      "id": "dab5703f-fe3b-488a-89f0-21b9d0dacec4",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "is_active": true
+    },
+    {
+      "id": "1c5194c6-3774-436c-b76f-57830a4b8419",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "is_active": true
+    },
+    {
+      "id": "71c3e890-097a-4638-a84f-5586f8691c81",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "445e602d-4197-443e-8745-808e663aeaf8",
+      "is_active": true
+    },
+    {
+      "id": "f60a1602-bf30-4170-b0d6-a819046a049f",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "is_active": true
+    },
+    {
+      "id": "3af7aa8b-4996-412e-9260-9910b982ae3d",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "is_active": true
+    },
+    {
+      "id": "659edd0e-389e-4388-8c99-05833366be52",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "is_active": true
+    },
+    {
+      "id": "d85ee2d8-fd88-4696-8d5c-24c08738a458",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "is_active": true
+    },
+    {
+      "id": "7b9af9a7-70bd-492f-8785-b68256baaf31",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "is_active": true
+    },
+    {
+      "id": "393035cb-9826-43d7-ab11-e52b6d5dfb67",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "is_active": true
+    },
+    {
+      "id": "19cfdee9-906c-463f-918e-00e5b6e6398d",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+      "is_active": true
+    },
+    {
+      "id": "11f92be6-2ab2-48c2-8feb-82d7dcde6ca8",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "is_active": true
+    },
+    {
+      "id": "b09b48bc-e5f1-4d38-85f6-4d2a48b82a15",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "is_active": true
+    },
+    {
+      "id": "a5f806f4-165b-4b42-a680-a653e90cb4cf",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "is_active": true
+    },
+    {
+      "id": "8b4e028f-0347-40d2-93e4-08bb358b1369",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "is_active": true
+    },
+    {
+      "id": "cf5de067-ac0e-449f-b803-72bc88d1c5f4",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "is_active": true
+    },
+    {
+      "id": "48126908-d043-4dd5-88fb-c2e9c95cebe8",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "is_active": true
+    },
+    {
+      "id": "e2c4475a-a6aa-4f14-aa52-fc1a04f18dfe",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+      "is_active": true
+    },
+    {
+      "id": "3bed57c7-a795-4540-8c80-48bfef70d649",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "is_active": true
+    },
+    {
+      "id": "aed9ed10-6acd-457e-9888-244df50a89a9",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "is_active": true
+    },
+    {
+      "id": "6a1e9ec3-5144-42cd-a7ee-ff856a03df85",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "is_active": true
+    },
+    {
+      "id": "a9fed9f3-48bf-4a0a-9a31-20521cc81669",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "is_active": true
+    },
+    {
+      "id": "87208411-6cb7-4f3d-969a-1084c1d1e049",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "is_active": true
+    },
+    {
+      "id": "5a37f1f2-1207-4a00-a670-cd22094c85bd",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "is_active": true
+    },
+    {
+      "id": "ea5446f1-97d8-4252-84f3-5c37408dbc42",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+      "is_active": true
+    },
+    {
+      "id": "5062c69e-801e-43ea-a762-19106b92b84d",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "is_active": true
+    },
+    {
+      "id": "6df0285e-aaa7-4651-923d-3a47e2b5d369",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "is_active": true
+    },
+    {
+      "id": "75adf4f7-52ef-430b-b0e9-55bf2c577675",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "is_active": true
+    },
+    {
+      "id": "7f7dbf9c-e05a-43b9-ac6b-5b06bad6db4b",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "is_active": true
+    },
+    {
+      "id": "5b723fed-8b4b-417e-945d-a76a2bef56b8",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "is_active": true
+    },
+    {
+      "id": "9b10856a-92cb-4b4e-90a4-665255c191a6",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "is_active": true
+    },
+    {
+      "id": "792fd546-63e2-4280-849f-e23ccdbca304",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+      "is_active": true
+    },
+    {
+      "id": "d6914fa9-0742-4b59-97f0-027d1d1bf1be",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "is_active": true
+    },
+    {
+      "id": "625cad18-8a1a-4233-b813-ace96548bc10",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "is_active": true
+    },
+    {
+      "id": "fb24f1e3-1263-48ec-9012-aff263aa683c",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "is_active": true
+    },
+    {
+      "id": "91ad1e0e-3256-404c-8d08-3dc46698e5a1",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "is_active": true
+    },
+    {
+      "id": "01d243d5-5b2a-453a-a3d0-7366eaa594a6",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "is_active": true
+    },
+    {
+      "id": "c23e9851-c6e6-437d-9f56-3e936f745299",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "is_active": true
+    },
+    {
+      "id": "495c3958-edac-4b30-b166-03d5f1ce3940",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+      "is_active": true
+    },
+    {
+      "id": "f4a9fc51-8d62-4395-a328-d7f294e1e0aa",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "is_active": true
+    },
+    {
+      "id": "70d67b09-4a1c-468b-a363-8b48c28b3aa1",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "is_active": true
+    },
+    {
+      "id": "30eca9af-b0b6-4567-af8a-a81312a715fa",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "is_active": true
+    },
+    {
+      "id": "b1edd9a5-81eb-48d9-a9d3-acb1a712ec34",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "is_active": true
+    },
+    {
+      "id": "d532a82c-a5bc-4aa7-88ea-96a24755847b",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "is_active": true
+    },
+    {
+      "id": "187accc9-3621-497f-8dba-d5dfc3529b94",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "is_active": true
+    },
+    {
+      "id": "562a1449-93e3-4e79-81cd-72a1727fc9dd",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+      "is_active": true
+    },
+    {
+      "id": "cc0d3ad4-6c3a-414d-8cd6-a7f88ded95e6",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "is_active": true
+    },
+    {
+      "id": "2e624626-4879-478d-a5bd-72e644a0d474",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "is_active": true
+    },
+    {
+      "id": "dae5198c-2145-454d-bb18-d23b2274075d",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "is_active": true
+    },
+    {
+      "id": "021b2c38-c18f-471e-92f4-139313faed1d",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "is_active": true
+    },
+    {
+      "id": "5a543e44-e9dc-430a-b772-7aa4e1ab2bc1",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "is_active": true
+    },
+    {
+      "id": "c7e1dbd9-4112-4447-94d8-581d8adca5db",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "is_active": true
+    },
+    {
+      "id": "665215b9-8584-454e-bdb9-90bf333625ab",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+      "is_active": true
+    },
+    {
+      "id": "83c159b7-ebb1-4592-ae4c-f7bdd941bfc1",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "is_active": true
+    },
+    {
+      "id": "44f8d498-08aa-455d-ae99-6ee21f6d2b1e",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "is_active": true
+    },
+    {
+      "id": "7a85be43-aaf0-4d69-8f60-89c42f5d1cae",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "is_active": true
+    },
+    {
+      "id": "b7332442-9910-461f-8d30-4fe81c12a98f",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "is_active": true
+    },
+    {
+      "id": "9962891c-293c-45f6-b9ff-4f30cb10b138",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "is_active": true
+    },
+    {
+      "id": "5b14f588-4f64-4ed1-98e2-385212843ce3",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "is_active": true
+    },
+    {
+      "id": "4028d712-5e4f-4750-b678-7fb752f7d0e3",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+      "is_active": true
+    },
+    {
+      "id": "5c69e33c-116d-4e18-b52c-21fbc2a6c5b5",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "is_active": true
+    },
+    {
+      "id": "c8bb2f3e-1702-415e-9489-819164883445",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "is_active": true
+    },
+    {
+      "id": "5849a751-32c3-42f8-9640-f6d242381eee",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "is_active": true
+    },
+    {
+      "id": "90f9d617-5a4f-426e-a804-b08ff36ab49d",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "is_active": true
+    },
+    {
+      "id": "c03035ea-7310-457a-a0e1-eb3a07c93803",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "is_active": true
+    },
+    {
+      "id": "f5e221a4-6b80-44a1-acc6-a16dd406fdb2",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "is_active": true
+    },
+    {
+      "id": "bd4c3496-ce0a-4a83-938d-a3a5db9784f4",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+      "is_active": true
+    },
+    {
+      "id": "bcaf61cc-978c-4199-95af-59b0e69e9cf6",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "is_active": true
+    },
+    {
+      "id": "993a7f99-c888-425d-8d02-4779b72c5237",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "is_active": true
+    },
+    {
+      "id": "90203033-5119-468c-a920-954abeed12b7",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "is_active": true
+    },
+    {
+      "id": "9e80fd1f-ba77-4e12-b34c-93d8baa29f31",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "is_active": true
+    },
+    {
+      "id": "8cae9fb0-0371-4d56-a460-b8b3007ecc06",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "is_active": true
+    },
+    {
+      "id": "1949883a-3c0d-45f8-a2ab-14f067be62bf",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "is_active": true
+    },
+    {
+      "id": "426fd8d5-ec1e-444b-abbb-97d0a15a7e72",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+      "is_active": true
+    },
+    {
+      "id": "c6308d08-76b1-4026-aa1e-cf5c9d9cf967",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "is_active": true
+    },
+    {
+      "id": "54c55d02-b998-4c4d-85dc-4fd0e5b429b8",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "is_active": true
+    },
+    {
+      "id": "79661630-bc27-4fba-995b-f5b419248c96",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "is_active": true
+    },
+    {
+      "id": "b839845a-c24c-4722-8593-61969e2ee832",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "is_active": true
+    },
+    {
+      "id": "804cd231-52c5-47c4-9462-96b584a7b1eb",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "is_active": true
+    },
+    {
+      "id": "b98c8e2c-32e8-42ca-af9c-f87857c0487c",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "is_active": true
+    },
+    {
+      "id": "f03b48bb-8e06-48c8-b81e-8845d476696b",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+      "is_active": true
+    },
+    {
+      "id": "4cf17b40-4f41-47af-b7d4-069f23021c79",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "is_active": true
+    },
+    {
+      "id": "43b29adb-cd4a-4a4f-9d3d-7d970a44ab36",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "is_active": true
+    },
+    {
+      "id": "fbd1a912-bdff-4bf1-8d0b-8090699ae29d",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "is_active": true
+    },
+    {
+      "id": "77eb476c-1aac-4864-9f61-e3076eea3a32",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "is_active": true
+    },
+    {
+      "id": "1cbf0019-b5ba-4803-bac3-34cc795476d1",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "is_active": true
+    },
+    {
+      "id": "fff7d2c1-f513-41a3-b988-ff528913e22b",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "is_active": true
+    },
+    {
+      "id": "bd653b6a-ce1b-4af4-b202-08a1e0dc031a",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+      "is_active": true
+    },
+    {
+      "id": "b2d460cc-48e1-4987-a89f-74c00981d15e",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "is_active": true
+    },
+    {
+      "id": "dcf0d07b-3fc0-4010-ba2b-2efba5a9beff",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "is_active": true
+    },
+    {
+      "id": "f5781e6f-80ea-4ed6-8cef-db2fcb17164f",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "is_active": true
+    },
+    {
+      "id": "0afbb1ba-afad-4797-8a44-d610e158c704",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "is_active": true
+    },
+    {
+      "id": "af856d58-b280-4c9a-8b69-202771dc88bf",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "is_active": true
+    },
+    {
+      "id": "05b2a8b9-885e-4c8e-936e-32af6166ff5d",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "is_active": true
+    },
+    {
+      "id": "83dad601-b6fb-4c8a-be6a-0dbff40c2f34",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+      "is_active": true
+    },
+    {
+      "id": "d04d1da1-2ff8-42ba-a2ee-d2a1d847b512",
+      "name": "Getir",
+      "type": "income",
+      "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+      "is_active": true
+    },
+    {
+      "id": "0cf85faf-e093-47eb-aceb-c36fa0fb8995",
+      "name": "Yemek Sepeti",
+      "type": "income",
+      "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+      "is_active": true
+    },
+    {
+      "id": "c7557eac-0805-4162-996a-91569d8c31d6",
+      "name": "Trendyol",
+      "type": "income",
+      "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+      "is_active": true
+    },
+    {
+      "id": "b0e74ab1-517a-4491-b234-9ca8138646d2",
+      "name": "Dükkan",
+      "type": "income",
+      "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+      "is_active": true
+    },
+    {
+      "id": "3bac65ce-c3b5-4527-95a4-3c7b165cb1b5",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "is_active": true
+    },
+    {
+      "id": "1575be71-adcd-418c-9af9-69b777b90272",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "is_active": true
+    },
+    {
+      "id": "70895e39-2e39-4289-9501-11494d8c5b16",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "is_active": true
+    },
+    {
+      "id": "052ea9c8-7358-488b-8143-3ef8594b0ca8",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "is_active": true
+    },
+    {
+      "id": "4999a436-68c2-47fa-9a36-5ac9c61fff27",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "is_active": true
+    },
+    {
+      "id": "95191a96-0b82-41c3-92e8-12d4c9d0aa79",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "is_active": true
+    },
+    {
+      "id": "cad0fd62-4d18-4dc2-a166-27162b218edd",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+      "is_active": true
+    },
+    {
+      "id": "f91ed92d-828a-4fe7-b150-f3232ad04ba8",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "is_active": true
+    },
+    {
+      "id": "81dd2b30-0e7b-4ea3-b837-280edc12e147",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "is_active": true
+    },
+    {
+      "id": "993fceb6-4984-43dd-a310-206e06c3c810",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "is_active": true
+    },
+    {
+      "id": "c74f179d-0d1a-40cd-a15b-3c55a445574d",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "is_active": true
+    },
+    {
+      "id": "2ec69f62-151f-47ff-a07d-bd16a3019393",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "is_active": true
+    },
+    {
+      "id": "e95d9e89-aa62-4156-96ee-1a7b71b9144b",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "is_active": true
+    },
+    {
+      "id": "f5a7f8c0-6395-46f4-8dce-bfee431f10d0",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+      "is_active": true
+    },
+    {
+      "id": "143627f4-c66c-4436-a5c3-dd9e3d71ce0f",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "is_active": true
+    },
+    {
+      "id": "f2058f22-142c-4aa4-acdc-dc070372e4d5",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "is_active": true
+    },
+    {
+      "id": "30e7cebb-f247-47d0-9a2d-91d1ecd6e504",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "is_active": true
+    },
+    {
+      "id": "24b7452a-b89a-4c47-abee-6a816ab9c7f3",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "is_active": true
+    },
+    {
+      "id": "1c370793-c952-4188-9c81-b2e42fae2686",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "is_active": true
+    },
+    {
+      "id": "43ebb626-e6f0-492e-81b5-51b7613e9f2b",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "is_active": true
+    },
+    {
+      "id": "67061aa7-309d-4667-9d76-28d444ba90a7",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+      "is_active": true
+    },
+    {
+      "id": "f1da4663-d3e3-4814-b8d3-745536ba9788",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "is_active": true
+    },
+    {
+      "id": "1d29ca31-8e5e-4112-9e10-e35215cf12bc",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "is_active": true
+    },
+    {
+      "id": "a5795fb7-799d-44e8-a7e2-c08a94aa4c55",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "is_active": true
+    },
+    {
+      "id": "1752d8ce-6a0a-4ea2-bbb3-4abfb8e3b3c8",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "is_active": true
+    },
+    {
+      "id": "4ce38530-e732-47d0-952c-4d16c55bfb12",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "is_active": true
+    },
+    {
+      "id": "22209737-5294-4328-80cb-530c0f468672",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "is_active": true
+    },
+    {
+      "id": "3eec923c-d855-404e-bf68-956417c7986d",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+      "is_active": true
+    },
+    {
+      "id": "0a9acd6a-a557-4719-ac2d-ff6b398105f7",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "is_active": true
+    },
+    {
+      "id": "bd51f3a9-1577-4b89-ab14-44b0bbfe766a",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "is_active": true
+    },
+    {
+      "id": "aca46ac9-769f-453e-a5b7-d4ac27f622e8",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "is_active": true
+    },
+    {
+      "id": "5fded277-4669-4d0c-b6f5-cde3eb2ac1ed",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "is_active": true
+    },
+    {
+      "id": "2b60dbd9-2e3e-4078-8fa2-52df3a4f195b",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "is_active": true
+    },
+    {
+      "id": "d6342da4-6266-4ec8-8730-69b1abb90cd9",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "is_active": true
+    },
+    {
+      "id": "866d5076-0c2b-42f0-a0be-be4815a18d61",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+      "is_active": true
+    },
+    {
+      "id": "fdbca412-fbbe-4faf-83e7-8eaeee289abb",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "is_active": true
+    },
+    {
+      "id": "fa02146f-4b6c-473a-893b-486e6ab292a2",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "is_active": true
+    },
+    {
+      "id": "8403ed0e-3595-4a2d-a2ec-0d44a8c9532d",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "is_active": true
+    },
+    {
+      "id": "f96eb8b0-1299-4abe-833d-e0adbb0da60b",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "is_active": true
+    },
+    {
+      "id": "5777187c-9fe2-4e0e-b923-7469477bd650",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "is_active": true
+    },
+    {
+      "id": "954f71a3-dfdd-4c05-b102-d5a49dc8c190",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "is_active": true
+    },
+    {
+      "id": "873fc3b0-baa5-4117-bf48-8159268ed63f",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+      "is_active": true
+    },
+    {
+      "id": "6ba6b2d8-3e3f-4f2f-b26b-833413d9fb09",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "is_active": true
+    },
+    {
+      "id": "d4caa7ae-75a4-42bd-92fe-358490af5662",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "is_active": true
+    },
+    {
+      "id": "77f73341-0f6d-42f8-88a3-da78bdd1a13f",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "is_active": true
+    },
+    {
+      "id": "b0c53639-0e74-4534-bfd3-c48677d8a672",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "is_active": true
+    },
+    {
+      "id": "4a1ac2d2-1826-45ca-9be8-53bf740a9e33",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "is_active": true
+    },
+    {
+      "id": "fef08a5f-bcbb-41f4-8d22-1c910400d636",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "is_active": true
+    },
+    {
+      "id": "e2b4f4b0-6cde-49b7-b23e-eada82fcd160",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "is_active": true
+    },
+    {
+      "id": "fb6e1fef-8aef-45c9-8f80-6c2df88993b8",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "is_active": true
+    },
+    {
+      "id": "d74f9f56-aff3-4300-a516-281611f9ff27",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "is_active": true
+    },
+    {
+      "id": "aacb83fd-4036-434a-a752-ddd8695c99aa",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "is_active": true
+    },
+    {
+      "id": "1a9a7813-e4fc-42b8-8854-0709df4b7f42",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "is_active": true
+    },
+    {
+      "id": "93b3e14d-3298-4fa8-b745-53bcfe5913e0",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "is_active": true
+    },
+    {
+      "id": "f4ae9790-08c5-4b70-9537-b80dd68a88fa",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "is_active": true
+    },
+    {
+      "id": "0ec2205c-643e-4f7a-9204-afd2436fb804",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "edd5aac7-a093-4160-8162-685c6b782dae",
+      "is_active": true
+    },
+    {
+      "id": "c4f2c3e4-950c-4f2c-9e27-c69a9a1e246e",
+      "name": "Kira Giderleri",
+      "type": "expense",
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "is_active": true
+    },
+    {
+      "id": "c5b811c4-9e26-40c0-a4b9-70276e95d080",
+      "name": "Fatura & Abonelik",
+      "type": "expense",
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "is_active": true
+    },
+    {
+      "id": "4bb5df5d-9168-4b0e-97b7-de0f1c6fc60f",
+      "name": "Personel Maaş",
+      "type": "expense",
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "is_active": true
+    },
+    {
+      "id": "d6e3bf86-8e49-4f3f-bbea-5c452770bfc1",
+      "name": "Stok / Malzeme",
+      "type": "expense",
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "is_active": true
+    },
+    {
+      "id": "61e1a359-db43-4ab8-be21-65df9d875321",
+      "name": "Diğer Giderler",
+      "type": "expense",
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "is_active": true
+    },
+    {
+      "id": "7bc2d769-a401-4259-8084-3998298e16ba",
+      "name": "Satış Geliri",
+      "type": "income",
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "is_active": true
+    },
+    {
+      "id": "a1363e3e-de13-48b4-bcb8-dca0500fe98b",
+      "name": "Hizmet Geliri",
+      "type": "income",
+      "user_id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+      "is_active": true
+    }
+  ]
+}

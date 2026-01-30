@@ -1,0 +1,19 @@
+;; DNS Import File for g2panda.com.tr
+;; Instructions:
+;; 1. Download this file (or save content as dns_records.txt)
+;; 2. Go to Cloudflare Dashboard > DNS > Records
+;; 3. Click "Import and Export", then "Import DNS Records"
+;; 4. Upload this file.
+
+;; Root Domain (Frontend) -> Points to your Public IP
+@ IN A 95.70.183.195
+
+;; Backend API -> Points to your Public IP
+api IN A 95.70.183.195
+
+;; WWW Subdomain -> Redirects to Root
+www IN CNAME g2panda.com.tr.
+
+;; Staging Environments
+staging IN A 95.70.183.195
+api.staging IN A 95.70.183.195
