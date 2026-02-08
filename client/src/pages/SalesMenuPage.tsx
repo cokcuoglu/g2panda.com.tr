@@ -24,6 +24,13 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface Product {
     id: string;
@@ -66,6 +73,8 @@ export default function SalesMenuPage() {
 
     const [paymentChannels, setPaymentChannels] = useState<any[]>([]);
     const [selectedChannelId, setSelectedChannelId] = useState<string>('');
+
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
     const fetchProducts = async () => {
         setIsLoadingProducts(true);
@@ -328,12 +337,12 @@ export default function SalesMenuPage() {
                 className="h-screen overflow-hidden w-full"
                 fullWidth={true}
                 actions={
-                    <div className="flex bg-slate-100 p-1 rounded-lg">
+                    <div className="flex bg-slate-100 p-1 rounded-lg overflow-x-auto max-w-[200px] md:max-w-none">
                         <Button
                             variant={selectedMenuCategoryId === 'all' ? 'default' : 'ghost'}
                             size="sm"
                             onClick={() => setSelectedMenuCategoryId('all')}
-                            className="text-xs h-7"
+                            className="text-xs h-7 whitespace-nowrap"
                         >
                             Tümü
                         </Button>
@@ -343,7 +352,7 @@ export default function SalesMenuPage() {
                                 variant={selectedMenuCategoryId === cat.id ? 'default' : 'ghost'}
                                 size="sm"
                                 onClick={() => setSelectedMenuCategoryId(cat.id)}
-                                className="text-xs h-7"
+                                className="text-xs h-7 whitespace-nowrap"
                             >
                                 {cat.name}
                             </Button>
@@ -351,9 +360,9 @@ export default function SalesMenuPage() {
                     </div>
                 }
             >
-                <div className="flex flex-1 gap-6 h-full pb-6 pl-1 pr-1 overflow-hidden">
+                <div className="flex flex-1 gap-6 h-full pb-6 pl-1 pr-1 overflow-hidden relative">
                     {/* Left: Product Grid */}
-                    <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar pb-24 lg:pb-0">
                         {/* Daily Stats Bar */}
                         <div className="mb-6 flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                             <div className="flex items-center gap-3">
@@ -367,7 +376,7 @@ export default function SalesMenuPage() {
                                     </h3>
                                 </div>
                             </div>
-                            <div className="text-xs text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full">
+                            <div className="text-xs text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full hidden sm:block">
                                 {new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
                             </div>
                         </div>
@@ -380,33 +389,133 @@ export default function SalesMenuPage() {
                             </div>
                         )}
 
-                        {isLoadingProducts ? (
-                            <div className="flex items-center justify-center py-20 opacity-50">
-                                <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
-                            </div>
-                        ) : activeProducts.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-20 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 mx-4">
-                                <p>Aktif ürün bulunamadı.</p>
-                                <p className="text-sm mt-1">Ürün eklemek için "Ürün Yönetimi"ne tıklayın.</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-20">
-                                {activeProducts.map(product => (
-                                    <ProductCard
-                                        key={product.id}
-                                        name={product.name}
-                                        price={Number(product.price)}
-                                        color={product.color}
-                                        image_url={product.image_url}
-                                        onClick={() => handleProductClick(product)}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                        {/* Product Rendering Logic */}
+                        {(() => {
+                            // Helper to find node in tree
+                            const findNode = (nodes: any[], id: string): any => {
+                                for (const node of nodes) {
+                                    if (node.id === id) return node;
+                                    if (node.children) {
+                                        const found = findNode(node.children, id);
+                                        if (found) return found;
+                                    }
+                                }
+                                return null;
+                            };
+
+                            // Helper to collect all IDs from a node (for sub-group filtering)
+                            const collectIds = (node: any): string[] => {
+                                let ids = [node.id];
+                                if (node.children) {
+                                    node.children.forEach((c: any) => ids.push(...collectIds(c)));
+                                }
+                                return ids;
+                            };
+
+                            const selectedNode = selectedMenuCategoryId !== 'all' ? findNode(categories, selectedMenuCategoryId) : null;
+                            const hasSubCategories = selectedNode && selectedNode.children && selectedNode.children.length > 0;
+
+                            if (isLoadingProducts) {
+                                return (
+                                    <div className="flex items-center justify-center py-20 opacity-50">
+                                        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+                                    </div>
+                                );
+                            }
+
+                            if (activeProducts.length === 0) {
+                                return (
+                                    <div className="flex flex-col items-center justify-center py-20 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 mx-4">
+                                        <p>Aktif ürün bulunamadı.</p>
+                                        <p className="text-sm mt-1">Ürün eklemek için "Ürün Yönetimi"ne tıklayın.</p>
+                                    </div>
+                                );
+                            }
+
+                            // If All selected or leaf node (no children), show flat grid
+                            if (!hasSubCategories) {
+                                return (
+                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-20">
+                                        {activeProducts.map(product => (
+                                            <ProductCard
+                                                key={product.id}
+                                                name={product.name}
+                                                price={Number(product.price)}
+                                                color={product.color}
+                                                image_url={product.image_url}
+                                                onClick={() => handleProductClick(product)}
+                                            />
+                                        ))}
+                                    </div>
+                                );
+                            }
+
+                            // Grouped View for Categories with Children
+                            return (
+                                <div className="space-y-8 pb-20">
+                                    {/* 1. Direct Products (Orphans in the parent category) */}
+                                    {(() => {
+                                        const directProducts = activeProducts.filter(p => p.menu_category_id === selectedNode.id);
+                                        if (directProducts.length === 0) return null;
+                                        return (
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <div className="h-px flex-1 bg-slate-200"></div>
+                                                    <h3 className="font-semibold text-lg text-slate-500">{selectedNode.name}</h3>
+                                                    <div className="h-px flex-1 bg-slate-200"></div>
+                                                </div>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                                                    {directProducts.map(product => (
+                                                        <ProductCard
+                                                            key={product.id}
+                                                            name={product.name}
+                                                            price={Number(product.price)}
+                                                            color={product.color}
+                                                            image_url={product.image_url}
+                                                            onClick={() => handleProductClick(product)}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
+
+                                    {/* 2. Sub-Category Groups */}
+                                    {selectedNode.children.map((subCat: any) => {
+                                        // Get all product IDs belonging to this sub-category (or its descendants)
+                                        const allowedIds = collectIds(subCat);
+                                        const subProducts = activeProducts.filter(p => allowedIds.includes(p.menu_category_id));
+
+                                        if (subProducts.length === 0) return null;
+
+                                        return (
+                                            <div key={subCat.id}>
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <h3 className="font-bold text-xl text-slate-800">{subCat.name}</h3>
+                                                    <div className="h-px flex-1 bg-slate-200"></div>
+                                                </div>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                                                    {subProducts.map(product => (
+                                                        <ProductCard
+                                                            key={product.id}
+                                                            name={product.name}
+                                                            price={Number(product.price)}
+                                                            color={product.color}
+                                                            image_url={product.image_url}
+                                                            onClick={() => handleProductClick(product)}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            );
+                        })()}
                     </div>
 
-                    {/* Right: Order Summary (Fixed width) */}
-                    <div className="w-[400px] flex-shrink-0 h-full pb-6">
+                    {/* Right: Order Summary. Hidden on mobile, shown on lg screens. */}
+                    <div className="hidden lg:block w-[400px] flex-shrink-0 h-full pb-6">
                         <OrderSummary
                             items={cart}
                             onUpdateQuantity={handleUpdateQuantity}
@@ -414,6 +523,42 @@ export default function SalesMenuPage() {
                             onConfirm={handleInitiateOrder}
                             isProcessing={isProcessing}
                         />
+                    </div>
+
+                    {/* Mobile Cart Button (FAB) */}
+                    <div className="lg:hidden fixed bottom-4 right-4 left-4 z-50">
+                        <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+                            <SheetTrigger asChild>
+                                <Button className="w-full h-14 shadow-xl bg-slate-900 text-white flex justify-between px-6 items-center rounded-xl">
+                                    <div className="flex gap-2 items-center">
+                                        <div className="bg-white/20 px-2 py-0.5 rounded text-sm font-bold">
+                                            {cart.reduce((acc, item) => acc + item.quantity, 0)}
+                                        </div>
+                                        <span>Sepeti Görüntüle</span>
+                                    </div>
+                                    <span className="font-bold text-lg">
+                                        ₺{cart.reduce((acc, item) => acc + (item.price * item.quantity), 0).toLocaleString('tr-TR')}
+                                    </span>
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="bottom" className="h-[90vh] p-0 rounded-t-xl">
+                                <SheetHeader className="p-4 border-b">
+                                    <SheetTitle>Sipariş Özeti</SheetTitle>
+                                </SheetHeader>
+                                <div className="h-full pb-20">
+                                    <OrderSummary
+                                        items={cart}
+                                        onUpdateQuantity={handleUpdateQuantity}
+                                        onRemove={handleRemoveItem}
+                                        onConfirm={() => {
+                                            setIsCartOpen(false);
+                                            handleInitiateOrder();
+                                        }}
+                                        isProcessing={isProcessing}
+                                    />
+                                </div>
+                            </SheetContent>
+                        </Sheet>
                     </div>
                 </div>
 

@@ -1,8 +1,12 @@
-const express = require('express');
+import express, { Request, Response } from 'express';
+import logger from '../config/logger';
+
 const router = express.Router();
 
+
+
 // GET /api/dashboard/daily-summary
-router.get('/daily-summary', async (req, res) => {
+router.get('/daily-summary', async (req: any, res: Response) => {
     try {
         const { date } = req.query;
 
@@ -31,14 +35,14 @@ router.get('/daily-summary', async (req, res) => {
 
         const result = await req.db.query(query, [date]);
         res.json({ success: true, data: result.rows[0] });
-    } catch (err) {
-        console.error(err);
+    } catch (err: any) {
+        logger.error(err);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 });
 
 // GET /api/dashboard/monthly-summary
-router.get('/monthly-summary', async (req, res) => {
+router.get('/monthly-summary', async (req: any, res: Response) => {
     try {
         const { year, month } = req.query;
 
@@ -68,14 +72,14 @@ router.get('/monthly-summary', async (req, res) => {
 
         const result = await req.db.query(query, [year, month]);
         res.json({ success: true, data: result.rows[0] });
-    } catch (err) {
-        console.error(err);
+    } catch (err: any) {
+        logger.error(err);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 });
 
 // GET /api/dashboard/trend
-router.get('/trend', async (req, res) => {
+router.get('/trend', async (req: any, res: Response) => {
     try {
         const { days = 30 } = req.query;
 
@@ -90,7 +94,7 @@ router.get('/trend', async (req, res) => {
       ),
       daily_summary AS (
           SELECT 
-              transaction_date AS report_date,
+              (transaction_date AT TIME ZONE 'Europe/Istanbul')::DATE AS report_date,
               SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS daily_income,
               SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS daily_expense
           FROM transactions
@@ -112,16 +116,16 @@ router.get('/trend', async (req, res) => {
 
         const result = await req.db.query(query, [days]);
         res.json({ success: true, data: result.rows });
-    } catch (err) {
-        console.error(err);
+    } catch (err: any) {
+        logger.error(err);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 });
 
 // GET /api/reports/by-category
-router.get('/reports/by-category', async (req, res) => {
+router.get('/reports/by-category', async (req: any, res: Response) => {
     try {
-        const { start_date, end_date, type } = req.query;
+        const { start_date, end_date, type } = req.query as any;
 
         if (!start_date || !end_date) {
             return res.status(400).json({ success: false, error: 'Start date and end date are required' });
@@ -168,16 +172,16 @@ router.get('/reports/by-category', async (req, res) => {
 
         const result = await req.db.query(query, params);
         res.json({ success: true, data: result.rows });
-    } catch (err) {
-        console.error(err);
+    } catch (err: any) {
+        logger.error(err);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 });
 
 // GET /api/reports/by-channel
-router.get('/reports/by-channel', async (req, res) => {
+router.get('/reports/by-channel', async (req: any, res: Response) => {
     try {
-        const { start_date, end_date, type } = req.query;
+        const { start_date, end_date, type } = req.query as any;
 
         if (!start_date || !end_date) {
             return res.status(400).json({ success: false, error: 'Start date and end date are required' });
@@ -229,10 +233,10 @@ router.get('/reports/by-channel', async (req, res) => {
 
         const result = await req.db.query(query, params);
         res.json({ success: true, data: result.rows });
-    } catch (err) {
-        console.error(err);
+    } catch (err: any) {
+        logger.error(err);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 });
 
-module.exports = router;
+export default router;

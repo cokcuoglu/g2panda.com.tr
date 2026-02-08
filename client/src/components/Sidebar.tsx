@@ -41,7 +41,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                 { title: 'Tüm İşlemler', href: '/transactions', icon: Receipt },
                 { title: 'Gelir Raporu', href: '/reports/income-category', icon: TrendingUp },
                 { title: 'Gider Raporu', href: '/reports/expense-category', icon: TrendingDown },
-                { title: 'Genel Rapor', href: '/reports', icon: FileText },
+                { title: 'Genel Raporlar', href: '/reports', icon: FileText },
             ]
         },
 
@@ -75,7 +75,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                 },
                 // Removed Menü Ürünler from nere
                 { title: 'Satış, Ödeme Araçları', href: '/settings/data', icon: Receipt, roles: ['owner'] },
-                { title: 'Gelir/Gider Kategoriler', href: '/categories', icon: Tag, roles: ['owner', 'accountant'] }
+
             ]
         },
     ], []);

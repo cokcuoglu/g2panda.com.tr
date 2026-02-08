@@ -6,7 +6,7 @@ async function testDailyTotal() {
 
         // First, login to get a token
         console.log('1. Logging in...');
-        const loginRes = await axios.post('http://localhost:5002/api/auth/login', {
+        const loginRes = await axios.post('http://localhost:7173/api/auth/login', {
             email: 'caner@example.com',  // Update with actual email
             password: 'password123'       // Update with actual password
         });
@@ -20,7 +20,7 @@ async function testDailyTotal() {
 
         // Test daily-total endpoint
         console.log('\n2. Testing daily-total endpoint...');
-        const dailyRes = await axios.get('http://localhost:5002/api/transactions/daily-total', {
+        const dailyRes = await axios.get('http://localhost:7173/api/transactions/daily-total', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

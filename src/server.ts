@@ -10,16 +10,15 @@ import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
 import logger from './config/logger';
 
-// Import existing routers (JS files)
-const transactionsRouter = require('./routes/transactions');
-const dashboardRouter = require('./routes/dashboard');
-const { query } = require('./db');
+import transactionsRouter from './routes/transactions';
+import dashboardRouter from './routes/dashboard';
+import { query } from './db';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 7174;
 
 // Security Configurations
 app.set('trust proxy', 1); // Trust first proxy (Cloudflare)
@@ -180,7 +179,8 @@ const server = app.listen(PORT, () => {
 // Handle Unhandled Promise Rejections
 process.on('unhandledRejection', (err: any) => {
     logger.error('UNHANDLED REJECTION! 💥 Shutting down...');
-    logger.error(err.name, err.message);
+    logger.error(err);
+    if (err.stack) logger.error(err.stack);
     server.close(() => {
         process.exit(1);
     });
@@ -188,7 +188,8 @@ process.on('unhandledRejection', (err: any) => {
 
 // Handle Uncaught Exceptions
 process.on('uncaughtException', (err: any) => {
-    logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-    logger.error(err.name, err.message);
+    console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+    console.error(err);
+    if (err.stack) console.error(err.stack);
     process.exit(1);
 });

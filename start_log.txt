@@ -1,0 +1,13 @@
+﻿2026-02-02 00:48:14:4814 [31merror[39m: [31mUNCAUGHT EXCEPTION! ­şÆÑ Shutting down...[39m
+2026-02-02 00:48:14:4814 [31merror[39m: [31m[31merror[31m[39m
+2026-02-02 00:48:14:4814 [31merror[39m: [31mError: listen EADDRINUSE: address already in use :::7173[39m
+[31m    at Server.setupListenHandle [as _listen2] (node:net:1940:16)[39m
+[31m    at listenInCluster (node:net:1997:12)[39m
+[31m    at Server.listen (node:net:2102:7)[39m
+[31m    at Function.listen (D:\Personal_Project\g2panda_release\node_modules\express\lib\application.js:635:24)[39m
+[31m    at Object.<anonymous> (D:\Personal_Project\g2panda_release\src\server.ts:175:20)[39m
+[31m    at Module._compile (node:internal/modules/cjs/loader:1706:14)[39m
+[31m    at Module.m._compile (D:\Personal_Project\g2panda_release\node_modules\ts-node\src\index.ts:1618:23)[39m
+[31m    at node:internal/modules/cjs/loader:1839:10[39m
+[31m    at Object.require.extensions.<computed> [as .ts] (D:\Personal_Project\g2panda_release\node_modules\ts-node\src\index.ts:1621:12)[39m
+[31m    at Module.load (node:internal/modules/cjs/loader:1441:32)[39m

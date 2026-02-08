@@ -4,15 +4,16 @@ import axios from 'axios';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Plus, TrendingDown } from 'lucide-react';
+import { Plus, TrendingDown, Pencil, Trash2 } from 'lucide-react';
 import { ReceiptScanner } from '@/components/ReceiptScanner';
 import { KpiCard } from '@/components/dashboard/KpiCard';
 
@@ -28,6 +29,10 @@ interface Transaction {
     channel_name?: string;
     receipt_image?: string;
     is_tax_deductible: boolean;
+    notes?: string;
+    created_at: string;
+    vat_rate?: number;
+    vat_amount?: number;
 }
 
 export default function ExpensesPage() {
@@ -37,6 +42,7 @@ export default function ExpensesPage() {
     const [categories, setCategories] = useState<any[]>([]);
     const [channels, setChannels] = useState<any[]>([]);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     // const [isLoading, setIsLoading] = useState(true); // Removed unused
 
     // Initial value: Current "YYYY-MM"
@@ -57,7 +63,10 @@ export default function ExpensesPage() {
         expense_type: activeTab,
         is_tax_deductible: true,
         deduction_reason: '',
-        document_type: 'receipt'
+        document_type: 'receipt',
+        notes: '',
+        vat_rate: '',
+        vat_amount: ''
     });
 
     const fetchData = async () => {
@@ -109,13 +118,27 @@ export default function ExpensesPage() {
     }, [activeTab, selectedMonth]);
 
     const handleScanComplete = (data: any) => {
-        setFormData(prev => ({
-            ...prev,
-            amount: data.amount ? String(data.amount) : prev.amount,
-            transaction_date: data.date || prev.transaction_date,
-            description: data.description || prev.description,
-            ocr_record_id: data.ocr_id
-        }));
+        setFormData(prev => {
+            let isoDate = prev.transaction_date;
+            if (data.date) {
+                // Backend returns DD.MM.YYYY, convert to YYYY-MM-DD for input
+                const parts = data.date.split('.');
+                if (parts.length === 3) {
+                    isoDate = `${parts[2]}-${parts[1]}-${parts[0]}T${data.details?.time?.slice(0, 5) || '12:00'}`;
+                }
+            }
+
+            return {
+                ...prev,
+                amount: data.amount ? String(data.amount) : prev.amount,
+                transaction_date: isoDate,
+                description: data.description || prev.description,
+                ocr_record_id: data.ocr_id,
+                notes: data.raw_text || prev.notes,
+                vat_rate: data.vat_rate ? String(data.vat_rate) : prev.vat_rate,
+                vat_amount: data.vat_total ? String(data.vat_total) : prev.vat_amount
+            };
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -126,7 +149,7 @@ export default function ExpensesPage() {
         const viewDate = new Date(selectedMonth + '-01');
         const isSameMonth = txDate.getMonth() === viewDate.getMonth() && txDate.getFullYear() === viewDate.getFullYear();
 
-        if (!isSameMonth) {
+        if (!isSameMonth && !editingId) { // Only warn on new creation
             const confirmMsg = `Dikkat: Kayıt tarihi (${formData.transaction_date}) seçili dönemden (${selectedMonth}) farklı.\n\nKayıt eklenecek ancak bu listede görünmeyecek. Devam etmek istiyor musunuz?`;
             if (!confirm(confirmMsg)) {
                 return;
@@ -134,29 +157,79 @@ export default function ExpensesPage() {
         }
 
         try {
-            await axios.post('/api/transactions', {
+            const payload = {
                 ...formData,
                 type: 'expense',
                 expense_type: formData.expense_type || activeTab || 'operational', // Fallback to activeTab
                 amount: Number(formData.amount)
-            });
+            };
+
+            if (editingId) {
+                await axios.put(`/api/transactions/${editingId}`, payload);
+            } else {
+                await axios.post('/api/transactions', payload);
+            }
 
             setFormData(prev => ({
                 ...prev,
                 amount: '',
                 description: '',
                 ocr_record_id: null,
-                deduction_reason: ''
+                deduction_reason: '',
+                notes: '',
+                vat_rate: '',
+                vat_amount: ''
             }));
+            setEditingId(null);
             setIsSheetOpen(false);
 
-            // If saved successfully, maybe we should switch view to that month?
-            // For now, just refresh. If user confirmed, they know.
             fetchData();
         } catch (error: any) {
             console.error("Expense Save Error:", error);
             const msg = error.response?.data?.error || error.message || "Kaydetme başarısız.";
             alert(`Hata (${error.response?.status || 'Ağ'}): ${msg}`);
+        }
+    };
+
+    const handleEdit = (t: Transaction) => {
+        setEditingId(t.id);
+        const isoDate = new Date(t.transaction_date).toISOString().slice(0, 16);
+        setFormData({
+            amount: String(t.amount),
+            description: t.description || '',
+            transaction_date: isoDate,
+            category_id: t.category_name ? categories.find(c => c.name === t.category_name)?.id : '', // Best effort map
+            channel_id: t.channel_name ? channels.find(c => c.name === t.channel_name)?.id : '',
+            ocr_record_id: null, // Don't re-link OCR on edit for now
+            expense_type: t.expense_type,
+            is_tax_deductible: t.is_tax_deductible,
+            deduction_reason: '',
+            document_type: 'receipt',
+            notes: t.notes || '',
+            vat_rate: t.vat_rate ? String(t.vat_rate) : '',
+            vat_amount: t.vat_amount ? String(t.vat_amount) : ''
+        });
+        setIsSheetOpen(true);
+    };
+
+    const handleDelete = async (id: string, createdAt: string) => {
+        // 24-hour check
+        const created = new Date(createdAt);
+        const now = new Date();
+        const diffHours = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
+
+        if (diffHours > 24) {
+            alert("24 saati geçmiş kayıtlar silinemez.");
+            return;
+        }
+
+        if (!confirm("Bu kaydı silmek istediğinize emin misiniz?")) return;
+
+        try {
+            await axios.delete(`/api/transactions/${id}`);
+            fetchData();
+        } catch (error: any) {
+            alert("Silme başarısız: " + (error.response?.data?.error || error.message));
         }
     };
 
@@ -178,21 +251,67 @@ export default function ExpensesPage() {
                         />
                     </div>
                     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                        <SheetTrigger asChild>
-                            <Button className="bg-rose-600 hover:bg-rose-700 h-9">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Yeni Gider
-                            </Button>
-                        </SheetTrigger>
+                        <Button className="bg-rose-600 hover:bg-rose-700 h-9" onClick={() => { setEditingId(null); setIsSheetOpen(true); }}>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Yeni Gider
+                        </Button>
                         <SheetContent className="overflow-y-auto w-full sm:max-w-md">
                             <SheetHeader className="mb-6">
-                                <SheetTitle>Yeni Gider Kaydı</SheetTitle>
+                                <SheetTitle>{editingId ? "Gider Düzenle" : "Yeni Gider Kaydı"}</SheetTitle>
                             </SheetHeader>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <ReceiptScanner onScanComplete={handleScanComplete} className="mb-4" />
                                 <div className="space-y-4">
-                                    <Input type="number" placeholder="Tutar" value={formData.amount} onChange={e => setFormData({ ...formData, amount: e.target.value })} required />
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div className="space-y-1">
+                                            <Label className="text-xs">Genel Toplam (KDV Dahil)</Label>
+                                            <Input type="number" placeholder="Tutar" value={formData.amount} onChange={e => {
+                                                const newAmount = e.target.value;
+                                                let newVatAmount = formData.vat_amount;
+                                                // Auto-calc VAT if rate exists
+                                                if (newAmount && formData.vat_rate) {
+                                                    const rate = parseFloat(formData.vat_rate);
+                                                    const amount = parseFloat(newAmount);
+                                                    newVatAmount = (amount - (amount / (1 + rate / 100))).toFixed(2);
+                                                }
+                                                setFormData({ ...formData, amount: newAmount, vat_amount: newVatAmount });
+                                            }} required />
+                                            {formData.amount && formData.vat_amount && (
+                                                <div className="text-[10px] text-slate-400 text-right">
+                                                    Matrah: {(parseFloat(formData.amount) - parseFloat(formData.vat_amount)).toFixed(2)} ₺
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Label className="text-xs">KDV Oranı (%)</Label>
+                                            <Select value={formData.vat_rate} onValueChange={val => {
+                                                const rate = parseFloat(val);
+                                                let newVatAmount = formData.vat_amount;
+                                                if (formData.amount && !isNaN(rate)) {
+                                                    const amount = parseFloat(formData.amount);
+                                                    newVatAmount = (amount - (amount / (1 + rate / 100))).toFixed(2);
+                                                }
+                                                setFormData({ ...formData, vat_rate: val, vat_amount: newVatAmount });
+                                            }}>
+                                                <SelectTrigger><SelectValue placeholder="Seç" /></SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="0">0%</SelectItem>
+                                                    <SelectItem value="1">1%</SelectItem>
+                                                    <SelectItem value="8">8%</SelectItem>
+                                                    <SelectItem value="10">10%</SelectItem>
+                                                    <SelectItem value="18">18%</SelectItem>
+                                                    <SelectItem value="20">20%</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1">
+                                        <div className="space-y-1">
+                                            <Label className="text-xs">KDV Tutarı</Label>
+                                            <Input type="number" placeholder="KDV" value={formData.vat_amount} onChange={e => setFormData({ ...formData, vat_amount: e.target.value })} />
+                                        </div>
+                                    </div>
                                     <Input type="datetime-local" value={formData.transaction_date} onChange={e => setFormData({ ...formData, transaction_date: e.target.value })} />
                                     <div className="space-y-2">
                                         <label className="text-xs font-medium uppercase text-slate-500 tracking-wider">Gider Türü</label>
@@ -237,7 +356,23 @@ export default function ExpensesPage() {
                                         <Label>Vergiden Düşülebilir</Label>
                                         <Switch checked={formData.is_tax_deductible} onCheckedChange={c => setFormData({ ...formData, is_tax_deductible: c })} />
                                     </div>
-                                    <Input placeholder="Açıklama" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                                    <div className="space-y-2">
+                                        <Label>Açıklama</Label>
+                                        <Input
+                                            placeholder="Kısa Açıklama (örn. Ofis Malzemeleri)"
+                                            value={formData.description}
+                                            onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Detaylar (Fiş İçeriği)</Label>
+                                        <Textarea
+                                            placeholder="Fiş detayları veya notlar..."
+                                            value={formData.notes || ''}
+                                            onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                                            className="min-h-[100px] font-mono text-xs"
+                                        />
+                                    </div>
                                 </div>
                                 <Button type="submit" className="w-full bg-rose-600">Kaydet</Button>
                             </form>
@@ -288,7 +423,19 @@ export default function ExpensesPage() {
                                                         <Badge variant="outline">{t.category_name}</Badge>
                                                         {!t.is_tax_deductible && <span className="ml-2 text-xs text-amber-600">KKEG</span>}
                                                     </TableCell>
-                                                    <TableCell className="text-right text-rose-600">-{t.amount} ₺</TableCell>
+                                                    <TableCell className="text-right text-rose-600">
+                                                        <div className="flex flex-col items-end">
+                                                            <span>-{t.amount} ₺</span>
+                                                            <div className="flex gap-2 mt-1">
+                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleEdit(t)}>
+                                                                    <Pencil className="h-3 w-3 text-slate-400 hover:text-blue-600" />
+                                                                </Button>
+                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleDelete(t.id, t.created_at)}>
+                                                                    <Trash2 className={`h-3 w-3 ${((new Date().getTime() - new Date(t.created_at).getTime()) / 36e5) > 24 ? 'text-slate-200 cursor-not-allowed' : 'text-slate-400 hover:text-red-600'}`} />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </TableCell>
                                                 </TableRow>
                                             ))
                                         )}

@@ -1,0 +1,30 @@
+
+const { Client } = require('pg');
+const fs = require('fs');
+const path = require('path');
+require('dotenv').config();
+
+async function runMigration() {
+    const client = new Client({
+        connectionString: process.env.DATABASE_URL,
+    });
+
+    try {
+        await client.connect();
+        console.log('Connected to database.');
+
+        const sqlPath = path.join(__dirname, '../database/21_add_vat_columns.sql');
+        const sql = fs.readFileSync(sqlPath, 'utf8');
+
+        console.log('Running migration...');
+        await client.query(sql);
+        console.log('Migration applied successfully.');
+
+    } catch (err) {
+        console.error('Migration failed:', err);
+    } finally {
+        await client.end();
+    }
+}
+
+runMigration();

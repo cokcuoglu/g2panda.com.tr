@@ -235,6 +235,25 @@ export default function Reports() {
                 </Card>
 
                 {/* Main Content Sections */}
+                {loading && (
+                    <div className="flex h-64 items-center justify-center">
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-primary" />
+                            <p className="text-sm text-slate-500">Raporlar hazırlanıyor...</p>
+                        </div>
+                    </div>
+                )}
+
+                {!loading && !summary && (
+                    <div className="flex h-64 items-center justify-center">
+                        <div className="text-center space-y-2">
+                            <p className="font-bold text-slate-800">Veri Alınamadı</p>
+                            <p className="text-sm text-slate-500">Rapor verileri yüklenirken bir sorun oluştu. Lütfen tekrar deneyin.</p>
+                            <Button variant="outline" onClick={fetchReportData} className="mt-2">Tekrar Dene</Button>
+                        </div>
+                    </div>
+                )}
+
                 {summary && (
                     <div className="space-y-8">
                         {/* Summary Visualization */}
