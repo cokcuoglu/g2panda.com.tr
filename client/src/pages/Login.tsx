@@ -52,10 +52,10 @@ export default function Login() {
 
             <div className="w-full max-w-md px-4 z-10">
                 <div className="mb-8 text-center space-y-2">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-white shadow-lg mb-2">
-                        <Lock className="w-6 h-6" />
+                    <div className="inline-flex items-center justify-center w-36 h-36 rounded-2xl shadow-lg mb-4 overflow-hidden p-3">
+                        <img src="/favicon.png" alt="G2Panda Logo" className="w-full h-full object-contain" />
                     </div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">GG_Esnaf</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">G2Panda</h1>
                     <p className="text-slate-500">İşletmenizi yönetmeye hemen başlayın</p>
                 </div>
 

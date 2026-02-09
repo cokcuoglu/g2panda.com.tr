@@ -31,6 +31,8 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
     const menuItems = useMemo(() => [
         { title: 'Özet', icon: LayoutDashboard, href: '/', roles: ['owner', 'accountant', 'staff'] },
         { title: 'Satış Menüsü', icon: ShoppingCart, href: '/sales', roles: ['owner', 'staff'] },
+        { title: 'Gelen Siparişler', icon: Receipt, href: '/orders', roles: ['owner', 'staff'] },
+        { title: 'Müşteriler', icon: Users, href: '/customers', roles: ['owner', 'staff'] },
         { title: 'Giderler', icon: TrendingDown, href: '/expenses', roles: ['owner', 'accountant'] },
         {
             title: 'Raporlar',
@@ -75,6 +77,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                 },
                 // Removed Menü Ürünler from nere
                 { title: 'Satış, Ödeme Araçları', href: '/settings/data', icon: Receipt, roles: ['owner'] },
+                { title: 'Gelir/Gider Kategorileri', href: '/categories', icon: Tag, roles: ['owner', 'accountant'] },
 
             ]
         },
@@ -209,17 +212,15 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                 {/* Brand Logo */}
                 <div className="p-6 border-b border-slate-50">
                     <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 bg-primary rounded-lg flex items-center justify-center shadow-md overflow-hidden">
-                            {user?.business_logo_url ? (
-                                <img src={user.business_logo_url} alt="Logo" className="h-full w-full object-cover" />
-                            ) : (
-                                <span className="text-white font-bold text-lg">
-                                    {(user?.business_name || 'GG').substring(0, 2).toUpperCase()}
-                                </span>
-                            )}
+                        <div className="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img
+                                src={user?.business_logo_url || "/favicon.png"}
+                                alt="Logo"
+                                className="h-full w-full object-cover"
+                            />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-slate-800 truncate" title={user?.business_name || 'GG_Esnaf'}>
-                            {user?.business_name || 'GG_Esnaf'}
+                        <span className="text-xl font-bold tracking-tight text-slate-800 truncate" title={user?.business_name || 'G2Panda'}>
+                            {user?.business_name || 'G2Panda'}
                         </span>
                     </div>
                 </div>

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { Store, ShieldCheck, Mail, Lock, User, Building2, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, User, Building2, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import axios from 'axios';
 
@@ -51,13 +51,13 @@ export default function Register() {
                 <Card className="border-none shadow-2xl bg-white/80 backdrop-blur-xl">
                     <CardHeader className="space-y-4 pb-2 text-center">
                         <div className="flex justify-center">
-                            <div className="h-16 w-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 transform hover:scale-105 transition-transform duration-300">
-                                <Store className="h-8 w-8 text-white" />
+                            <div className="h-36 w-36 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300 overflow-hidden p-3">
+                                <img src="/favicon.png" alt="G2Panda Logo" className="w-full h-full object-contain" />
                             </div>
                         </div>
                         <div className="space-y-2">
                             <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
-                                GG_Esnaf'a Katılın
+                                G2Panda'a Katılın
                             </CardTitle>
                             <CardDescription className="text-slate-500 text-base">
                                 İşletmenizi yönetmeye hemen başlayın
@@ -171,7 +171,7 @@ export default function Register() {
                 </Card>
                 <div className="mt-8 text-center space-y-2">
                     <p className="text-xs text-slate-400">
-                        &copy; {new Date().getFullYear()} GG_Esnaf. Tüm hakları saklıdır.
+                        &copy; {new Date().getFullYear()} G2Panda. Tüm hakları saklıdır.
                     </p>
                 </div>
             </div>
