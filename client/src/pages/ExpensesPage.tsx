@@ -338,7 +338,7 @@ export default function ExpensesPage() {
                                             <SelectTrigger><SelectValue placeholder="Kategori Seç" /></SelectTrigger>
                                             <SelectContent>
                                                 {categories
-                                                    .filter(c => !c.expense_type || c.expense_type === formData.expense_type) // Show unclassified or matching
+                                                    .filter(c => (!c.expense_type || c.expense_type === formData.expense_type) && !c.name?.startsWith('Sistem-')) // Hide system categories
                                                     .map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)
                                                 }
                                             </SelectContent>

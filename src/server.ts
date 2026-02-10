@@ -13,12 +13,16 @@ import logger from './config/logger';
 import transactionsRouter from './routes/transactions';
 import dashboardRouter from './routes/dashboard';
 import { query } from './db';
+import { initBackupScheduler } from './services/backupService';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 7174;
+
+// Initialize Scheduled Tasks
+initBackupScheduler();
 
 // Security Configurations
 app.set('trust proxy', 1); // Trust first proxy (Cloudflare)
@@ -97,6 +101,9 @@ app.use('/api/auth', authRouter);
 import publicMenuRouter from './routes/public_menu';
 app.use('/api/public/menu', publicMenuRouter);
 
+import ordersRouter from './routes/orders';
+app.use('/api/orders', ordersRouter);
+
 // Auth Middleware (RLS & Transaction) - Protects routes below
 // This assumes an upstream JWT validator has already populated req.user
 app.use('/api', authMiddleware);
@@ -111,6 +118,7 @@ import userRouter from './routes/user';
 import usersRouter from './routes/users'; // Import new router
 import reportsRouter from './routes/reports';
 import ocrRouter from './routes/ocr';
+import customersRouter from './routes/customers';
 
 app.use('/api/categories', categoriesRouter);
 app.use('/api/channels', channelsRouter);
@@ -126,6 +134,7 @@ app.use('/api/menu-categories', menuCategoriesRouter);
 // Mount reports router
 app.use('/api/reports', reportsRouter);
 app.use('/api/ocr', ocrRouter);
+app.use('/api/customers', customersRouter);
 
 import auditLogsRouter from './routes/audit_logs';
 app.use('/api/audit-logs', auditLogsRouter);

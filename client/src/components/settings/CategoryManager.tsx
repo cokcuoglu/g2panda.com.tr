@@ -15,6 +15,8 @@ interface Category {
     color: string | null;
     default_channel_id?: string | null;
     form_channel_ids?: string[];
+    service_commission_rate?: number;
+    courier_service_rate?: number;
 }
 const COLORS = [
     '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#10b981',
@@ -35,12 +37,16 @@ export const CategoryManager = () => {
         color: string | null;
         default_channel_id: string | null;
         form_channel_ids: string[];
+        service_commission_rate: number;
+        courier_service_rate: number;
     }>({
         name: '',
         type: 'expense',
         color: COLORS[0],
         default_channel_id: null,
-        form_channel_ids: []
+        form_channel_ids: [],
+        service_commission_rate: 0,
+        courier_service_rate: 0
     });
 
     const [channels, setChannels] = useState<any[]>([]);
@@ -91,7 +97,9 @@ export const CategoryManager = () => {
                 type: category.type,
                 color: category.color || COLORS[0],
                 default_channel_id: category.default_channel_id || null,
-                form_channel_ids: category.form_channel_ids || []
+                form_channel_ids: category.form_channel_ids || [],
+                service_commission_rate: category.service_commission_rate || 0,
+                courier_service_rate: category.courier_service_rate || 0
             });
         } else {
             setEditingCategory(null);
@@ -100,7 +108,9 @@ export const CategoryManager = () => {
                 type: 'expense',
                 color: COLORS[0],
                 default_channel_id: null,
-                form_channel_ids: []
+                form_channel_ids: [],
+                service_commission_rate: 0,
+                courier_service_rate: 0
             });
         }
         setIsDialogOpen(true);
@@ -153,37 +163,93 @@ export const CategoryManager = () => {
                 {isLoading ? (
                     <div className="flex justify-center p-8"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
                 ) : (
-                    <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {categories && categories.length > 0 ? categories.map((cat) => (
-                                <div key={cat.id} className="flex items-center justify-between p-3 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all group">
-                                    <div className="flex items-center gap-3">
-                                        <div
-                                            className="w-4 h-4 rounded-full border border-black/10 shadow-sm"
-                                            style={{ backgroundColor: cat.color || '#e2e8f0' }}
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="font-medium text-sm text-slate-700">{cat.name}</span>
-                                            <span className={cn("text-[10px] uppercase font-bold tracking-wider flex items-center gap-1", cat.type === 'income' ? 'text-emerald-600' : 'text-rose-600')}>
-                                                {cat.type === 'income' ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                                                {cat.type === 'income' ? 'Gelir' : 'Gider'}
-                                            </span>
+                    <div className="space-y-8">
+                        {/* Income Categories */}
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-2 pb-2 border-b border-emerald-100">
+                                <div className="p-1.5 bg-emerald-50 rounded-lg text-emerald-600">
+                                    <ArrowUpRight className="h-4 w-4" />
+                                </div>
+                                <h3 className="text-sm font-bold text-emerald-800 uppercase tracking-wider">Gelir Kategorileri</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {categories.filter(c => c.type === 'income').length > 0 ? (
+                                    categories.filter(c => c.type === 'income').map((cat) => (
+                                        <div key={cat.id} className="flex items-center justify-between p-3 border border-emerald-100/50 rounded-lg bg-emerald-50/10 hover:bg-emerald-50/30 transition-all group">
+                                            <div className="flex items-center gap-3">
+                                                <div
+                                                    className="w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 shadow-sm"
+                                                    style={{ backgroundColor: cat.color || '#e2e8f0' }}
+                                                >
+                                                    <span className="text-xs font-bold text-white opacity-90">{cat.name.substring(0, 1)}</span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="font-semibold text-sm text-slate-700">{cat.name}</span>
+                                                    {(cat.form_channel_ids?.length || 0) > 0 && (
+                                                        <span className="text-[10px] text-slate-400 font-medium">
+                                                            {cat.form_channel_ids?.length} Ödeme Aracı Bağlı
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50" onClick={() => handleOpenDialog(cat)}>
+                                                    <Edit2 className="h-4 w-4" />
+                                                </Button>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(cat.id)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full p-6 text-center border border-dashed border-emerald-200 rounded-xl bg-emerald-50/30 text-emerald-600/60 text-sm">
+                                        Henüz gelir kategorisi bulunmuyor.
                                     </div>
-                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-600" onClick={() => handleOpenDialog(cat)}>
-                                            <Edit2 className="h-4 w-4" />
-                                        </Button>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600" onClick={() => handleDelete(cat.id)}>
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Expense Categories */}
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-2 pb-2 border-b border-rose-100">
+                                <div className="p-1.5 bg-rose-50 rounded-lg text-rose-600">
+                                    <ArrowDownRight className="h-4 w-4" />
+                                </div>
+                                <h3 className="text-sm font-bold text-rose-800 uppercase tracking-wider">Gider Kategorileri</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {categories.filter(c => c.type === 'expense' && !c.name?.startsWith('Sistem-')).length > 0 ? (
+                                    categories.filter(c => c.type === 'expense' && !c.name?.startsWith('Sistem-')).map((cat) => (
+                                        <div key={cat.id} className="flex items-center justify-between p-3 border border-rose-100/50 rounded-lg bg-rose-50/10 hover:bg-rose-50/30 transition-all group">
+                                            <div className="flex items-center gap-3">
+                                                <div
+                                                    className="w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 shadow-sm"
+                                                    style={{ backgroundColor: cat.color || '#e2e8f0' }}
+                                                >
+                                                    <span className="text-xs font-bold text-white opacity-90">{cat.name.substring(0, 1)}</span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="font-semibold text-sm text-slate-700">{cat.name}</span>
+                                                    <span className="text-[10px] text-slate-400 font-medium">Gider Kalemi</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-rose-600 hover:bg-rose-50" onClick={() => handleOpenDialog(cat)}>
+                                                    <Edit2 className="h-4 w-4" />
+                                                </Button>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(cat.id)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full p-6 text-center border border-dashed border-rose-200 rounded-xl bg-rose-50/30 text-rose-600/60 text-sm">
+                                        Henüz gider kategorisi bulunmuyor.
                                     </div>
-                                </div>
-                            )) : (
-                                <div className="col-span-full p-8 text-center border rounded-lg bg-slate-50 text-slate-500">
-                                    Henüz kategori bulunmuyor. Yeni kategori ekleyebilirsiniz.
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -299,6 +365,41 @@ export const CategoryManager = () => {
                                             </select>
                                         </div>
                                     )}
+
+                                    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-200">
+                                        <div className="space-y-2">
+                                            <Label>Hizmet Komisyon (%)</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    type="number"
+                                                    min="0"
+                                                    max="100"
+                                                    step="0.1"
+                                                    value={formData.service_commission_rate}
+                                                    onChange={(e) => setFormData({ ...formData, service_commission_rate: parseFloat(e.target.value) || 0 })}
+                                                    className="pr-8"
+                                                />
+                                                <span className="absolute right-3 top-2.5 text-slate-400 text-sm">%</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-500">Satıştan düşülecek hizmet komisyonu.</p>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Kurye Hizmet (%)</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    type="number"
+                                                    min="0"
+                                                    max="100"
+                                                    step="0.1"
+                                                    value={formData.courier_service_rate}
+                                                    onChange={(e) => setFormData({ ...formData, courier_service_rate: parseFloat(e.target.value) || 0 })}
+                                                    className="pr-8"
+                                                />
+                                                <span className="absolute right-3 top-2.5 text-slate-400 text-sm">%</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-500">Satıştan düşülecek kurye ücreti.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 

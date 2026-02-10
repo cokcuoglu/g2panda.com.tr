@@ -187,6 +187,147 @@ router.post('/', async (req: any, res: Response) => {
         const result = await req.db.query(query, values);
         const transaction = result.rows[0];
 
+        // --- Automatic Expense Deduction Logic ---
+        if (type === 'income') {
+            try {
+                // Start a sub-transaction (savepoint) so failures here don't abort the main transaction
+                await req.db.query('SAVEPOINT deduction_savepoint');
+
+                // 1. Fetch Category Details to check for rates
+                const catRes = await req.db.query('SELECT * FROM categories WHERE id = $1', [category_id]);
+                const category = catRes.rows[0];
+
+                if (category) {
+                    // ... (rest of logic remains same, just indented or not needed to change if simple replace)
+                    const serviceRate = parseFloat(category.service_commission_rate || '0');
+                    const courierRate = parseFloat(category.courier_service_rate || '0');
+
+                    if (serviceRate > 0 || courierRate > 0) {
+                        const systemCategoryName = `Sistem-${category.name}`;
+
+                        // 2. Find or Create System Category
+                        let systemCategoryId;
+                        const sysCatRes = await req.db.query(
+                            'SELECT id FROM categories WHERE user_id = $1 AND name = $2 AND type = $3',
+                            [req.user.id, systemCategoryName, 'expense']
+                        );
+
+                        if (sysCatRes.rows.length > 0) {
+                            systemCategoryId = sysCatRes.rows[0].id;
+                        } else {
+                            // Create new category
+                            const createSysCatRes = await req.db.query(
+                                `INSERT INTO categories (user_id, name, type, color, is_default)
+                                 VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+                                [req.user.id, systemCategoryName, 'expense', '#64748b', false]
+                            );
+                            systemCategoryId = createSysCatRes.rows[0].id;
+                        }
+
+                        // 3. Create Service Commission Expense
+                        if (serviceRate > 0) {
+                            const commissionAmount = (Number(amount) * serviceRate) / 100;
+                            await req.db.query(
+                                `INSERT INTO transactions (
+                                    user_id, category_id, channel_id, type, amount, transaction_date, 
+                                    description, notes, expense_type
+                                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                                [
+                                    req.user.id,
+                                    systemCategoryId,
+                                    channel_id,
+                                    'expense',
+                                    commissionAmount,
+                                    transaction_date,
+                                    `Otomatik Kesinti: Hizmet Komisyonu (%${serviceRate})`,
+                                    `Bağlı İşlem ID: ${transaction.id}`,
+                                    'operational'
+                                ]
+                            );
+                        }
+
+                        // 4. Create Courier Service Expense
+                        if (courierRate > 0) {
+                            const courierAmount = (Number(amount) * courierRate) / 100;
+                            await req.db.query(
+                                `INSERT INTO transactions (
+                                    user_id, category_id, channel_id, type, amount, transaction_date, 
+                                    description, notes, expense_type
+                                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                                [
+                                    req.user.id,
+                                    systemCategoryId,
+                                    channel_id,
+                                    'expense',
+                                    courierAmount,
+                                    transaction_date,
+                                    `Otomatik Kesinti: Kurye Hizmeti (%${courierRate})`,
+                                    `Bağlı İşlem ID: ${transaction.id}`,
+                                    'operational'
+                                ]
+                            );
+                        }
+                    }
+                }
+                // 5. Check Channel Commission
+                if (channel_id) {
+                    const chanRes = await req.db.query('SELECT * FROM channels WHERE id = $1', [channel_id]);
+                    const channel = chanRes.rows[0];
+
+                    if (channel) {
+                        const commissionRate = parseFloat(channel.commission_rate || '0');
+
+                        if (commissionRate > 0) {
+                            const systemChannelCatName = `Sistem-${channel.name}`;
+                            let systemChannelCatId;
+
+                            // Find or Create System Category for Channel
+                            const sysChanCatRes = await req.db.query(
+                                'SELECT id FROM categories WHERE user_id = $1 AND name = $2 AND type = $3',
+                                [req.user.id, systemChannelCatName, 'expense']
+                            );
+
+                            if (sysChanCatRes.rows.length > 0) {
+                                systemChannelCatId = sysChanCatRes.rows[0].id;
+                            } else {
+                                const createSysChanCatRes = await req.db.query(
+                                    `INSERT INTO categories (user_id, name, type, color, is_default)
+                                     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+                                    [req.user.id, systemChannelCatName, 'expense', '#f59e0b', false] // Orange for payment commissions
+                                );
+                                systemChannelCatId = createSysChanCatRes.rows[0].id;
+                            }
+
+                            // Create Channel Commission Expense
+                            const commissionAmount = (Number(amount) * commissionRate) / 100;
+                            await req.db.query(
+                                `INSERT INTO transactions (
+                                    user_id, category_id, channel_id, type, amount, transaction_date, 
+                                    description, notes, expense_type
+                                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                                [
+                                    req.user.id,
+                                    systemChannelCatId,
+                                    channel_id,
+                                    'expense',
+                                    commissionAmount,
+                                    transaction_date,
+                                    `Otomatik Kesinti: ${channel.name} Komisyonu (%${commissionRate})`,
+                                    `Bağlı İşlem ID: ${transaction.id}`,
+                                    'operational'
+                                ]
+                            );
+                        }
+                    }
+                }
+            } catch (deductionErr) {
+                console.error('Error processing automatic deductions:', deductionErr);
+                // Rollback to savepoint to ensure main transaction can proceed
+                await req.db.query('ROLLBACK TO SAVEPOINT deduction_savepoint');
+            }
+        }
+        // ----------------------------------------
+
         // File Organization Logic (if OCR)
         if (ocr_record_id) {
             try {

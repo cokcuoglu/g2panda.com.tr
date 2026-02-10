@@ -77,7 +77,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                 },
                 // Removed Menü Ürünler from nere
                 { title: 'Satış, Ödeme Araçları', href: '/settings/data', icon: Receipt, roles: ['owner'] },
-                { title: 'Gelir/Gider Kategorileri', href: '/categories', icon: Tag, roles: ['owner', 'accountant'] },
+
 
             ]
         },

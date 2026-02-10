@@ -1,0 +1,187 @@
+USERS:
+[
+  {
+    "id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+    "email": "basarili@test.com"
+  },
+  {
+    "id": "d4afdec1-8ed0-41c8-a7f5-48238e9c9356",
+    "email": "newuser123@test.com"
+  },
+  {
+    "id": "5f0ddb66-4fb5-470d-a2d7-0f8a1c77f766",
+    "email": "testfinal@example.com"
+  },
+  {
+    "id": "1863589e-f84c-4f39-bf31-806bac4fcd0d",
+    "email": "simple@test.com"
+  },
+  {
+    "id": "3d45bdf2-61af-4ef5-948f-3e2e882f3608",
+    "email": "test@test.com"
+  },
+  {
+    "id": "931be1d0-6555-4b6d-8f19-8bebd18d5c17",
+    "email": "test1@test.com"
+  },
+  {
+    "id": "6262311d-4b09-425f-bc6a-b4fb83fa253c",
+    "email": "test_6420@example.com"
+  },
+  {
+    "id": "6001e1b4-662c-4ea7-ac74-c4ad74aeb52f",
+    "email": "test4@test.com"
+  },
+  {
+    "id": "edd5aac7-a093-4160-8162-685c6b782dae",
+    "email": "Alice_99433@test.com"
+  },
+  {
+    "id": "dea0631c-e50f-4b63-b124-f64e5091f890",
+    "email": "Bob_37472@test.com"
+  },
+  {
+    "id": "bc93c3fb-4927-4b9f-97b4-3575ca4d1d18",
+    "email": "Alice_127@test.com"
+  },
+  {
+    "id": "a1a8bcd4-0376-45ba-a264-ca89e3901397",
+    "email": "Bob_56655@test.com"
+  },
+  {
+    "id": "28caee79-254e-459b-a91f-ebeb09d6ff49",
+    "email": "Alice_54240@test.com"
+  },
+  {
+    "id": "445e602d-4197-443e-8745-808e663aeaf8",
+    "email": "Bob_3836@test.com"
+  },
+  {
+    "id": "b074d982-de1c-43f5-90bc-1d33ce13cca3",
+    "email": "architect_UserA_160487@test.com"
+  },
+  {
+    "id": "284feb03-d06d-4381-bd73-d9b28f023629",
+    "email": "architect_UserB_103963@test.com"
+  },
+  {
+    "id": "2449f7b1-59d3-475f-b62e-ed3f320f7875",
+    "email": "architect_UserA_697733@test.com"
+  },
+  {
+    "id": "6e0bfed8-76ec-42d1-8b68-b0b7339a5374",
+    "email": "architect_UserB_310312@test.com"
+  },
+  {
+    "id": "d24eaf75-108a-41d3-b24c-dcdcf4ce5d72",
+    "email": "architect_UserA_435243@test.com"
+  },
+  {
+    "id": "f1b9df20-19ec-42bc-8adc-6afb778cd432",
+    "email": "architect_UserB_746522@test.com"
+  },
+  {
+    "id": "c958f224-b1be-46b0-a975-078d3b231e2b",
+    "email": "test5@test.com"
+  },
+  {
+    "id": "8fc98aa6-eac9-46fa-be6a-6ad1b4834bb2",
+    "email": "test6@test.com"
+  },
+  {
+    "id": "d4b5a038-dab9-4b00-8fdf-cbcde292cc94",
+    "email": "test10@test.com"
+  },
+  {
+    "id": "45d16c5c-7722-4da4-bb34-3d6f1fbb6cbe",
+    "email": "realtest_9655@test.com"
+  },
+  {
+    "id": "4cec099b-8abf-4f88-9561-ecf1b75401b1",
+    "email": "realtest_4604@test.com"
+  },
+  {
+    "id": "d1799f89-09e0-4bf3-84c4-1f83db406ecc",
+    "email": "appuser_2787@test.com"
+  },
+  {
+    "id": "51c6dea5-f8c6-4ea0-9cef-5f568d2c91df",
+    "email": "test11@test.com"
+  },
+  {
+    "id": "19bc99a7-9900-4448-bf7c-90cdb2054353",
+    "email": "dev@dev.com"
+  },
+  {
+    "id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+    "email": "ozan.demirci28@gmail.com"
+  },
+  {
+    "id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "email": "test3@test.com"
+  }
+]
+
+CATEGORIES:
+[
+  {
+    "id": "e06cbb09-c0ad-4d7d-9ad3-73bc2ac01aec",
+    "name": "Balık",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209"
+  },
+  {
+    "id": "01278280-fb38-4e93-a042-d7967cd9fde4",
+    "name": "İçecekler",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209"
+  },
+  {
+    "id": "07cf17ab-5099-40d1-9157-b820eb7a1890",
+    "name": "Ana Yemek",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209"
+  },
+  {
+    "id": "51453b73-f4db-410e-8948-5911c3e4fee7",
+    "name": "Ara Sıcak",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209"
+  },
+  {
+    "id": "4173b406-eb63-404f-9398-a0cf27bf7288",
+    "name": "test",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209"
+  },
+  {
+    "id": "88be9069-2bcb-4fde-b61e-b3643909e005",
+    "name": "testa",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209"
+  },
+  {
+    "id": "80225371-fb1d-4e2f-a508-dd0c7e802440",
+    "name": "Ev Yemekleri",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209"
+  },
+  {
+    "id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "name": "Sıcak İçecekler",
+    "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57"
+  },
+  {
+    "id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "name": "Soğuk İçecekler",
+    "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57"
+  },
+  {
+    "id": "84a79213-5623-4e36-8114-595ead40266c",
+    "name": "Magnolya",
+    "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57"
+  },
+  {
+    "id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "name": "BELÇİKA ÇİKOLATALI TATLILAR",
+    "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57"
+  },
+  {
+    "id": "5fb5edae-67e5-4c28-80e3-00e899ab5223",
+    "name": "İçecekler",
+    "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57"
+  }
+]

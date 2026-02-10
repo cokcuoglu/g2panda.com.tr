@@ -10,13 +10,15 @@ const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const SalesMenuPage = lazy(() => import('@/pages/SalesMenuPage'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const Reports = lazy(() => import('@/pages/Reports'));
-const Categories = lazy(() => import('@/pages/Categories'));
+
 const Users = lazy(() => import('@/pages/Users'));
 const IncomePage = lazy(() => import('@/pages/IncomePage'));
 const ExpensesPage = lazy(() => import('@/pages/ExpensesPage'));
 const AllTransactionsPage = lazy(() => import('@/pages/AllTransactionsPage'));
 const CategoryReportPage = lazy(() => import('@/components/reports/CategoryReportPage'));
 const PublicMenuPage = lazy(() => import('@/pages/PublicMenuPage'));
+const IncomingOrdersPage = lazy(() => import('@/pages/IncomingOrdersPage'));
+const CustomersPage = lazy(() => import('@/pages/CustomersPage'));
 
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center bg-slate-50/50">
@@ -62,6 +64,14 @@ function App() {
                 }
               />
               <Route
+                path="/orders"
+                element={
+                  <ProtectedRoute>
+                    <IncomingOrdersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/settings/:tab?"
                 element={
                   <ProtectedRoute>
@@ -95,14 +105,7 @@ function App() {
                 }
               />
 
-              <Route
-                path="/categories"
-                element={
-                  <ProtectedRoute>
-                    <Categories />
-                  </ProtectedRoute>
-                }
-              />
+
               <Route
                 path="/users"
                 element={
@@ -124,6 +127,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ExpensesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/customers"
+                element={
+                  <ProtectedRoute>
+                    <CustomersPage />
                   </ProtectedRoute>
                 }
               />

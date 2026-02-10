@@ -24,18 +24,18 @@ router.get('/', async (req: Request, res: Response) => {
 // POST /api/channels
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const { name, type, description } = req.body;
+        const { name, type, description, commission_rate } = req.body;
 
         if (!name || !type) {
             return res.status(400).json({ success: false, error: 'Name and type are required' });
         }
 
         const query = `
-            INSERT INTO channels (name, type, description, user_id) 
-            VALUES ($1, $2, $3, $4) 
+            INSERT INTO channels (name, type, description, user_id, commission_rate) 
+            VALUES ($1, $2, $3, $4, $5) 
             RETURNING *
         `;
-        const result = await req.db.query(query, [name, type, description, req.user?.id]);
+        const result = await req.db.query(query, [name, type, description, req.user?.id, commission_rate || 0]);
 
         res.status(201).json({
             success: true,
@@ -51,15 +51,15 @@ router.post('/', async (req: Request, res: Response) => {
 router.put('/:id', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { name, type, description } = req.body;
+        const { name, type, description, commission_rate } = req.body;
 
         const query = `
             UPDATE channels 
-            SET name = $1, type = $2, description = $3, updated_at = NOW()
-            WHERE id = $4 AND deleted_at IS NULL
+            SET name = $1, type = $2, description = $3, commission_rate = $4, updated_at = NOW()
+            WHERE id = $5 AND deleted_at IS NULL
             RETURNING *
         `;
-        const result = await req.db.query(query, [name, type, description, id]);
+        const result = await req.db.query(query, [name, type, description, commission_rate || 0, id]);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, error: 'Channel not found' });

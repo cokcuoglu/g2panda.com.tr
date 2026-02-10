@@ -47,14 +47,23 @@ router.get('/', async (req: Request, res: Response) => {
 // POST /api/categories
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const { name, type, color, expense_type, default_channel_id, channel_ids } = req.body;
+        const { name, type, color, expense_type, default_channel_id, channel_ids, service_commission_rate, courier_service_rate } = req.body;
 
         const query = `
-            INSERT INTO categories (name, type, color, user_id, expense_type, default_channel_id) 
-            VALUES ($1, $2, $3, $4, $5, $6) 
+            INSERT INTO categories (name, type, color, user_id, expense_type, default_channel_id, service_commission_rate, courier_service_rate) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
             RETURNING *
         `;
-        const result = await req.db.query(query, [name, type, color, req.user?.id, expense_type || null, default_channel_id || null]);
+        const result = await req.db.query(query, [
+            name,
+            type,
+            color,
+            req.user?.id,
+            expense_type || null,
+            default_channel_id || null,
+            service_commission_rate || 0,
+            courier_service_rate || 0
+        ]);
         const newCategory = result.rows[0];
 
         // Insert channel links
@@ -79,16 +88,26 @@ router.post('/', async (req: Request, res: Response) => {
 router.put('/:id', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { name, type, color, expense_type, default_channel_id, channel_ids } = req.body;
+        const { name, type, color, expense_type, default_channel_id, channel_ids, service_commission_rate, courier_service_rate } = req.body;
 
         const query = `
             UPDATE categories 
-            SET name = $1, type = $2, color = $3, expense_type = $4, default_channel_id = $5, updated_at = NOW()
-            WHERE id = $6 AND deleted_at IS NULL
+            SET name = $1, type = $2, color = $3, expense_type = $4, default_channel_id = $5, 
+                service_commission_rate = $6, courier_service_rate = $7, updated_at = NOW()
+            WHERE id = $8 AND deleted_at IS NULL
             RETURNING *
         `;
 
-        const result = await req.db.query(query, [name, type, color, expense_type || null, default_channel_id || null, id]);
+        const result = await req.db.query(query, [
+            name,
+            type,
+            color,
+            expense_type || null,
+            default_channel_id || null,
+            service_commission_rate || 0,
+            courier_service_rate || 0,
+            id
+        ]);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, error: 'Category not found' });

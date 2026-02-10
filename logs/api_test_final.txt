@@ -1,0 +1,8 @@
+--- Simulating API Request for test3@test.com ---
+User ID: be8b8541-f427-4287-a00b-a0e9783e5209
+API would return 3 customers.
+ - Caner3 (DeletedAt: null)
+ - Caner2 (DeletedAt: null)
+ - Test Customer Updated (DeletedAt: null)
+
+Deleted customers (Hidden): 0

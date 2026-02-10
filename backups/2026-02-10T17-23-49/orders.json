@@ -1,0 +1,499 @@
+[
+  {
+    "id": "3e03877a-cf93-4b68-804a-d16eedf12760",
+    "user_id": "4ab60021-ffa6-46e6-9039-26a9e165b1f7",
+    "order_number": "ORD-787962-18",
+    "table_number": "Masa Test",
+    "items": [
+      {
+        "id": "024d0a94-a724-43a7-ba05-6ddc6981b97b",
+        "name": "Test Product",
+        "price": 100,
+        "quantity": 2
+      }
+    ],
+    "total_amount": "200.00",
+    "status": "pending",
+    "note": "Test Sipariş Script",
+    "created_at": "2026-02-09T06:33:07.963Z",
+    "updated_at": "2026-02-09T06:33:07.963Z",
+    "deleted_at": null,
+    "customer_id": null,
+    "customer_name": null,
+    "customer_phone": null,
+    "customer_address": null,
+    "customer_city": null,
+    "customer_district": null,
+    "customer_neighborhood": null
+  },
+  {
+    "id": "dae17e3f-0376-410f-92c0-a6a12214b624",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-945318-2",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 1
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 2
+      },
+      {
+        "id": "5af0b94d-d49c-472d-a068-6640afbbd6f7",
+        "name": "Pilav",
+        "price": 120,
+        "quantity": 2
+      }
+    ],
+    "total_amount": "1140.00",
+    "status": "rejected",
+    "note": "",
+    "created_at": "2026-02-09T06:52:25.319Z",
+    "updated_at": "2026-02-09T06:52:38.060Z",
+    "deleted_at": null,
+    "customer_id": null,
+    "customer_name": null,
+    "customer_phone": null,
+    "customer_address": null,
+    "customer_city": null,
+    "customer_district": null,
+    "customer_neighborhood": null
+  },
+  {
+    "id": "9b551920-e102-4d3e-9ab7-627c41197a52",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-795565-59",
+    "table_number": "Caner Okcuoğlu",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 2
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 2
+      },
+      {
+        "id": "d21a8c5b-659a-454e-8b39-f2d42566fe42",
+        "name": "Kola",
+        "price": 50,
+        "quantity": 2
+      }
+    ],
+    "total_amount": "1500.00",
+    "status": "completed",
+    "note": "Test",
+    "created_at": "2026-02-09T06:33:15.566Z",
+    "updated_at": "2026-02-09T06:55:02.716Z",
+    "deleted_at": null,
+    "customer_id": null,
+    "customer_name": null,
+    "customer_phone": null,
+    "customer_address": null,
+    "customer_city": null,
+    "customer_district": null,
+    "customer_neighborhood": null
+  },
+  {
+    "id": "e1fac8ac-7608-4668-b84c-2e4d71e1752c",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-759307-3",
+    "table_number": "Caner Okcuoğlu",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 1
+      },
+      {
+        "id": "5af0b94d-d49c-472d-a068-6640afbbd6f7",
+        "name": "Pilav",
+        "price": 120,
+        "quantity": 2
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 1
+      },
+      {
+        "id": "ffaa46c8-4046-4986-a49b-77fdf4a727c1",
+        "name": "Soda",
+        "price": 20,
+        "quantity": 2
+      },
+      {
+        "id": "0a947cc9-9682-45b6-9819-c6aceeac7260",
+        "name": "Paçanga",
+        "price": 200,
+        "quantity": 1
+      }
+    ],
+    "total_amount": "1180.00",
+    "status": "completed",
+    "note": "Test",
+    "created_at": "2026-02-09T06:32:39.308Z",
+    "updated_at": "2026-02-09T06:55:19.150Z",
+    "deleted_at": null,
+    "customer_id": null,
+    "customer_name": null,
+    "customer_phone": null,
+    "customer_address": null,
+    "customer_city": null,
+    "customer_district": null,
+    "customer_neighborhood": null
+  },
+  {
+    "id": "275243c4-a02e-48c8-afcf-1d0180a22e8a",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-162600-28",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 2
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 2
+      },
+      {
+        "id": "5af0b94d-d49c-472d-a068-6640afbbd6f7",
+        "name": "Pilav",
+        "price": 120,
+        "quantity": 3
+      }
+    ],
+    "total_amount": "1760.00",
+    "status": "completed",
+    "note": "",
+    "created_at": "2026-02-09T06:56:02.603Z",
+    "updated_at": "2026-02-09T06:56:46.002Z",
+    "deleted_at": null,
+    "customer_id": null,
+    "customer_name": null,
+    "customer_phone": null,
+    "customer_address": null,
+    "customer_city": null,
+    "customer_district": null,
+    "customer_neighborhood": null
+  },
+  {
+    "id": "09c97213-441e-447c-9ac4-8a83a30a18a0",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "TEST-ORD-1",
+    "table_number": "T1",
+    "items": [],
+    "total_amount": "100.00",
+    "status": "completed",
+    "note": "Test",
+    "created_at": "2026-02-09T07:50:08.194Z",
+    "updated_at": "2026-02-09T07:54:55.433Z",
+    "deleted_at": null,
+    "customer_id": "df7432ad-d243-45d5-a2d1-4c8c80752484",
+    "customer_name": "Test Customer",
+    "customer_phone": "5551234567",
+    "customer_address": "Addr",
+    "customer_city": null,
+    "customer_district": null,
+    "customer_neighborhood": null
+  },
+  {
+    "id": "8fa192bd-5789-4d2b-b20a-34b3ba52c1d4",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-679219-82",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 1
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 1
+      }
+    ],
+    "total_amount": "700.00",
+    "status": "completed",
+    "note": "",
+    "created_at": "2026-02-09T07:54:39.219Z",
+    "updated_at": "2026-02-09T07:55:01.780Z",
+    "deleted_at": null,
+    "customer_id": null,
+    "customer_name": "",
+    "customer_phone": "",
+    "customer_address": "",
+    "customer_city": null,
+    "customer_district": null,
+    "customer_neighborhood": null
+  },
+  {
+    "id": "af9dd4d3-5edd-4b73-aa20-9e34ea952fc0",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-806278-88",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 3
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 3
+      }
+    ],
+    "total_amount": "2100.00",
+    "status": "completed",
+    "note": "",
+    "created_at": "2026-02-09T08:13:26.279Z",
+    "updated_at": "2026-02-09T08:13:39.950Z",
+    "deleted_at": null,
+    "customer_id": "93b3f5b1-68bd-423a-af74-684d9243c9e1",
+    "customer_name": "Caner2",
+    "customer_phone": "5309022660",
+    "customer_address": "Test",
+    "customer_city": "İstanbul",
+    "customer_district": "Beşiktaş",
+    "customer_neighborhood": "Dikilitaş"
+  },
+  {
+    "id": "b980c425-8c6d-443b-865b-9fa7a535c36e",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-732812-48",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 2
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 1
+      }
+    ],
+    "total_amount": "1200.00",
+    "status": "completed",
+    "note": "",
+    "created_at": "2026-02-09T07:55:32.814Z",
+    "updated_at": "2026-02-09T08:13:44.262Z",
+    "deleted_at": null,
+    "customer_id": "93b3f5b1-68bd-423a-af74-684d9243c9e1",
+    "customer_name": "Caner Okcuoğlu",
+    "customer_phone": "5309022660",
+    "customer_address": "Dikilitaş",
+    "customer_city": null,
+    "customer_district": null,
+    "customer_neighborhood": null
+  },
+  {
+    "id": "5460c2d7-0911-434b-96ef-b9540f8fe1ff",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-891689-9",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 3
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 1
+      },
+      {
+        "id": "5af0b94d-d49c-472d-a068-6640afbbd6f7",
+        "name": "Pilav",
+        "price": 120,
+        "quantity": 3
+      }
+    ],
+    "total_amount": "2060.00",
+    "status": "completed",
+    "note": "",
+    "created_at": "2026-02-09T12:24:51.691Z",
+    "updated_at": "2026-02-09T12:25:35.086Z",
+    "deleted_at": null,
+    "customer_id": null,
+    "customer_name": "",
+    "customer_phone": "",
+    "customer_address": "",
+    "customer_city": "",
+    "customer_district": "",
+    "customer_neighborhood": ""
+  },
+  {
+    "id": "62fa2598-4727-4493-951b-112a71a5954c",
+    "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+    "order_number": "ORD-237800-9",
+    "table_number": "",
+    "items": [
+      {
+        "id": "0a55c683-512e-44a8-a60d-cfb3b68b0607",
+        "name": "Kamelya",
+        "price": 300,
+        "quantity": 2
+      },
+      {
+        "id": "044bf12a-bf84-49d0-b166-f60791cc3e71",
+        "name": "Nevra",
+        "price": 335,
+        "quantity": 3
+      },
+      {
+        "id": "e2372372-d858-4cb6-aa86-be63c4f2bc39",
+        "name": "Süsen",
+        "price": 335,
+        "quantity": 1
+      }
+    ],
+    "total_amount": "1940.00",
+    "status": "pending",
+    "note": "Hızı gelsin",
+    "created_at": "2026-02-09T12:47:17.800Z",
+    "updated_at": "2026-02-09T12:47:17.800Z",
+    "deleted_at": null,
+    "customer_id": "fcf5407d-dea3-4420-8a6d-64c44d6637d3",
+    "customer_name": "Caner Okcuoğlu ",
+    "customer_phone": "5309022660",
+    "customer_address": "Dödkxm",
+    "customer_city": "İstanbul",
+    "customer_district": "Beşiktaş",
+    "customer_neighborhood": "Dikilitaş"
+  },
+  {
+    "id": "c46a2f40-0eee-45f3-9bb4-bc15b350d1af",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-988096-26",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 1
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 1
+      },
+      {
+        "id": "5af0b94d-d49c-472d-a068-6640afbbd6f7",
+        "name": "Pilav",
+        "price": 120,
+        "quantity": 3
+      }
+    ],
+    "total_amount": "1060.00",
+    "status": "rejected",
+    "note": "",
+    "created_at": "2026-02-09T12:26:28.096Z",
+    "updated_at": "2026-02-09T20:00:13.241Z",
+    "deleted_at": null,
+    "customer_id": null,
+    "customer_name": "",
+    "customer_phone": "",
+    "customer_address": "",
+    "customer_city": "",
+    "customer_district": "",
+    "customer_neighborhood": ""
+  },
+  {
+    "id": "05d14667-d401-4878-8503-287ece2f7063",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-872874-46",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 2
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 1
+      }
+    ],
+    "total_amount": "1200.00",
+    "status": "rejected",
+    "note": "",
+    "created_at": "2026-02-09T08:14:32.874Z",
+    "updated_at": "2026-02-09T20:00:15.842Z",
+    "deleted_at": null,
+    "customer_id": "e21eaf99-2417-4de2-9f51-6dcd72b757fd",
+    "customer_name": "Caner3",
+    "customer_phone": "5309022661",
+    "customer_address": "Test",
+    "customer_city": "İstanbul",
+    "customer_district": "Beşiktaş",
+    "customer_neighborhood": "Dikilitaş"
+  },
+  {
+    "id": "1769111c-15b3-4abb-aa0d-2e9bd5b3d409",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "order_number": "ORD-853983-40",
+    "table_number": "",
+    "items": [
+      {
+        "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+        "name": "Lüfer",
+        "price": 500,
+        "quantity": 2
+      },
+      {
+        "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+        "name": "KuruFasulye",
+        "price": 200,
+        "quantity": 2
+      }
+    ],
+    "total_amount": "1400.00",
+    "status": "rejected",
+    "note": "",
+    "created_at": "2026-02-09T08:14:13.983Z",
+    "updated_at": "2026-02-09T20:00:19.506Z",
+    "deleted_at": null,
+    "customer_id": "e21eaf99-2417-4de2-9f51-6dcd72b757fd",
+    "customer_name": "Caner2",
+    "customer_phone": "5309022661",
+    "customer_address": "Test",
+    "customer_city": "İstanbul",
+    "customer_district": "Beşiktaş",
+    "customer_neighborhood": "Dikilitaş"
+  }
+]
