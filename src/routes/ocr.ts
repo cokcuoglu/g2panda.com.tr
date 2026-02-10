@@ -4,6 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { createWorker } from 'tesseract.js';
+import sharp from 'sharp';
 
 const router = Router();
 
@@ -70,207 +71,118 @@ function parseReceipt(text: string): OCRResult {
 
     // --- Helpers ---
     const parseTurkishFloat = (str: string) => {
-        let clean = str.replace(/\s/g, '');
-        if (clean.match(/,\d{2}$/)) { clean = clean.replace(/\./g, '').replace(',', '.'); }
-        else { clean = clean.replace(/,/g, '.'); }
+        let clean = str.replace(/\s/g, '').replace(/[*%]/g, '');
+        if (clean.match(/,\d{2}$/)) {
+            clean = clean.replace(/\./g, '').replace(',', '.');
+        } else if (clean.match(/\.\d{2}$/)) {
+            // Already dot decimal
+        } else {
+            clean = clean.replace(/,/g, '.');
+        }
+        clean = clean.replace(/[^0-9.]/g, '');
         return parseFloat(clean);
     };
 
     const isGarbage = (line: string) => {
         const alnum = line.replace(/[^a-zA-Z0-9ÇĞİÖŞÜçğıöşü]/g, '').length;
-        // Strict: Delete if < 3 chars or mostly symbols
-        if (alnum < 3) return true;
-        if (alnum < line.length * 0.5) return true;
-        // Delete uppercase gibberish (e.g. "S K L M")
-        if (line === line.toUpperCase() && !line.match(/[AEIİOÖUÜ]/)) return true;
+        if (alnum < 2) return true; // Relaxed from 3
+        if (alnum < line.length * 0.4) return true; // Relaxed from 0.5
         return false;
     };
 
     // --- Extraction Logic ---
 
-    // 1. Merchant & Address (Header Section)
-    for (let i = 0; i < Math.min(lines.length, 8); i++) {
-        const line = lines[i];
-        if (isGarbage(line)) continue;
-        if (line.match(/(TARİH|SAAT|FİŞ|NO|KDV)/i)) break;
+    const moneyRegex = /[0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})(?![0-9])/g;
+    const dateRegex = /(\d{2})[./-](\d{2})[./-](\d{2,4})/;
+    const timeRegex = /(\d{2}:\d{2}(?::\d{2})?)/;
 
-        // Merchant Name Indicators
-        if (!result.merchant_name && line.match(/(LTD|ŞTİ|A\.Ş|GIDA|MARKET|FIRIN|RESTORAN|TİC|SAN|BAKKAL|BÜFE)/i)) {
+    let potentialTotals: { val: number, line: string }[] = [];
+
+    lines.forEach((line) => {
+        // 1. Date/Time
+        const dateMatch = line.match(dateRegex);
+        if (dateMatch && !result.date) {
+            let year = dateMatch[3];
+            if (year.length === 2) year = '20' + year;
+            result.date = `${year}-${dateMatch[2]}-${dateMatch[1]}`;
+        }
+        const timeMatch = line.match(timeRegex);
+        if (timeMatch && !result.time) {
+            result.time = timeMatch[1];
+        }
+
+        // 2. Merchant (First valid line heuristic)
+        if (!result.merchant_name && !isGarbage(line) && !line.match(/\d/) && line.length > 3) {
             result.merchant_name = line;
-            continue;
         }
-        // Address Indicators
-        if (line.match(/(CAD|SOK|MAH|NO:|İST|ANK|İZM|ANT|BURSA|ADANA)/i) || line.match(/\//)) {
-            result.address = result.address ? `${result.address} ${line}` : line;
-        }
-        // Phone
-        if (line.match(/(TEL|TLF|0\d{3})/i)) {
-            const m = line.match(/(0\s*\d{3}\s*\d{3}\s*\d{2}\s*\d{2})/);
-            if (m) result.phone = m[0];
-        }
-        // Tax Info
-        if (line.match(/(V\.D|VERGİ|DAİRE|TCKN|VKN|MERSİS)/i)) {
-            const office = line.match(/([A-ZÇĞİÖŞÜ\s]+)\s+V\.D/i);
-            if (office) result.tax_office = office[1].trim();
-            const num = line.match(/(\d{10,11})/);
-            if (num) result.tax_number = num[0];
-        }
-    }
 
-    // 2. Transaction Details (Date, Time, Receipt No)
-    for (const line of lines) {
-        // Date (DD.MM.YYYY)
-        if (!result.date) {
-            const d = line.match(/(\d{2})[./-](\d{2})[./-](\d{4})/);
-            if (d) result.date = `${d[1]}.${d[2]}.${d[3]}`;
+        // 3. Amounts & Items
+        const amounts = line.match(moneyRegex);
+        if (amounts) {
+            amounts.forEach(amtStr => {
+                const val = parseTurkishFloat(amtStr);
+                if (!isNaN(val)) {
+                    potentialTotals.push({ val, line });
+
+                    // Possible Item Logic
+                    // If line has text and ends with amount, or starts with *
+                    if (line.includes('*') || (line.length > amtStr.length + 3)) {
+                        let name = line.replace(amtStr, '').replace(/[*%]\d+/g, '').replace(/[*]/g, '').trim();
+                        name = name.replace(/^\d+\s*(ad|x|adet)/i, '').trim();
+
+                        if (name.length > 2 && !isGarbage(name) && !name.match(/(TOPLAM|KDV|TARIH|SAAT|BANKA|KREDI|TUTAR|MATRAH)/i)) {
+                            // VAT Rate Heuristic from line (e.g. %1, %10)
+                            let vat = null;
+                            const vatMatch = line.match(/[%*](\d{1,2})/);
+                            if (vatMatch) vat = parseInt(vatMatch[1]);
+
+                            // Dedup
+                            const exists = result.items.find((i) => i.description === name && i.amount === val);
+                            if (!exists) {
+                                result.items.push({ description: name, amount: val, vat_rate: vat });
+                            }
+                        }
+                    }
+                }
+            });
         }
-        // Time (HH:MM:SS)
-        if (!result.time) {
-            const t = line.match(/(\d{2}:\d{2}(?::\d{2})?)/);
-            if (t) result.time = t[1];
-        }
-        // Receipt No
-        if (!result.receipt_no) {
-            const f = line.match(/(FİŞ|FIS|NO)\s*[:.]?\s*(\d{4,})/i);
-            if (f) result.receipt_no = f[2];
-        }
-    }
+    });
 
-    // 3. Line Items (Strict)
-    // Must end with a valid price
-    // Must end with a valid price (allow trailing non-digit noise)
-    const moneyRegex = /[0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})(?![0-9])/;
+    // 4. Find Total
+    // Sort potential totals descending
+    potentialTotals.sort((a, b) => b.val - a.val);
 
-    for (const line of lines) {
-        if (line.match(/(TOPLAM|TUTAR|KDV|NAKİT|KREDİ|BANKA|TARİH|SAAT|MALIYE)/i)) continue;
-        if (isGarbage(line)) continue;
-
-        const priceMatch = line.match(moneyRegex);
-        if (priceMatch) {
-            const price = parseTurkishFloat(priceMatch[0]);
-            let name = line.substring(0, line.length - priceMatch[0].length).trim();
-            // Clean up extraction
-            name = name.replace(/[*%]\d{1,2}/g, '').trim(); // Remove VAT markers like *10
-            name = name.replace(/^[\d*]+/g, '').trim();    // Remove leading numbers/stars
-
-            if (name.length > 2) {
-                // Heuristic: Infer VAT if present
-                let vat = null;
-                const vatMatch = line.match(/[*%](\d{1,2})/);
-                if (vatMatch) vat = parseInt(vatMatch[1]);
-
-                result.items.push({ description: name, amount: price, vat_rate: vat });
-            }
+    // Fuzzy match for TOPLAM
+    const toplamLine = lines.find(l => l.match(/(TOPLAM|T0PLAM|TOPLA|GENEL|TUTAR)/i));
+    if (toplamLine) {
+        const match = toplamLine.match(moneyRegex);
+        if (match) {
+            // Pick the largest amount in this line if multiple
+            const vals = match.map(m => parseTurkishFloat(m)).sort((a, b) => b - a);
+            result.total_amount = vals[0];
         }
     }
 
-    // 4. Totals (TOPLAM / TUTAR)
-    for (const line of lines) {
-        if (line.match(/(TOPLAM|TUTAR|GENEL)/i) && !line.match(/(KDV|MATRAH)/i)) {
-            const m = line.match(/[0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})/);
-            if (m) result.total_amount = parseTurkishFloat(m[0]);
-        }
-        if (line.match(/(KDV|TOPKDV)/i)) {
-            const m = line.match(/[0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})/);
-            if (m) result.vat_total = parseTurkishFloat(m[0]);
-        }
-    }
-    // Fallback Total: Sum of items if TOPLAM missing (Safety check)
-    if (result.total_amount === 0 && result.items.length > 0) {
-        const sum = result.items.reduce((a, b) => a + b.amount, 0);
-        result.total_amount = sum;
+    if (!result.total_amount && potentialTotals.length > 0) {
+        // Fallback: Max value found in the whole receipt (Assuming Total is the largest number)
+        // This is usually true for receipts unless there's a huge Ref Number parsed as float (unlikely with decimal check)
+        // Also ensure it's in the bottom half? No, simple Max is robust enough for now.
+        result.total_amount = potentialTotals[0].val;
     }
 
-    // 5. Payment Info & Auth
-    for (const line of lines) {
-        // Payment Method
-        if (line.match(/(KREDİ|VISA|MASTER|DEBIT|AMEX)/i)) result.payment_method = 'Kredi Kartı';
-        else if (line.match(/(NAKİT)/i)) result.payment_method = 'Nakit';
-
-        // Bank
-        if (line.match(/(GARANTİ|ZİRAAT|İŞ BANK|YAPI KREDİ|AKBANK|FİNANS)/i)) {
-            result.bank = line.replace(/[^a-zA-ZÇĞİÖŞÜçğıöşü\s]/g, '').trim();
-        }
-
-        // Card Last Digits
-        const cardMatch = line.match(/\*{4}\s*(\d{4})/);
-        if (cardMatch) result.card_last_digits = cardMatch[1];
-
-        // Auth/Ref
-        const refMatch = line.match(/(REF|NO):?\s*(\d{5,})/i);
-        if (refMatch) result.reference_number = refMatch[2];
-    }
-
-    // 6. Infer VAT Rate
-    // Priority 1: Explicit most frequent rate from items
-    if (!result.vat_rate && result.items.length > 0) {
-        const rates: { [key: number]: number } = {};
-        result.items.forEach(item => {
-            if (item.vat_rate !== null) {
-                rates[item.vat_rate] = (rates[item.vat_rate] || 0) + 1;
-            }
-        });
-
-        let bestRate = null;
-        let maxCount = 0;
-        for (const [rate, count] of Object.entries(rates)) {
-            if (count > maxCount) {
-                maxCount = count;
-                bestRate = Number(rate);
-            }
-        }
-
-        if (bestRate !== null) {
-            result.vat_rate = bestRate;
-        }
-    }
-
-    // 6. Infer VAT Rate from Totals (if not explicit)
-    if (!result.vat_rate) {
-        // Fallback: Global search for VAT Rate indicators (e.g. %10, %20)
-        // This catches cases where the item line wasn't parsed as a full item but contains the rate
-        const globalRateMatch = text.match(/[%*](1|8|10|18|20)(?!\d)/);
-        if (globalRateMatch) {
-            result.vat_rate = parseInt(globalRateMatch[1]);
-        }
-    }
-
+    // 5. VAT Extraction (Heuristic)
     if (!result.vat_total) {
-        // Fallback: Global search for VAT Total (e.g. TOPKDV *270,44)
-        // Look for KDV followed by a number
-        const kdvMatch = text.match(/(?:TOPKDV|KDV)[^0-9]*([\d.,]+)/i);
-        if (kdvMatch) {
-            result.vat_total = parseTurkishFloat(kdvMatch[1]);
+        const kdvLine = lines.find(l => l.match(/(TOPKDV|KDV|K.D.V)/i) && l.match(moneyRegex));
+        if (kdvLine) {
+            const match = kdvLine.match(moneyRegex);
+            if (match) result.vat_total = parseTurkishFloat(match[0]);
         }
     }
 
-    // Priority 2: Infer from Totals (if not explicit and items/global failed)
-    if (!result.vat_rate && result.vat_total && result.total_amount) {
-        // Calculate effective rate: VAT / (Total - VAT)
-        const net = result.total_amount - result.vat_total;
-        if (net > 0) {
-            const rawRate = (result.vat_total / net) * 100;
-            // Snap to nearest standard rate (1, 8, 10, 18, 20)
-            const standardRates = [1, 8, 10, 18, 20];
-            const closest = standardRates.reduce((prev, curr) =>
-                Math.abs(curr - rawRate) < Math.abs(prev - rawRate) ? curr : prev
-            );
-
-            // Only accept if reasonably close (within 1.5%)
-            if (Math.abs(closest - rawRate) < 1.5) {
-                result.vat_rate = closest;
-            }
-        }
-    }
-
-    // 7. Final Fallback: Calculate VAT Total from Rate & Grand Total (Mathematical Guarantee)
-    // If we missed the explicit VAT amount but found the rate (or inferred it), calculate it.
-    if (!result.vat_total && result.vat_rate && result.total_amount) {
-        const rate = result.vat_rate;
-        const total = result.total_amount;
-        // VAT = Total - (Total / (1 + rate/100))
-        result.vat_total = Number((total - (total / (1 + rate / 100))).toFixed(2));
-    }
+    // 6. Payment Method
+    const textLower = text.toLowerCase();
+    if (textLower.match(/(kredi|visa|master|debit|amex)/)) result.payment_method = 'Kredi Kartı';
+    else if (textLower.match(/(nakit)/)) result.payment_method = 'Nakit';
 
     return result;
 }
@@ -296,6 +208,23 @@ function cleanOCRText(text: string): string {
         .join('\n');
 }
 
+// Helper: Preprocess Image
+async function preprocessImage(inputPath: string): Promise<string> {
+    const outputPath = inputPath + '_processed.png';
+    try {
+        await sharp(inputPath)
+            .rotate() // Auto-orient based on EXIF
+            // .resize({ width: 1000, withoutEnlargement: false }) // Removed
+            // .grayscale() // Removed
+            // .normalize() // Removed
+            .toFile(outputPath);
+        return outputPath;
+    } catch (error) {
+        console.error('Image preprocessing failed:', error);
+        return inputPath; // Fallback to original
+    }
+}
+
 // POST /api/ocr/scan
 router.post('/scan', upload.single('image'), async (req: Request, res: Response) => {
     try {
@@ -305,8 +234,12 @@ router.post('/scan', upload.single('image'), async (req: Request, res: Response)
 
         const imagePath = req.file.path;
 
-        // 1. Perform OCR
-        console.log(`Starting OCR for ${imagePath}...`);
+        // 1. Preprocess Image
+        console.log(`Preprocessing image...`);
+        const processedImagePath = await preprocessImage(imagePath);
+
+        // 2. Perform OCR
+        console.log(`Starting OCR for ${processedImagePath}...`);
 
         // Use local training data
         const langPath = path.join(__dirname, '../../');
@@ -315,7 +248,7 @@ router.post('/scan', upload.single('image'), async (req: Request, res: Response)
         const worker = await createWorker('tur', 1, {
             langPath: langPath,
             gzip: false,
-            logger: m => console.log(m)
+            // logger: m => console.log(m) // Disable noisy logging
         });
 
         // Configure parameters for better accuracy
@@ -325,10 +258,16 @@ router.post('/scan', upload.single('image'), async (req: Request, res: Response)
             tessedit_pageseg_mode: 4 as any // PSM 4: Assume a single column of text of variable sizes
         });
 
-        const ret = await worker.recognize(imagePath);
+        const ret = await worker.recognize(processedImagePath);
         const rawOutput = ret.data.text;
+        console.log('Raw Tesseract Output Pattern:', rawOutput.substring(0, 100).replace(/\n/g, '\\n')); // Log start of text
         const confidence = ret.data.confidence;
         await worker.terminate();
+
+        // Cleanup processed file if different
+        if (processedImagePath !== imagePath) {
+            fs.unlinkSync(processedImagePath);
+        }
 
         console.log('OCR Complete. Confidence:', confidence);
 
@@ -382,7 +321,7 @@ router.post('/scan', upload.single('image'), async (req: Request, res: Response)
             [
                 req.user?.id,
                 imagePath,
-                reconstructedText, // Save the clean version
+                reconstructedText + '\n\n--- RAW TESSERACT OUTPUT ---\n' + rawOutput, // Save clean version + raw for debug
                 extracted.total_amount,
                 extracted.date,
                 extracted.merchant_name?.substring(0, 255),
