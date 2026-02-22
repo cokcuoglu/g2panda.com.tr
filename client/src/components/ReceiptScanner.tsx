@@ -10,6 +10,7 @@ interface ScanResult {
     date: string | null;
     description: string | null;
     raw_text?: string;
+    items?: any[];
 }
 
 interface ReceiptScannerProps {
@@ -35,28 +36,62 @@ export const ReceiptScanner: React.FC<ReceiptScannerProps> = ({ onScanComplete, 
             formData.append('image', file);
 
             const token = localStorage.getItem('token');
-            const response = await axios.post('/api/ocr/scan', formData, {
+            // 1. Start Processing (Advanced Async)
+            const initiateRes = await axios.post('/api/ocr-advanced/process', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (response.data.success) {
-                onScanComplete(response.data.data);
-            } else {
-                console.error('OCR Scan failed:', response.data.error);
-                alert('Fiş okuma başarısız oldu. Lütfen tekrar deneyin.');
+            if (!initiateRes.data.success) {
+                throw new Error(initiateRes.data.error || 'İşlem başlatılamadı');
             }
-        } catch (error) {
-            console.error('Error uploading receipt:', error);
-            alert('Fiş yüklenirken bir hata oluştu.');
+
+            const jobId = initiateRes.data.job_id;
+
+            // 2. Poll for results
+            let attempts = 0;
+            const maxAttempts = 20; // 20 seconds max
+
+            const poll = async (): Promise<any> => {
+                if (attempts >= maxAttempts) throw new Error('İşlem zaman aşımına uğradı');
+                attempts++;
+
+                const statusRes = await axios.get(`/api/ocr-advanced/status/${jobId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = statusRes.data.data;
+                if (data.status === 'completed') {
+                    return data;
+                } else if (data.status === 'failed') {
+                    throw new Error('Analiz başarısız oldu');
+                } else {
+                    // Wait 1s and retry
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    return poll();
+                }
+            };
+
+            const finalData = await poll();
+
+            // Transform to expected format
+            onScanComplete({
+                ocr_id: finalData.id,
+                amount: finalData.extracted_amount,
+                date: finalData.extracted_date,
+                description: finalData.extracted_vendor,
+                raw_text: finalData.raw_text,
+                items: finalData.items || []
+            });
+
+        } catch (error: any) {
+            console.error('OCR Error:', error);
+            alert(`Hata: ${error.message || 'Fiş işlenirken bir hata oluştu.'}`);
         } finally {
             setIsScanning(false);
-            // Reset input value to allow selecting same file again if needed
-            if (fileInputRef.current) {
-                fileInputRef.current.value = '';
-            }
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 

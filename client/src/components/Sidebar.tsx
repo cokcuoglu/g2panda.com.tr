@@ -1,8 +1,10 @@
 import { useAuth } from '@/context/AuthContext';
+import { useBusiness } from '@/context/BusinessContext';
 import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import {
     LayoutDashboard,
+    LayoutGrid as LayoutIcon,
     Receipt,
     FileText,
     Settings,
@@ -13,7 +15,9 @@ import {
     TrendingUp,
     TrendingDown,
     Utensils,
-    QrCode
+    QrCode,
+    Ticket,
+    Package
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -27,13 +31,26 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
     const { user, logout } = useAuth();
     const location = useLocation();
     const role = (user?.role || 'staff').toLowerCase();
+    const { hasPendingOrders } = useBusiness();
 
     const menuItems = useMemo(() => [
         { title: 'Özet', icon: LayoutDashboard, href: '/', roles: ['owner', 'accountant', 'staff'] },
+        { title: 'Masa Siparişleri', icon: LayoutIcon, href: '/tables', roles: ['owner', 'staff'] },
         { title: 'Satış Menüsü', icon: ShoppingCart, href: '/sales', roles: ['owner', 'staff'] },
         { title: 'Gelen Siparişler', icon: Receipt, href: '/orders', roles: ['owner', 'staff'] },
         { title: 'Müşteriler', icon: Users, href: '/customers', roles: ['owner', 'staff'] },
         { title: 'Giderler', icon: TrendingDown, href: '/expenses', roles: ['owner', 'accountant'] },
+        {
+            title: 'Stok Yönetimi',
+            icon: Package,
+            href: '#',
+            roles: ['owner', 'accountant'],
+            children: [
+                { title: 'Hammaddeler', href: '/inventory/raw-materials', icon: Package },
+                { title: 'Stok Girişleri', href: '/inventory/stock-entries', icon: TrendingUp },
+                { title: 'Stok Durumu', href: '/inventory/stock-status', icon: LayoutDashboard },
+            ]
+        },
         {
             title: 'Raporlar',
             icon: FileText,
@@ -52,7 +69,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
             title: 'Ayarlar',
             icon: Settings,
             href: '#',
-            roles: ['owner', 'accountant'],
+            roles: ['owner', 'accountant', 'staff'],
             children: [
                 {
                     title: 'Profil',
@@ -71,8 +88,10 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                     href: '#',
                     roles: ['owner', 'staff'],
                     children: [
+                        { title: 'Kampanyalar', href: '/settings/campaigns', icon: Ticket, roles: ['owner', 'staff'] },
                         { title: 'Menü/Ürün', href: '/settings/menu', icon: ShoppingCart },
-                        { title: 'Dijital Menü', href: '/settings/qr_menu', icon: QrCode }
+                        { title: 'Dijital Menü', href: '/settings/qr_menu', icon: QrCode },
+                        { title: 'Masa Yerleşimi', href: '/settings/tables', icon: LayoutIcon }
                     ]
                 },
                 // Removed Menü Ürünler from nere
@@ -101,8 +120,9 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
     }, []);
 
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
-        'Raporlar': true,
-        'Ayarlar': true
+        'Raporlar': false,
+        'Ayarlar': false,
+        'Stok Yönetimi': false
     });
 
     const toggleMenu = (title: string) => {
@@ -188,7 +208,13 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                     isActive ? "text-primary" : "text-slate-400 group-hover:text-slate-600",
                     depth > 0 && "h-4 w-4"
                 )} />
-                <span>{item.title}</span>
+                <span className="flex-1">{item.title}</span>
+                {item.title === 'Masa Siparişleri' && hasPendingOrders && (
+                    <span className="flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                    </span>
+                )}
             </Link>
         );
     };

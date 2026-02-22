@@ -10,7 +10,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
     const { method, originalUrl, ip } = req;
 
     // Log the request initiation
-    logger.http({
+    logger.info({
         message: `Incoming Request: ${method} ${originalUrl}`,
         requestId,
         method,
@@ -23,7 +23,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
         const duration = Date.now() - start;
         const { statusCode } = res;
 
-        logger.http({
+        logger.info({
             message: `Request Completed: ${method} ${originalUrl} -> ${statusCode} (${duration}ms)`,
             requestId,
             method,

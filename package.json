@@ -1,6 +1,6 @@
 {
   "name": "g2panda",
-  "version": "1.3.0",
+  "version": "1.4.1",
   "description": "GG_Esnaf MVP Backend",
   "main": "src/server.ts",
   "scripts": {

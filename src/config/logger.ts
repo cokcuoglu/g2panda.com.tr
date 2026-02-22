@@ -13,9 +13,7 @@ const levels = {
 
 // Define level based on environment
 const level = () => {
-    const env = process.env.NODE_ENV || 'development';
-    const isDevelopment = env === 'development';
-    return isDevelopment ? 'debug' : 'info';
+    return 'debug';
 };
 
 // Define colors for each level
@@ -70,14 +68,11 @@ const logger = winston.createLogger({
     ],
 });
 
-// If we're not in production then log to the `console` with the format:
-// `${info.timestamp} ${info.level}: ${info.message}`
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(
-        new winston.transports.Console({
-            format: format,
-        })
-    );
-}
+// Always log to console for pm2 to capture
+logger.add(
+    new winston.transports.Console({
+        format: format,
+    })
+);
 
 export default logger;

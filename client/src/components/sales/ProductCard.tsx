@@ -4,12 +4,13 @@ import { cn } from "@/lib/utils";
 interface ProductCardProps {
     name: string;
     price: number;
+    originalPrice?: number;
     color?: string;
     image_url?: string;
     onClick: () => void;
 }
 
-export function ProductCard({ name, price, color, image_url, onClick }: ProductCardProps) {
+export function ProductCard({ name, price, originalPrice, color, image_url, onClick }: ProductCardProps) {
     return (
         <button
             onClick={onClick}
@@ -32,12 +33,24 @@ export function ProductCard({ name, price, color, image_url, onClick }: ProductC
                 )}>
                     {name}
                 </span>
-                <span className={cn(
-                    "font-bold py-1 px-2 rounded-md text-xs self-start backdrop-blur-sm",
-                    image_url ? "bg-white/20 text-white border border-white/20" : "bg-white text-slate-900 border border-slate-100 shadow-sm"
-                )}>
-                    {price.toLocaleString('tr-TR')} TL
-                </span>
+                <div className="flex items-baseline gap-1.5 flex-wrap">
+                    <span className={cn(
+                        "font-bold py-0.5 px-2 rounded-md text-xs backdrop-blur-sm shadow-sm",
+                        image_url
+                            ? "bg-white/20 text-white border border-white/20"
+                            : "bg-white text-slate-900 border border-slate-100"
+                    )}>
+                        {price.toLocaleString('tr-TR')} TL
+                    </span>
+                    {originalPrice && originalPrice > price && (
+                        <span className={cn(
+                            "text-[10px] line-through opacity-70",
+                            image_url ? "text-white" : "text-slate-400"
+                        )}>
+                            {originalPrice.toLocaleString('tr-TR')} TL
+                        </span>
+                    )}
+                </div>
             </div>
         </button>
     );

@@ -1,0 +1,16 @@
+📋 Table Column Inspection
+
+📋 Table: users
+id (uuid), email (character varying), password_hash (character varying), full_name (character varying), business_name (character varying), business_type (character varying), tax_number (character varying), currency (character varying), locale (character varying), role (character varying), created_at (timestamp with time zone), updated_at (timestamp with time zone), deleted_at (timestamp with time zone)
+
+📋 Table: categories
+id (uuid), user_id (uuid), name (character varying), type (character varying), color (character varying), icon (character varying), is_default (boolean), is_active (boolean), created_at (timestamp with time zone), updated_at (timestamp with time zone), deleted_at (timestamp with time zone), expense_type (character varying), service_commission_rate (numeric), courier_service_rate (numeric)
+
+📋 Table: channels
+id (uuid), user_id (uuid), name (character varying), type (character varying), description (text), is_active (boolean), created_at (timestamp with time zone), updated_at (timestamp with time zone), deleted_at (timestamp with time zone)
+
+📋 Table: products
+id (uuid), user_id (uuid), name (character varying), price (numeric), category_id (uuid), color (character varying), is_active (boolean), created_at (timestamp with time zone), image_url (text), menu_category_id (uuid), sort_order (integer), description (text), updated_at (timestamp with time zone), takeaway_discount_percent (numeric)
+
+📋 Table: transactions
+id (uuid), user_id (uuid), category_id (uuid), channel_id (uuid), type (character varying), amount (numeric), currency (character varying), transaction_date (timestamp with time zone), description (text), invoice_number (character varying), payment_method (character varying), notes (text), created_at (timestamp with time zone), updated_at (timestamp with time zone), deleted_at (timestamp with time zone), expense_type (character varying), is_tax_deductible (boolean), deduction_reason (text), document_type (character varying), vat_rate (numeric), vat_amount (numeric), base_amount (numeric), discount_amount (numeric)

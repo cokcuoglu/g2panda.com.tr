@@ -1,0 +1,14 @@
+﻿
+  [1m[90m[TAILING] Tailing last 1000
+ lines for [g2panda] process (change t
+he value with --lines option)[39m[22
+m
+> [90mC:\Users\caner\.pm2\logs\g2pand
+a-error.log last 1000 lines:[39m
+  
+  [90mC:\Users\caner\.pm2\logs\g2pand
+a-out.log last 1000 lines:[39m
+  2026-02-13T23:26:51: [REQUEST] GET /
+api/users/me
+
+

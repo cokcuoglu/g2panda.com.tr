@@ -1,7 +1,7 @@
 
 const axios = require('axios');
 
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = 'http://localhost:7001/api';
 
 async function registerUser(name) {
     const rand = Math.floor(Math.random() * 100000);

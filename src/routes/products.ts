@@ -74,7 +74,17 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
             return res.status(401).json({ success: false, error: 'Unauthorized' });
         }
 
-        const { name, price, color, menu_category_id, is_active, sort_order } = req.body;
+        let { name, price, color, menu_category_id, is_active, sort_order, takeaway_discount_percent } = req.body;
+
+        // Sanitize price: Convert "300,00" to "300.00"
+        if (typeof price === 'string') {
+            price = price.replace(',', '.');
+        }
+
+        // Sanitize discount: ensure it's a valid number between 0-100
+        let discount = parseFloat(takeaway_discount_percent) || 0;
+        discount = Math.max(0, Math.min(100, discount));
+
         // Construct image_url if file was uploaded
         let image_url = req.body.image_url; // Allow manual URL if sent? Maybe not.
         if (req.file) {
@@ -87,16 +97,16 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
             return res.status(400).json({ success: false, error: 'Name and Price are required' });
         }
 
-        // Convert is_active string 'true'/'false' to boolean if coming from FormData
-        const active = is_active === 'true' || is_active === true;
+        // Default to true if not provided
+        const active = is_active !== undefined ? (is_active === 'true' || is_active === true) : true;
         const order = sort_order || 0;
         const desc = req.body.description || null;
 
         const result = await req.db.query(
-            `INSERT INTO products (user_id, name, price, color, menu_category_id, image_url, is_active, sort_order, description)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            `INSERT INTO products (user_id, name, price, color, menu_category_id, image_url, is_active, sort_order, description, takeaway_discount_percent)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
              RETURNING *`,
-            [req.user.id, name, price, color || 'bg-white', menu_category_id || null, image_url || null, active, order, desc]
+            [req.user.id, name, price, color || 'bg-white', menu_category_id || null, image_url || null, active, order, desc, discount]
         );
 
         res.status(201).json({ success: true, data: result.rows[0] });
@@ -111,7 +121,18 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
 router.put('/:id', upload.single('image'), async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { name, price, color, menu_category_id, is_active, sort_order } = req.body;
+        let { name, price, color, menu_category_id, is_active, sort_order, takeaway_discount_percent } = req.body;
+
+        // Sanitize price: Convert "300,00" to "300.00"
+        if (typeof price === 'string') {
+            price = price.replace(',', '.');
+        }
+
+        // Sanitize discount if provided
+        let discount = takeaway_discount_percent !== undefined ? parseFloat(takeaway_discount_percent) || 0 : undefined;
+        if (discount !== undefined) {
+            discount = Math.max(0, Math.min(100, discount));
+        }
 
         let image_url = req.body.image_url;
         if (req.file) {
@@ -134,10 +155,11 @@ router.put('/:id', upload.single('image'), async (req: Request, res: Response) =
                  image_url = COALESCE($5, image_url),
                  is_active = COALESCE($6, is_active),
                  sort_order = COALESCE($7, sort_order),
-                 description = COALESCE($8, description)
-             WHERE id = $9 AND user_id = $10
+                 description = COALESCE($8, description),
+                 takeaway_discount_percent = COALESCE($9, takeaway_discount_percent)
+             WHERE id = $10 AND user_id = $11
              RETURNING *`,
-            [name, price, color, menu_category_id || null, image_url, active, sort_order, desc, id, req.user!.id]
+            [name, price, color, menu_category_id || null, image_url, active, sort_order, desc, discount, id, req.user!.id]
         );
 
         if (result.rows.length === 0) {

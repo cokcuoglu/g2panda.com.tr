@@ -5,13 +5,10 @@ import path from 'path';
 
 const router = express.Router();
 
-
-
 // GET /api/transactions
 router.get('/', async (req: any, res: Response) => {
     try {
-        const { page = '1', limit = '20', type, start_date, end_date, sort_by = 'date', expense_type } = req.query as any;
-        // console.log('GET /api/transactions Query:', req.query);
+        const { page = '1', limit = '20', type, start_date, end_date, date, sort_by = 'date', expense_type } = req.query as any;
         const offset = (parseInt(page) - 1) * parseInt(limit);
 
         let query = `
@@ -42,6 +39,12 @@ router.get('/', async (req: any, res: Response) => {
         if (end_date) {
             params.push(end_date);
             query += ` AND t.transaction_date <= $${params.length}`;
+        }
+
+        if (date) {
+            params.push(date);
+            query += ` AND t.transaction_date >= ($${params.length}::TIMESTAMP AT TIME ZONE 'Europe/Istanbul')`;
+            query += ` AND t.transaction_date < (($${params.length}::DATE + INTERVAL '1 day')::TIMESTAMP AT TIME ZONE 'Europe/Istanbul')`;
         }
 
         if (sort_by === 'created_at') {
@@ -81,9 +84,6 @@ router.get('/', async (req: any, res: Response) => {
 // GET /api/transactions/daily-total
 router.get('/daily-total', async (req: any, res: Response) => {
     try {
-        // Sum amount for income transactions created today
-        // Using transaction_date for business logic day
-
         const { date } = req.query as any;
         const targetDate = date || new Date().toISOString().split('T')[0];
 
@@ -139,7 +139,15 @@ router.get('/:id', async (req: any, res: Response) => {
 // POST /api/transactions
 router.post('/', async (req: any, res: Response) => {
     try {
-        const { category_id, channel_id, type, amount, transaction_date, description, ocr_record_id, expense_type, is_tax_deductible, deduction_reason, document_type, notes } = req.body;
+        let {
+            category_id, channel_id, type, amount, transaction_date, description, ocr_record_id,
+            expense_type, is_tax_deductible, deduction_reason, document_type, notes,
+            invoice_number, base_amount, discount_amount, campaign_id, campaign_code
+        } = req.body;
+
+        // Normalize empty strings to null for UUID fields
+        if (category_id === '') category_id = null;
+        if (channel_id === '') channel_id = null;
 
         // Validation
         if (!amount || amount <= 0) {
@@ -157,15 +165,19 @@ router.post('/', async (req: any, res: Response) => {
             return res.status(400).json({ success: false, error: 'Date cannot be in the future (more than 48h)' });
         }
 
-        // Insert Transaction
-        const query = `
-      INSERT INTO transactions (
-        user_id, category_id, channel_id, type, amount, transaction_date, description, ocr_record_id,
-        expense_type, is_tax_deductible, deduction_reason, document_type, notes, vat_rate, vat_amount
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-      RETURNING *
-    `;
+        // Use the existing client from authentication middleware (already in transaction)
+        const client = req.db;
+
+        // 1. Insert Transaction
+        const queryStr = `
+            INSERT INTO transactions (
+                user_id, category_id, channel_id, type, amount, transaction_date, description, ocr_record_id,
+                expense_type, is_tax_deductible, deduction_reason, document_type, notes, vat_rate, vat_amount,
+                invoice_number, base_amount, discount_amount, campaign_id, campaign_code
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+            RETURNING *
+        `;
 
         const values = [
             req.user.id,
@@ -182,107 +194,217 @@ router.post('/', async (req: any, res: Response) => {
             document_type || 'receipt',
             notes || null,
             req.body.vat_rate || null,
-            req.body.vat_amount || null
+            req.body.vat_amount || null,
+            invoice_number || null,
+            base_amount || amount,
+            discount_amount || 0,
+            campaign_id || null,
+            campaign_code || null
         ];
-        const result = await req.db.query(query, values);
+
+        const result = await client.query(queryStr, values);
         const transaction = result.rows[0];
 
-        // --- Automatic Expense Deduction Logic ---
-        if (type === 'income') {
-            try {
-                // Start a sub-transaction (savepoint) so failures here don't abort the main transaction
-                await req.db.query('SAVEPOINT deduction_savepoint');
+        logger.info(`[TRANSACTION CREATED] ID: ${transaction.id}, User: ${req.user.id}`);
 
-                // 1. Fetch Category Details to check for rates
-                const catRes = await req.db.query('SELECT * FROM categories WHERE id = $1', [category_id]);
-                const category = catRes.rows[0];
+        // 2. Save Individual Items (If present)
+        const items = req.body.items;
+        if (items && Array.isArray(items) && items.length > 0) {
+            for (const item of items) {
+                // Check if item already exists (from OCR)
+                if (item.id) {
+                    await client.query(
+                        `UPDATE transaction_items 
+                         SET transaction_id = $1, name = $2, quantity = $3, unit = $4, unit_price = $5, total_price = $6, 
+                             vat_rate = $7, vat_amount = $8, is_tax_deductible = $9, is_stock = $10, updated_at = NOW()
+                         WHERE id = $11`,
+                        [
+                            transaction.id,
+                            item.name,
+                            item.quantity || 1,
+                            item.unit || 'adet',
+                            item.unit_price || item.total_price || 0,
+                            item.total_price || 0,
+                            item.vat_rate || 0,
+                            item.vat_amount || ((item.total_price || 0) * ((item.vat_rate || 0) / 100)),
+                            item.is_tax_deductible === undefined ? true : item.is_tax_deductible,
+                            item.is_stock || false,
+                            item.id
+                        ]
+                    );
+                } else {
+                    await client.query(
+                        `INSERT INTO transaction_items (
+                            transaction_id, ocr_record_id, name, quantity, unit,
+                            unit_price, total_price, vat_rate, vat_amount, confidence,
+                            is_tax_deductible, is_stock
+                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+                        [
+                            transaction.id,
+                            ocr_record_id || null,
+                            item.name,
+                            item.quantity || 1,
+                            item.unit || 'adet',
+                            item.unit_price || item.total_price || 0,
+                            item.total_price || 0,
+                            item.vat_rate || 0,
+                            item.vat_amount || ((item.total_price || 0) * ((item.vat_rate || 0) / 100)),
+                            item.confidence || 1.0,
+                            item.is_tax_deductible === undefined ? true : item.is_tax_deductible,
+                            item.is_stock || false
+                        ]
+                    );
+                }
 
-                if (category) {
-                    // ... (rest of logic remains same, just indented or not needed to change if simple replace)
-                    const serviceRate = parseFloat(category.service_commission_rate || '0');
-                    const courierRate = parseFloat(category.courier_service_rate || '0');
+                // --- Stock Deduction for Income Items ---
+                if (type === 'income') {
+                    try {
+                        // Create a savepoint to isolate stock deduction failures
+                        await client.query('SAVEPOINT stock_deduction');
 
-                    if (serviceRate > 0 || courierRate > 0) {
-                        const systemCategoryName = `Sistem-${category.name}`;
-
-                        // 2. Find or Create System Category
-                        let systemCategoryId;
-                        const sysCatRes = await req.db.query(
-                            'SELECT id FROM categories WHERE user_id = $1 AND name = $2 AND type = $3',
-                            [req.user.id, systemCategoryName, 'expense']
+                        const productRes = await client.query(
+                            `SELECT id FROM products WHERE name = $1 AND user_id = $2 LIMIT 1`,
+                            [item.name, req.user.id]
                         );
 
-                        if (sysCatRes.rows.length > 0) {
-                            systemCategoryId = sysCatRes.rows[0].id;
-                        } else {
-                            // Create new category
-                            const createSysCatRes = await req.db.query(
-                                `INSERT INTO categories (user_id, name, type, color, is_default)
-                                 VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-                                [req.user.id, systemCategoryName, 'expense', '#64748b', false]
+                        if (productRes.rows.length > 0) {
+                            const productId = productRes.rows[0].id;
+                            const quantity = item.quantity || 1;
+
+                            const recipeRes = await client.query(
+                                `SELECT raw_material_id, quantity FROM product_recipes 
+                                 WHERE product_id = $1 AND user_id = $2`,
+                                [productId, req.user.id]
                             );
-                            systemCategoryId = createSysCatRes.rows[0].id;
+
+                            for (const ingredient of recipeRes.rows) {
+                                const requiredQty = ingredient.quantity * quantity;
+                                let remainingToDeduct = requiredQty;
+
+                                const stockEntries = await client.query(
+                                    `SELECT id, remaining_quantity FROM raw_material_stock_entries
+                                     WHERE raw_material_id = $1 AND user_id = $2 AND remaining_quantity > 0
+                                     ORDER BY entry_date ASC, created_at ASC
+                                     FOR UPDATE`,
+                                    [ingredient.raw_material_id, req.user.id]
+                                );
+
+                                for (const entry of stockEntries.rows) {
+                                    if (remainingToDeduct <= 0) break;
+                                    const deductFromThis = Math.min(entry.remaining_quantity, remainingToDeduct);
+
+                                    const newRemaining = entry.remaining_quantity - deductFromThis;
+
+                                    await client.query(
+                                        `UPDATE raw_material_stock_entries 
+                                         SET remaining_quantity = $1
+                                         WHERE id = $2`,
+                                        [newRemaining, entry.id]
+                                    );
+
+                                    await client.query(
+                                        `INSERT INTO stock_movements (
+                                            user_id, raw_material_id, stock_entry_id, movement_type, 
+                                            quantity, remaining_quantity, reference_type, reference_id, notes
+                                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                                        [
+                                            req.user.id,
+                                            ingredient.raw_material_id,
+                                            entry.id,
+                                            'out',
+                                            -deductFromThis,
+                                            newRemaining,
+                                            'transaction',
+                                            transaction.id,
+                                            `Satış: ${item.name} x${quantity}`
+                                        ]
+                                    );
+                                    remainingToDeduct -= deductFromThis;
+                                }
+                            }
                         }
 
-                        // 3. Create Service Commission Expense
-                        if (serviceRate > 0) {
-                            const commissionAmount = (Number(amount) * serviceRate) / 100;
-                            await req.db.query(
-                                `INSERT INTO transactions (
-                                    user_id, category_id, channel_id, type, amount, transaction_date, 
-                                    description, notes, expense_type
-                                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-                                [
-                                    req.user.id,
-                                    systemCategoryId,
-                                    channel_id,
-                                    'expense',
-                                    commissionAmount,
-                                    transaction_date,
-                                    `Otomatik Kesinti: Hizmet Komisyonu (%${serviceRate})`,
-                                    `Bağlı İşlem ID: ${transaction.id}`,
-                                    'operational'
-                                ]
-                            );
-                        }
+                        await client.query('RELEASE SAVEPOINT stock_deduction');
+                    } catch (stockErr) {
+                        logger.error(`Stock deduction failed for item ${item.name}:`, stockErr);
+                        // Rollback to savepoint to ensure main transaction is not aborted
+                        await client.query('ROLLBACK TO SAVEPOINT stock_deduction');
+                    }
+                }
+            }
+        }
 
-                        // 4. Create Courier Service Expense
-                        if (courierRate > 0) {
-                            const courierAmount = (Number(amount) * courierRate) / 100;
-                            await req.db.query(
-                                `INSERT INTO transactions (
-                                    user_id, category_id, channel_id, type, amount, transaction_date, 
-                                    description, notes, expense_type
-                                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-                                [
-                                    req.user.id,
-                                    systemCategoryId,
-                                    channel_id,
-                                    'expense',
-                                    courierAmount,
-                                    transaction_date,
-                                    `Otomatik Kesinti: Kurye Hizmeti (%${courierRate})`,
-                                    `Bağlı İşlem ID: ${transaction.id}`,
-                                    'operational'
-                                ]
+        // 3. Automatic Expense Deductions (Commissions)
+        if (type === 'income') {
+            try {
+                await client.query('SAVEPOINT deduction_savepoint');
+
+                // Category Commissions (Service/Courier)
+                if (category_id) {
+                    const catRes = await client.query('SELECT * FROM categories WHERE id = $1', [category_id]);
+                    const category = catRes.rows[0];
+
+                    if (category) {
+                        const serviceRate = parseFloat(category.service_commission_rate || '0');
+                        const courierRate = parseFloat(category.courier_service_rate || '0');
+
+                        if (serviceRate > 0 || courierRate > 0) {
+                            const systemCategoryName = `Sistem-${category.name}`;
+                            let systemCategoryId;
+
+                            const sysCatRes = await client.query(
+                                'SELECT id FROM categories WHERE user_id = $1 AND name = $2 AND type = $3',
+                                [req.user.id, systemCategoryName, 'expense']
                             );
+
+                            if (sysCatRes.rows.length > 0) {
+                                systemCategoryId = sysCatRes.rows[0].id;
+                            } else {
+                                const createSysCatRes = await client.query(
+                                    `INSERT INTO categories (user_id, name, type, color, is_default)
+                                     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+                                    [req.user.id, systemCategoryName, 'expense', '#64748b', false]
+                                );
+                                systemCategoryId = createSysCatRes.rows[0].id;
+                            }
+
+                            if (serviceRate > 0) {
+                                const commissionAmount = (Number(amount) * serviceRate) / 100;
+                                await client.query(
+                                    `INSERT INTO transactions (
+                                        user_id, category_id, channel_id, type, amount, transaction_date, 
+                                        description, notes, expense_type
+                                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                                    [req.user.id, systemCategoryId, channel_id, 'expense', commissionAmount, transaction_date, `Otomatik Kesinti: Hizmet Komisyonu (%${serviceRate})`, `Bağlı İşlem ID: ${transaction.id}`, 'operational']
+                                );
+                            }
+
+                            if (courierRate > 0) {
+                                const courierAmount = (Number(amount) * courierRate) / 100;
+                                await client.query(
+                                    `INSERT INTO transactions (
+                                        user_id, category_id, channel_id, type, amount, transaction_date, 
+                                        description, notes, expense_type
+                                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                                    [req.user.id, systemCategoryId, channel_id, 'expense', courierAmount, transaction_date, `Otomatik Kesinti: Kurye Hizmeti (%${courierRate})`, `Bağlı İşlem ID: ${transaction.id}`, 'operational']
+                                );
+                            }
                         }
                     }
                 }
-                // 5. Check Channel Commission
+
+                // Channel Commission
                 if (channel_id) {
-                    const chanRes = await req.db.query('SELECT * FROM channels WHERE id = $1', [channel_id]);
+                    const chanRes = await client.query('SELECT * FROM channels WHERE id = $1', [channel_id]);
                     const channel = chanRes.rows[0];
 
                     if (channel) {
                         const commissionRate = parseFloat(channel.commission_rate || '0');
-
                         if (commissionRate > 0) {
                             const systemChannelCatName = `Sistem-${channel.name}`;
                             let systemChannelCatId;
 
-                            // Find or Create System Category for Channel
-                            const sysChanCatRes = await req.db.query(
+                            const sysChanCatRes = await client.query(
                                 'SELECT id FROM categories WHERE user_id = $1 AND name = $2 AND type = $3',
                                 [req.user.id, systemChannelCatName, 'expense']
                             );
@@ -290,98 +412,68 @@ router.post('/', async (req: any, res: Response) => {
                             if (sysChanCatRes.rows.length > 0) {
                                 systemChannelCatId = sysChanCatRes.rows[0].id;
                             } else {
-                                const createSysChanCatRes = await req.db.query(
+                                const createSysChanCatRes = await client.query(
                                     `INSERT INTO categories (user_id, name, type, color, is_default)
                                      VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-                                    [req.user.id, systemChannelCatName, 'expense', '#f59e0b', false] // Orange for payment commissions
+                                    [req.user.id, systemChannelCatName, 'expense', '#f59e0b', false]
                                 );
                                 systemChannelCatId = createSysChanCatRes.rows[0].id;
                             }
 
-                            // Create Channel Commission Expense
                             const commissionAmount = (Number(amount) * commissionRate) / 100;
-                            await req.db.query(
+                            await client.query(
                                 `INSERT INTO transactions (
                                     user_id, category_id, channel_id, type, amount, transaction_date, 
                                     description, notes, expense_type
                                 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-                                [
-                                    req.user.id,
-                                    systemChannelCatId,
-                                    channel_id,
-                                    'expense',
-                                    commissionAmount,
-                                    transaction_date,
-                                    `Otomatik Kesinti: ${channel.name} Komisyonu (%${commissionRate})`,
-                                    `Bağlı İşlem ID: ${transaction.id}`,
-                                    'operational'
-                                ]
+                                [req.user.id, systemChannelCatId, channel_id, 'expense', commissionAmount, transaction_date, `Otomatik Kesinti: ${channel.name} Komisyonu (%${commissionRate})`, `Bağlı İşlem ID: ${transaction.id}`, 'operational']
                             );
                         }
                     }
                 }
+
+                await client.query('RELEASE SAVEPOINT deduction_savepoint');
             } catch (deductionErr) {
-                console.error('Error processing automatic deductions:', deductionErr);
-                // Rollback to savepoint to ensure main transaction can proceed
-                await req.db.query('ROLLBACK TO SAVEPOINT deduction_savepoint');
+                console.error('Auto deduction error:', deductionErr);
+                await client.query('ROLLBACK TO SAVEPOINT deduction_savepoint');
             }
         }
-        // ----------------------------------------
 
-        // File Organization Logic (if OCR)
+        // 4. File Organization (Post-Commit action - but middleware commits at end of response)
+        // We can do this here. If middleware rolls back, the file move is still done?
+        // Yes, file operations are not transactional. 
+        // This is a trade-off. But previously it was also like this.
         if (ocr_record_id) {
             try {
-                // 1. Get OCR Record
                 const ocrRes = await req.db.query('SELECT * FROM ocr_records WHERE id = $1', [ocr_record_id]);
                 const ocrRecord = ocrRes.rows[0];
-
                 if (ocrRecord && ocrRecord.image_path) {
-                    // 2. Get Category Name for Folder
                     const catRes = await req.db.query('SELECT name FROM categories WHERE id = $1', [category_id]);
                     const categoryName = catRes.rows[0]?.name || 'uncategorized';
-
-                    // Slugify category name (e.g., "Food & Bev" -> "food-bev")
                     const safeCatName = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-                    // 3. Create Target Directory: uploads/{type}/{category_slug}
-                    const baseUploadDir = 'uploads'; // Ensure this matches ocr.ts
+                    const baseUploadDir = 'uploads';
                     const targetDir = path.join(baseUploadDir, type, safeCatName);
-
-                    if (!fs.existsSync(targetDir)) {
-                        fs.mkdirSync(targetDir, { recursive: true });
-                    }
-
-                    // 4. Move File
+                    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
                     const oldPath = ocrRecord.image_path;
                     const fileName = path.basename(oldPath);
                     const newPath = path.join(targetDir, fileName);
-
-                    // Check if old file exists before moving
-                    // Note: oldPath comes from DB, might be relative or absolute. 
-                    // Assuming relative to project root based on ocr.ts 'uploads' dest.
                     if (fs.existsSync(oldPath)) {
                         fs.renameSync(oldPath, newPath);
-
-                        // 5. Update OCR Record with new Path and Validated Status
-                        await req.db.query(
-                            `UPDATE ocr_records SET image_path = $1, status = 'confirmed' WHERE id = $2`,
-                            [newPath, ocr_record_id]
-                        );
-
-                        console.log(`Organized receipt: ${oldPath} -> ${newPath}`);
-                    } else {
-                        console.warn(`Original receipt file not found: ${oldPath}`);
+                        await req.db.query(`UPDATE ocr_records SET image_path = $1, status = 'confirmed' WHERE id = $2`, [newPath, ocr_record_id]);
                     }
                 }
             } catch (fileErr) {
                 console.error('File organization failed:', fileErr);
-                // Don't fail the transaction, just log error
             }
         }
 
         res.status(201).json({ success: true, data: transaction });
+
     } catch (err: any) {
-        logger.error(`[POST-TRANSACTION ERROR] User: ${req.user?.id}, Error: ${err.message}`, { stack: err.stack });
+        // No explicit ROLLBACK here, as middleware handles it on 500 status.
+        // client.release() is also handled by middleware.
+        console.error('[POST-TRANSACTION ERROR]', err);
+        logger.error(`[POST-TRANSACTION ERROR] User: ${req.user?.id}, Error: ${err.message}`, { stack: err.stack, detail: err.detail, hint: err.hint, code: err.code });
         res.status(500).json({ success: false, error: 'Internal Server Error: ' + err.message });
     }
 });
@@ -413,6 +505,7 @@ router.put('/:id', async (req: any, res: Response) => {
         if (req.body.notes !== undefined) { fields.push(`notes = $${idx++}`); values.push(req.body.notes); }
         if (req.body.vat_rate !== undefined) { fields.push(`vat_rate = $${idx++}`); values.push(req.body.vat_rate); }
         if (req.body.vat_amount !== undefined) { fields.push(`vat_amount = $${idx++}`); values.push(req.body.vat_amount); }
+        if (req.body.invoice_number !== undefined) { fields.push(`invoice_number = $${idx++}`); values.push(req.body.invoice_number); }
 
         if (fields.length === 0) return res.status(400).json({ success: false, error: 'No fields to update' });
 

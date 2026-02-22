@@ -1,26 +1,24 @@
-const { pool } = require('./src/db');
+const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
+require('dotenv').config();
 
-async function migrate() {
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL
+});
+
+async function runMigration() {
     try {
-        console.log('Applying performance indexes one by one...');
-
-        const queries = [
-            "CREATE INDEX IF NOT EXISTS transactions_deleted_at_idx ON transactions (deleted_at)",
-            "CREATE INDEX IF NOT EXISTS transactions_perf_report_idx ON transactions (user_id, type, transaction_date) WHERE deleted_at IS NULL",
-            "CREATE INDEX IF NOT EXISTS transactions_istanbul_date_idx ON transactions (((transaction_date AT TIME ZONE 'Europe/Istanbul')::DATE))"
-        ];
-
-        for (const q of queries) {
-            console.log(`Running: ${q}`);
-            await pool.query(q);
-        }
-
-        console.log('Migration successful.');
+        const migrationPath = path.join(__dirname, 'database', '37_add_order_discount_fields.sql');
+        const sql = fs.readFileSync(migrationPath, 'utf8');
+        await pool.query(sql);
+        console.log('Migration applied successfully.');
     } catch (err) {
-        console.error('Migration failed:', err);
+        console.error('Migration failed:', err.message);
+        process.exit(1);
     } finally {
-        pool.end();
+        await pool.end();
     }
 }
 
-migrate();
+runMigration();

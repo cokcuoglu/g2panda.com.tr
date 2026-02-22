@@ -188,4 +188,41 @@ router.get('/categories', async (req: Request, res: Response) => {
     }
 });
 
+// GET /api/reports/campaigns
+router.get('/campaigns', async (req: Request, res: Response) => {
+    try {
+        const { start_date, end_date } = req.query;
+
+        if (!start_date || !end_date) {
+            return res.status(400).json({ success: false, error: 'Start date and end date are required' });
+        }
+
+        const query = `
+            SELECT 
+                campaign_code,
+                campaign_id,
+                description,
+                COUNT(*) as sale_count,
+                SUM(amount) as total_amount
+            FROM transactions
+            WHERE transaction_date >= ($1::TIMESTAMP AT TIME ZONE 'Europe/Istanbul')
+              AND transaction_date < (($2::DATE + INTERVAL '1 day')::TIMESTAMP AT TIME ZONE 'Europe/Istanbul')
+              AND campaign_code IS NOT NULL
+            GROUP BY campaign_code, campaign_id, description
+            ORDER BY total_amount DESC
+        `;
+
+        const result = await req.db.query(query, [start_date, end_date]);
+
+        res.json({
+            success: true,
+            data: result.rows
+        });
+
+    } catch (error) {
+        console.error('Campaign Report Error:', error);
+        res.status(500).json({ success: false, error: 'Failed to fetch campaign report' });
+    }
+});
+
 export default router;

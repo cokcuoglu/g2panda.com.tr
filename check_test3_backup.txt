@@ -1,0 +1,20 @@
+📦 Analyzing Backup for Test3 Config...
+✅ Test3 User FOUND in backup: test3@test.com
+
+📂 Categories found: 19
+   Types: expense, income
+   - Kira (expense)
+   - Market (expense)
+   - TrendYol (income)
+   - Elektrik (expense)
+   - Vergi (expense)
+
+💳 Channels found: 8
+   - Test (sales)
+   - Online Satış (sales)
+   - test (sales)
+   - test (payment)
+   - Nakit (payment)
+   - Online Satış (payment)
+   - Kredi kartı (payment)
+   - Sodexo (payment)

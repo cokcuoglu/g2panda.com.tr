@@ -1,0 +1,93 @@
+[
+  {
+    "column_name": "ocr_record_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "numeric_precision": null,
+    "numeric_scale": null
+  },
+  {
+    "column_name": "transaction_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "numeric_precision": null,
+    "numeric_scale": null
+  },
+  {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "numeric_precision": null,
+    "numeric_scale": null
+  },
+  {
+    "column_name": "quantity",
+    "data_type": "numeric",
+    "is_nullable": "YES",
+    "numeric_precision": 15,
+    "numeric_scale": 2
+  },
+  {
+    "column_name": "unit_price",
+    "data_type": "numeric",
+    "is_nullable": "YES",
+    "numeric_precision": 15,
+    "numeric_scale": 2
+  },
+  {
+    "column_name": "total_price",
+    "data_type": "numeric",
+    "is_nullable": "NO",
+    "numeric_precision": 15,
+    "numeric_scale": 2
+  },
+  {
+    "column_name": "vat_rate",
+    "data_type": "numeric",
+    "is_nullable": "YES",
+    "numeric_precision": 10,
+    "numeric_scale": 2
+  },
+  {
+    "column_name": "vat_amount",
+    "data_type": "numeric",
+    "is_nullable": "YES",
+    "numeric_precision": 15,
+    "numeric_scale": 2
+  },
+  {
+    "column_name": "confidence",
+    "data_type": "double precision",
+    "is_nullable": "YES",
+    "numeric_precision": 53,
+    "numeric_scale": null
+  },
+  {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "numeric_precision": null,
+    "numeric_scale": null
+  },
+  {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "numeric_precision": null,
+    "numeric_scale": null
+  },
+  {
+    "column_name": "is_tax_deductible",
+    "data_type": "boolean",
+    "is_nullable": "YES",
+    "numeric_precision": null,
+    "numeric_scale": null
+  },
+  {
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "numeric_precision": null,
+    "numeric_scale": null
+  }
+]

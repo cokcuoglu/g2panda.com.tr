@@ -1,0 +1,17 @@
+audit_logs
+campaign_products
+campaigns
+categories
+category_channels
+channels
+customers
+fixed_expenses
+menu_categories
+ocr_records
+orders
+products
+tables
+transaction_items
+transaction_vat_breakdown
+transactions
+users

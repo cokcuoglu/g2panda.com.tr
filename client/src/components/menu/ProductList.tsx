@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Edit2, Trash2, Search, ImageIcon, MoreHorizontal } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, ImageIcon, MoreHorizontal, ChefHat } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { RecipeEditor } from '@/components/RecipeEditor';
 
 interface Product {
     id: string;
@@ -19,6 +20,7 @@ interface Product {
     sort_order: number;
     menu_category_id: string;
     description?: string;
+    takeaway_discount_percent?: number;
 }
 
 interface ProductListProps {
@@ -33,12 +35,19 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
     // Dialog State
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+    // Recipe Editor State
+    const [recipeDialogOpen, setRecipeDialogOpen] = useState(false);
+    const [recipeProduct, setRecipeProduct] = useState<{ id: string; name: string } | null>(null);
+
     const [formData, setFormData] = useState<any>({
         name: '',
         price: '',
         is_active: true,
         sort_order: 0,
         description: '',
+        takeaway_discount_percent: '',
+        takeaway_price: '',
         image_file: null as File | null
     });
 
@@ -95,6 +104,8 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
             is_active: true,
             sort_order: 0,
             description: '',
+            takeaway_discount_percent: '',
+            takeaway_price: '',
             image_file: null
         });
         setIsDialogOpen(true);
@@ -108,6 +119,10 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
             is_active: product.is_active,
             sort_order: product.sort_order || 0,
             description: product.description || '',
+            takeaway_discount_percent: product.takeaway_discount_percent || '',
+            takeaway_price: product.takeaway_discount_percent
+                ? (product.price * (1 - product.takeaway_discount_percent / 100)).toFixed(2)
+                : product.price,
             image_file: null
         });
         setIsDialogOpen(true);
@@ -136,6 +151,7 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
         data.append('is_active', String(formData.is_active));
         data.append('sort_order', String(formData.sort_order));
         data.append('description', formData.description);
+        data.append('takeaway_discount_percent', formData.takeaway_discount_percent || '0');
 
         if (formData.image_file) {
             data.append('image', formData.image_file);
@@ -241,6 +257,12 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
                                             <DropdownMenuItem onClick={() => handleEdit(product)}>
                                                 <Edit2 className="mr-2 h-4 w-4" /> Düzenle
                                             </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => {
+                                                setRecipeProduct({ id: product.id, name: product.name });
+                                                setRecipeDialogOpen(true);
+                                            }}>
+                                                <ChefHat className="mr-2 h-4 w-4" /> Reçete
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem className="text-red-600 focus:text-red-700 focus:bg-red-50" onClick={() => handleDelete(product.id)}>
                                                 <Trash2 className="mr-2 h-4 w-4" /> Sil
                                             </DropdownMenuItem>
@@ -253,7 +275,7 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
                 )}
             </div>
 
-            {/* Dialog */}
+            {/* Product Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
@@ -271,6 +293,17 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
                                 />
                             </div>
                             <div className="space-y-2">
+                                <Label>Sıra No</Label>
+                                <Input
+                                    type="number"
+                                    value={formData.sort_order}
+                                    onChange={e => setFormData({ ...formData, sort_order: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
                                 <Label>Fiyat (TL)</Label>
                                 <Input
                                     type="number"
@@ -279,6 +312,37 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
                                     onChange={e => setFormData({ ...formData, price: e.target.value })}
                                     required
                                 />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Al/Götür Satış Fiyatı (TL)</Label>
+                                <Input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={formData.takeaway_price}
+                                    onChange={e => {
+                                        const tPrice = parseFloat(e.target.value) || 0;
+                                        const mPrice = parseFloat(formData.price) || 0;
+                                        let percent = 0;
+                                        if (mPrice > 0) {
+                                            percent = Math.max(0, ((mPrice - tPrice) / mPrice) * 100);
+                                        }
+                                        setFormData({
+                                            ...formData,
+                                            takeaway_price: e.target.value,
+                                            takeaway_discount_percent: percent.toFixed(2)
+                                        });
+                                    }}
+                                    placeholder="İndirimli fiyat"
+                                />
+                                <div className="flex justify-between items-center mt-1">
+                                    <p className="text-[10px] text-slate-500">Paket indirimli fiyat</p>
+                                    {formData.takeaway_discount_percent > 0 && (
+                                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1 py-0.5 rounded">
+                                            İndirim: %{formData.takeaway_discount_percent}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -298,20 +362,11 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
                         <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50">
                             <div className="space-y-0.5">
                                 <Label className="text-base">Aktif Durum</Label>
-                                <p className="text-xs text-slate-500">Ürün menüde görünsün mü?</p>
+                                <p className="text-xs text-slate-500">Ürün menüde görünsün mu?</p>
                             </div>
                             <Switch
                                 checked={formData.is_active}
                                 onCheckedChange={c => setFormData({ ...formData, is_active: c })}
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label>Sıralama</Label>
-                            <Input
-                                type="number"
-                                value={formData.sort_order}
-                                onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
                             />
                         </div>
 
@@ -330,6 +385,16 @@ export const ProductList = ({ selectedCategoryId }: ProductListProps) => {
                     </form>
                 </DialogContent>
             </Dialog>
-        </div >
+
+            {/* Recipe Editor Dialog */}
+            {recipeProduct && (
+                <RecipeEditor
+                    productId={recipeProduct.id}
+                    productName={recipeProduct.name}
+                    open={recipeDialogOpen}
+                    onOpenChange={setRecipeDialogOpen}
+                />
+            )}
+        </div>
     );
 };

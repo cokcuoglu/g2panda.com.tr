@@ -1,0 +1,265 @@
+{
+  "success": true,
+  "data": {
+    "business_name": "Chocolate Lab",
+    "categories": [
+      {
+        "id": "07cf17ab-5099-40d1-9157-b820eb7a1890",
+        "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+        "name": "Ana Yemek",
+        "parent_id": null,
+        "level": 1,
+        "sort_order": 0,
+        "is_active": true,
+        "created_at": "2026-01-29T21:49:39.696Z",
+        "updated_at": "2026-01-30T19:34:28.251Z",
+        "children": [
+          {
+            "id": "e06cbb09-c0ad-4d7d-9ad3-73bc2ac01aec",
+            "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+            "name": "Balık",
+            "parent_id": "07cf17ab-5099-40d1-9157-b820eb7a1890",
+            "level": 2,
+            "sort_order": 0,
+            "is_active": true,
+            "created_at": "2026-01-29T21:49:54.260Z",
+            "updated_at": "2026-01-29T21:49:54.260Z",
+            "children": [],
+            "products": [
+              {
+                "id": "e34e35a8-7e77-4e92-a90e-98c37058324c",
+                "name": "Lüfer",
+                "price": "500.00",
+                "description": "Balık, Roka,Limon. Balık ızgarada yapılmaktadır.",
+                "image_url": "/uploads/be8b8541-f427-4287-a00b-a0e9783e5209/production/1770581107330-573958017.jpg",
+                "menu_category_id": "e06cbb09-c0ad-4d7d-9ad3-73bc2ac01aec",
+                "sort_order": 0,
+                "takeaway_discount_percent": "0.00"
+              }
+            ]
+          },
+          {
+            "id": "80225371-fb1d-4e2f-a508-dd0c7e802440",
+            "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+            "name": "Ev Yemekleri",
+            "parent_id": "07cf17ab-5099-40d1-9157-b820eb7a1890",
+            "level": 2,
+            "sort_order": 0,
+            "is_active": true,
+            "created_at": "2026-02-08T19:47:40.204Z",
+            "updated_at": "2026-02-08T19:47:40.204Z",
+            "children": [],
+            "products": [
+              {
+                "id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+                "name": "KuruFasulye",
+                "price": "200.00",
+                "description": "",
+                "image_url": "/uploads/be8b8541-f427-4287-a00b-a0e9783e5209/production/1770581122880-969168095.jpg",
+                "menu_category_id": "80225371-fb1d-4e2f-a508-dd0c7e802440",
+                "sort_order": 0,
+                "takeaway_discount_percent": "25.00"
+              },
+              {
+                "id": "5af0b94d-d49c-472d-a068-6640afbbd6f7",
+                "name": "Pilav",
+                "price": "120.00",
+                "description": "",
+                "image_url": "/uploads/be8b8541-f427-4287-a00b-a0e9783e5209/production/1770581132761-26870301.jpg",
+                "menu_category_id": "80225371-fb1d-4e2f-a508-dd0c7e802440",
+                "sort_order": 0,
+                "takeaway_discount_percent": "10.00"
+              }
+            ]
+          }
+        ],
+        "products": [
+          {
+            "id": "90432b31-042a-4972-9c80-28f3e98fc5b2",
+            "name": "test",
+            "price": "4321.00",
+            "description": null,
+            "image_url": null,
+            "menu_category_id": "07cf17ab-5099-40d1-9157-b820eb7a1890",
+            "sort_order": 0,
+            "takeaway_discount_percent": "0.00"
+          },
+          {
+            "id": "bbbf24d5-2717-4745-a5b9-8906ac8f1c40",
+            "name": "testtttttt",
+            "price": "123.00",
+            "description": null,
+            "image_url": null,
+            "menu_category_id": "07cf17ab-5099-40d1-9157-b820eb7a1890",
+            "sort_order": 0,
+            "takeaway_discount_percent": "0.00"
+          }
+        ]
+      },
+      {
+        "id": "01278280-fb38-4e93-a042-d7967cd9fde4",
+        "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+        "name": "İçecekler",
+        "parent_id": null,
+        "level": 1,
+        "sort_order": 0,
+        "is_active": true,
+        "created_at": "2026-01-29T21:52:17.724Z",
+        "updated_at": "2026-01-29T21:52:17.724Z",
+        "children": [],
+        "products": [
+          {
+            "id": "2da00c9f-522b-403b-926d-04e89c670125",
+            "name": "Su",
+            "price": "10.00",
+            "description": null,
+            "image_url": null,
+            "menu_category_id": "01278280-fb38-4e93-a042-d7967cd9fde4",
+            "sort_order": 0,
+            "takeaway_discount_percent": "0.00"
+          },
+          {
+            "id": "179d6eda-a6a9-4655-96ee-f5e5e240657c",
+            "name": "test",
+            "price": "12.00",
+            "description": null,
+            "image_url": null,
+            "menu_category_id": "01278280-fb38-4e93-a042-d7967cd9fde4",
+            "sort_order": 0,
+            "takeaway_discount_percent": "0.00"
+          },
+          {
+            "id": "ffaa46c8-4046-4986-a49b-77fdf4a727c1",
+            "name": "Soda",
+            "price": "20.00",
+            "description": "",
+            "image_url": null,
+            "menu_category_id": "01278280-fb38-4e93-a042-d7967cd9fde4",
+            "sort_order": 1,
+            "takeaway_discount_percent": "0.00"
+          },
+          {
+            "id": "d21a8c5b-659a-454e-8b39-f2d42566fe42",
+            "name": "Kola",
+            "price": "50.00",
+            "description": "",
+            "image_url": "/uploads/be8b8541-f427-4287-a00b-a0e9783e5209/production/1769723582649-879321100.jpg",
+            "menu_category_id": "01278280-fb38-4e93-a042-d7967cd9fde4",
+            "sort_order": 2,
+            "takeaway_discount_percent": "3.00"
+          }
+        ]
+      },
+      {
+        "id": "51453b73-f4db-410e-8948-5911c3e4fee7",
+        "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+        "name": "Ara Sıcak",
+        "parent_id": null,
+        "level": 1,
+        "sort_order": 1,
+        "is_active": true,
+        "created_at": "2026-01-30T19:37:49.046Z",
+        "updated_at": "2026-01-30T19:37:49.046Z",
+        "children": [],
+        "products": [
+          {
+            "id": "0a947cc9-9682-45b6-9819-c6aceeac7260",
+            "name": "Paçanga",
+            "price": "200.00",
+            "description": null,
+            "image_url": null,
+            "menu_category_id": "51453b73-f4db-410e-8948-5911c3e4fee7",
+            "sort_order": 0,
+            "takeaway_discount_percent": "10.00"
+          }
+        ]
+      }
+    ],
+    "campaigns": [
+      {
+        "id": "80979d45-4fb5-4a0c-9bd2-4b4cbd4ff513",
+        "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+        "name": "Öğle Menusu",
+        "unique_code": "CMP-20260213-235414",
+        "description": "kuru pilav",
+        "discount_amount": "20.00",
+        "discount_type": "percent",
+        "is_active": true,
+        "created_at": "2026-02-13T20:55:00.566Z",
+        "updated_at": "2026-02-13T20:55:00.566Z",
+        "deleted_at": null,
+        "image_url": null,
+        "products": [
+          {
+            "product_id": "179d6eda-a6a9-4655-96ee-f5e5e240657c",
+            "quantity": 1,
+            "name": "test",
+            "price": 12
+          },
+          {
+            "product_id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+            "quantity": 1,
+            "name": "KuruFasulye",
+            "price": 200
+          }
+        ]
+      },
+      {
+        "id": "95a9a423-77af-4ae2-a250-b8ed639fe854",
+        "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+        "name": "Süper 2'li",
+        "unique_code": "123",
+        "description": "",
+        "discount_amount": "10.00",
+        "discount_type": "amount",
+        "is_active": true,
+        "created_at": "2026-02-12T22:31:57.912Z",
+        "updated_at": "2026-02-12T22:37:00.231Z",
+        "deleted_at": null,
+        "image_url": null,
+        "products": [
+          {
+            "product_id": "bbb8ac2e-6f3a-4fb7-b4de-af2130222fbb",
+            "quantity": 1,
+            "name": "KuruFasulye",
+            "price": 200
+          },
+          {
+            "product_id": "5af0b94d-d49c-472d-a068-6640afbbd6f7",
+            "quantity": 1,
+            "name": "Pilav",
+            "price": 120
+          }
+        ]
+      },
+      {
+        "id": "b8a18152-d22b-4c36-b62b-0a3b6e1cff87",
+        "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+        "name": "test",
+        "unique_code": "1234",
+        "description": "",
+        "discount_amount": "10.00",
+        "discount_type": "percent",
+        "is_active": true,
+        "created_at": "2026-02-12T22:32:21.285Z",
+        "updated_at": "2026-02-13T12:18:33.254Z",
+        "deleted_at": null,
+        "image_url": "/uploads/be8b8541-f427-4287-a00b-a0e9783e5209/production/1770983456461-765627894.jpg",
+        "products": [
+          {
+            "product_id": "ffaa46c8-4046-4986-a49b-77fdf4a727c1",
+            "quantity": 1,
+            "name": "Soda",
+            "price": 20
+          },
+          {
+            "product_id": "0a947cc9-9682-45b6-9819-c6aceeac7260",
+            "quantity": 1,
+            "name": "Paçanga",
+            "price": 200
+          }
+        ]
+      }
+    ]
+  }
+}

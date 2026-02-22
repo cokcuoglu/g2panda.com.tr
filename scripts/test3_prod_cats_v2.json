@@ -1,0 +1,242 @@
+[
+  {
+    "name": "Süsen",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Begonya",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Manolya",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Çikolatalı Kruvasan",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Çilek Kruvasan",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Kruvasan",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Kare Waffle",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "ESPRESSO",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "DOUBLE ESPRESSO",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "AMERICANO",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "MACCHIATO",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "CORTADO",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "FLAT WHITE",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "CAPPUCINO",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "NUT LATTE",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "CARAMEL LATTE",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "LATTE",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "MOCHA",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "FİLTRE KAHVE",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "TÜRK KAHVESİ",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "ICE ESPRESSO",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE CARAMEL LATTE",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE VANİLYA LATTE",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE FİLTRE KAHVE",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE CARAMEL FRAPPE",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE VANİLYA FRAPPE",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "LİMONATA",
+    "menu_category_id": "614fdffb-80c7-4ff7-b131-742cf972d97a",
+    "is_active": true
+  },
+  {
+    "name": "ÇİLEKLİ LİMONATA",
+    "menu_category_id": "614fdffb-80c7-4ff7-b131-742cf972d97a",
+    "is_active": true
+  },
+  {
+    "name": "BÖĞÜRTLENLİ LİMONATA",
+    "menu_category_id": "614fdffb-80c7-4ff7-b131-742cf972d97a",
+    "is_active": true
+  },
+  {
+    "name": "ÇAY",
+    "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa",
+    "is_active": true
+  },
+  {
+    "name": "FİNCAN ÇAY",
+    "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa",
+    "is_active": true
+  },
+  {
+    "name": "SODA",
+    "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa",
+    "is_active": true
+  },
+  {
+    "name": "MEYVELİ SODA",
+    "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa",
+    "is_active": true
+  },
+  {
+    "name": "DOUBLE TÜRK KAHESİ",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "SICAK ÇİKOLATA",
+    "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+    "is_active": true
+  },
+  {
+    "name": "ICE AMERICANO",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE FLAT WHITE",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE LATTE",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE MOCHA",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "ICE CHOCOLATE",
+    "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+    "is_active": true
+  },
+  {
+    "name": "CHURCHILL",
+    "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa",
+    "is_active": true
+  },
+  {
+    "name": "SU",
+    "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa",
+    "is_active": true
+  },
+  {
+    "name": "Nevra",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Lotus Manolya",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Mug Cup",
+    "menu_category_id": "84a79213-5623-4e36-8114-595ead40266c",
+    "is_active": true
+  },
+  {
+    "name": "Çilek & Muz Kruvasan",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Muz Kruvasan",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  },
+  {
+    "name": "Kamelya",
+    "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+    "is_active": true
+  }
+]

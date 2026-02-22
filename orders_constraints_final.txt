@@ -1,0 +1,24 @@
+archived_at | nullable: YES | default: null
+base_amount | nullable: YES | default: null
+created_at | nullable: NO | default: now()
+customer_address | nullable: YES | default: null
+customer_city | nullable: YES | default: null
+customer_district | nullable: YES | default: null
+customer_id | nullable: YES | default: null
+customer_name | nullable: YES | default: null
+customer_neighborhood | nullable: YES | default: null
+customer_phone | nullable: YES | default: null
+deleted_at | nullable: YES | default: null
+discount_amount | nullable: YES | default: 0
+id | nullable: NO | default: gen_random_uuid()
+items | nullable: NO | default: '[]'::jsonb
+note | nullable: YES | default: null
+order_number | nullable: NO | default: null
+order_type | nullable: YES | default: 'dine-in'::character varying
+status | nullable: NO | default: 'pending'::character varying
+table_code | nullable: YES | default: null
+table_id | nullable: YES | default: null
+table_number | nullable: YES | default: null
+total_amount | nullable: NO | default: 0
+updated_at | nullable: NO | default: now()
+user_id | nullable: NO | default: null

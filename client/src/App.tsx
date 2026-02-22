@@ -19,6 +19,12 @@ const CategoryReportPage = lazy(() => import('@/components/reports/CategoryRepor
 const PublicMenuPage = lazy(() => import('@/pages/PublicMenuPage'));
 const IncomingOrdersPage = lazy(() => import('@/pages/IncomingOrdersPage'));
 const CustomersPage = lazy(() => import('@/pages/CustomersPage'));
+const TableOrdersPage = lazy(() => import('@/pages/TableOrdersPage'));
+// Inventory Management Pages
+const RawMaterialsPage = lazy(() => import('@/pages/inventory/RawMaterialsPage'));
+const StockEntriesPage = lazy(() => import('@/pages/inventory/StockEntriesPage'));
+const StockStatusPage = lazy(() => import('@/pages/inventory/StockStatusPage'));
+// Campaigns are handled via Settings tab now
 
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center bg-slate-50/50">
@@ -27,12 +33,14 @@ const PageLoader = () => (
 );
 
 import { BusinessProvider } from '@/context/BusinessContext';
+import { GlobalOrderMonitor } from '@/components/GlobalOrderMonitor';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
         <BusinessProvider>
+          <GlobalOrderMonitor />
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/login" element={<Login />} />
@@ -68,6 +76,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <IncomingOrdersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tables"
+                element={
+                  <ProtectedRoute>
+                    <TableOrdersPage />
                   </ProtectedRoute>
                 }
               />
@@ -135,6 +151,31 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <CustomersPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Inventory Management Routes */}
+              <Route
+                path="/inventory/raw-materials"
+                element={
+                  <ProtectedRoute>
+                    <RawMaterialsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/inventory/stock-entries"
+                element={
+                  <ProtectedRoute>
+                    <StockEntriesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/inventory/stock-status"
+                element={
+                  <ProtectedRoute>
+                    <StockStatusPage />
                   </ProtectedRoute>
                 }
               />

@@ -1,0 +1,58 @@
+[
+  {
+    "id": "df7432ad-d243-45d5-a2d1-4c8c80752484",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "name": "Test Customer Updated",
+    "phone": "5551234567",
+    "address": "Test Address",
+    "notes": null,
+    "created_at": "2026-02-09T07:50:08.185Z",
+    "updated_at": "2026-02-09T07:50:08.192Z",
+    "deleted_at": null,
+    "city": null,
+    "district": null,
+    "neighborhood": null
+  },
+  {
+    "id": "93b3f5b1-68bd-423a-af74-684d9243c9e1",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "name": "Caner2",
+    "phone": "5309022660",
+    "address": "Test",
+    "notes": null,
+    "created_at": "2026-02-09T07:55:32.809Z",
+    "updated_at": "2026-02-09T08:13:26.278Z",
+    "deleted_at": null,
+    "city": "İstanbul",
+    "district": "Beşiktaş",
+    "neighborhood": "Dikilitaş"
+  },
+  {
+    "id": "e21eaf99-2417-4de2-9f51-6dcd72b757fd",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "name": "Caner3",
+    "phone": "5309022661",
+    "address": "Test",
+    "notes": null,
+    "created_at": "2026-02-09T08:14:13.976Z",
+    "updated_at": "2026-02-09T08:14:32.870Z",
+    "deleted_at": null,
+    "city": "İstanbul",
+    "district": "Beşiktaş",
+    "neighborhood": "Dikilitaş"
+  },
+  {
+    "id": "fcf5407d-dea3-4420-8a6d-64c44d6637d3",
+    "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+    "name": "Caner Okcuoğlu ",
+    "phone": "5309022660",
+    "address": "Dödkxm",
+    "notes": null,
+    "created_at": "2026-02-09T12:47:17.791Z",
+    "updated_at": "2026-02-09T12:47:17.791Z",
+    "deleted_at": null,
+    "city": "İstanbul",
+    "district": "Beşiktaş",
+    "neighborhood": "Dikilitaş"
+  }
+]

@@ -21,12 +21,16 @@ import {
     Utensils,
     QrCode,
     ExternalLink,
+    LayoutGrid as LayoutIcon,
 } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { cn } from '@/lib/utils';
+import { Tag } from 'lucide-react';
 import { CategoryManager } from '@/components/settings/CategoryManager';
 import { ChannelManager } from '@/components/settings/ChannelManager';
 import { MenuManager } from '@/components/menu/MenuManager';
+import { CampaignManager } from '@/components/campaigns/CampaignManager';
+import { TableLayoutDesigner } from '@/components/settings/TableLayoutDesigner';
 
 interface UserSettings {
     full_name: string;
@@ -179,35 +183,45 @@ export default function Settings() {
         <Layout title="Ayarlar" description="Profilinizi ve işletme tercihlerinizi yönetin">
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <Tabs defaultValue="profile" value={activeTab} onValueChange={handleTabChange} className="w-full">
-                    <TabsList className="grid w-full grid-cols-5 mb-8 max-w-3xl bg-slate-100/50 p-1 rounded-xl">
-                        <TabsTrigger value="profile" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
+                    <TabsList className="flex flex-wrap w-full mb-8 max-w-5xl bg-slate-100/50 p-1 rounded-xl h-auto gap-1">
+                        <TabsTrigger value="profile" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 py-2">
                             <User className="h-4 w-4" />
                             Profil
                         </TabsTrigger>
-
-
-                        {/* ... INSIDE component ... */}
-                        <TabsTrigger value="business" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
+                        <TabsTrigger value="business" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 py-2">
                             <Building2 className="h-4 w-4" />
                             İşletme
                         </TabsTrigger>
-                        <TabsTrigger value="menu" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
-                            <Utensils className="h-4 w-4" />
-                            Menü/Ürün
-                        </TabsTrigger>
-                        <TabsTrigger value="qr_menu" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
-                            <QrCode className="h-4 w-4" />
-                            Dijital Menü
-                        </TabsTrigger>
-                        <TabsTrigger value="data" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
+
+                        {/* Menu Management Group */}
+                        <div className="flex bg-slate-200/50 rounded-lg p-0.5 gap-0.5">
+                            <TabsTrigger value="menu" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 py-2 text-xs md:text-sm px-3">
+                                <Utensils className="h-4 w-4" />
+                                Menü/Ürün
+                            </TabsTrigger>
+                            <TabsTrigger value="campaigns" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 py-2 text-xs md:text-sm px-3">
+                                <Tag className="h-4 w-4" />
+                                Kampanyalar
+                            </TabsTrigger>
+                            <TabsTrigger value="qr_menu" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 py-2 text-xs md:text-sm px-3">
+                                <QrCode className="h-4 w-4" />
+                                Dijital Menü
+                            </TabsTrigger>
+                            <TabsTrigger value="tables" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 py-2 text-xs md:text-sm px-3">
+                                <LayoutIcon className="h-4 w-4" />
+                                Masa Yerleşimi
+                            </TabsTrigger>
+                        </div>
+
+                        <TabsTrigger value="data" className="flex-1 min-w-[150px] rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 py-2">
                             <Database className="h-4 w-4" />
                             Satış, Ödeme Araçları
                         </TabsTrigger>
-                        <TabsTrigger value="preferences" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
+                        <TabsTrigger value="preferences" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 py-2">
                             <Settings2 className="h-4 w-4" />
                             Tercihler
                         </TabsTrigger>
-                        <TabsTrigger value="danger" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 text-red-600 data-[state=active]:text-red-700">
+                        <TabsTrigger value="danger" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2 text-red-600 data-[state=active]:text-red-700 py-2">
                             <ShieldAlert className="h-4 w-4" />
                             Riskli Alan
                         </TabsTrigger>
@@ -362,6 +376,11 @@ export default function Settings() {
                             <MenuManager />
                         </TabsContent>
 
+                        {/* Campaigns Tab */}
+                        <TabsContent value="campaigns" className="outline-none">
+                            <CampaignManager />
+                        </TabsContent>
+
                         {/* QR Menu Tab */}
                         <TabsContent value="qr_menu" className="outline-none">
                             <Card className="border-none shadow-premium overflow-hidden">
@@ -404,6 +423,11 @@ export default function Settings() {
                                     </Alert>
                                 </CardContent>
                             </Card>
+                        </TabsContent>
+
+                        {/* Table Layout Tab */}
+                        <TabsContent value="tables" className="outline-none">
+                            <TableLayoutDesigner />
                         </TabsContent>
 
                         {/* Data Management Tab */}

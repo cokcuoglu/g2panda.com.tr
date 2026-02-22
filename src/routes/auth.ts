@@ -10,8 +10,8 @@ router.post('/login', async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     try {
-        // Query user from DB
-        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        // Query user from DB (Case-insensitive)
+        const result = await pool.query('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [email]);
         const user = result.rows[0];
 
         if (!user) {
@@ -67,8 +67,8 @@ router.post('/register', async (req: Request, res: Response) => {
     }
 
     try {
-        // Check if user exists
-        const userExists = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+        // Check if user exists (Case-insensitive)
+        const userExists = await pool.query('SELECT id FROM users WHERE LOWER(email) = LOWER($1)', [email]);
         if (userExists.rows.length > 0) {
             return res.status(400).json({ success: false, error: 'User already exists' });
         }
@@ -94,7 +94,7 @@ router.post('/register', async (req: Request, res: Response) => {
         `;
 
         const newUserValues = [
-            email,
+            email.toLowerCase(),
             password_hash,
             full_name,
             business_name || 'İşletmem',

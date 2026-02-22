@@ -1,0 +1,24 @@
+archived_at: timestamp without time zone
+base_amount: numeric
+created_at: timestamp with time zone
+customer_address: text
+customer_city: character varying
+customer_district: character varying
+customer_id: uuid
+customer_name: character varying
+customer_neighborhood: character varying
+customer_phone: character varying
+deleted_at: timestamp with time zone
+discount_amount: numeric
+id: uuid
+items: jsonb
+note: text
+order_number: character varying
+order_type: character varying
+status: character varying
+table_code: character varying
+table_id: uuid
+table_number: character varying
+total_amount: numeric
+updated_at: timestamp with time zone
+user_id: uuid

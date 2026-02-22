@@ -1,11 +1,12 @@
-
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import { cn } from '@/lib/utils';
 import { Layout } from '@/components/Layout';
 import { ProductCard } from '@/components/sales/ProductCard';
 import { OrderSummary } from '@/components/sales/OrderSummary';
 import { useAuth } from '@/context/AuthContext';
-import { AlertCircle, Loader2, TrendingUp } from 'lucide-react';
+import { AlertCircle, Loader2, TrendingUp, Trash2, Tag } from 'lucide-react';
 
 import {
     Dialog,
@@ -52,6 +53,10 @@ interface OrderItem {
 }
 
 export default function SalesMenuPage() {
+    const [searchParams] = useSearchParams();
+    const tableId = searchParams.get('tableId');
+    const orderId = searchParams.get('orderId');
+
     const { hasPermission } = useAuth();
     const [cart, setCart] = useState<OrderItem[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
@@ -69,22 +74,32 @@ export default function SalesMenuPage() {
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
 
     const [categories, setCategories] = useState<any[]>([]);
+    const [campaigns, setCampaigns] = useState<any[]>([]);
     const [selectedMenuCategoryId, setSelectedMenuCategoryId] = useState<string>('all');
 
     const [paymentChannels, setPaymentChannels] = useState<any[]>([]);
     const [selectedChannelId, setSelectedChannelId] = useState<string>('');
 
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [finalAmount, setFinalAmount] = useState<number | undefined>(undefined);
+    const [selectedCampaign, setSelectedCampaign] = useState<any | null>(null);
 
     const fetchProducts = async () => {
         setIsLoadingProducts(true);
         try {
-            const [prodRes, catRes] = await Promise.all([
+            const [prodRes, catRes, campRes] = await Promise.all([
                 axios.get('/api/products').catch(() => ({ data: { data: [] } })),
-                axios.get('/api/menu-categories').catch(() => ({ data: { data: [] } }))
+                axios.get('/api/menu-categories').catch(() => ({ data: { data: [] } })),
+                axios.get('/api/campaigns').catch(() => ({ data: { data: [] } }))
             ]);
             setProducts(Array.isArray(prodRes?.data?.data) ? prodRes.data.data : []);
             setCategories(Array.isArray(catRes?.data?.data) ? catRes.data.data : []);
+
+            // Only active campaigns
+            const activeCamps = Array.isArray(campRes?.data?.data)
+                ? campRes.data.data.filter((c: any) => c.is_active)
+                : [];
+            setCampaigns(activeCamps);
 
         } catch (error) {
             console.error("Failed to load products/categories", error);
@@ -109,27 +124,10 @@ export default function SalesMenuPage() {
     const activeProducts = products.filter(p => {
         if (!p.is_active) return false;
         if (selectedMenuCategoryId !== 'all') {
-            // Flatten all sub-categories of the selected category
-            // Note: 'categories' state currently holds the tree (roots with children?) 
-            // OR flat list? Backend '/api/menu-categories' usually returns flat list or tree?
-            // Let's check backend 'menu_categories.ts'. 
-            // If it returns tree (roots with nested children), we need to traverse tree.
-            // If it returns flat list, we can just filter by parent_id.
-
-            // Assuming 'categories' passed to state is the direct data from API.
-            // If API returns flat list, the recursive function above works.
-            // If API returns Tree, we need to search the tree.
-
-            // Let's assume flat list for safety or verify backend.
-            // Backend `menu_categories.ts` usually builds a tree if using `getTree` logic.
-            // But lets look at `SalesMenuPage` fetch: `catRes.data.data`.
-            // If the API is `res.json({ data: tree })`, then `categories` is a list of roots.
-
-            // To support both (or if unsure), let's assume we match `menu_category_id` 
-            // OR the product's category is a descendant.
-
-            // SIMPLE FIX: API probably returns TREE.
-            // If tree, we need to find the selected node in the forest, then collect all its descendants.
+            if (selectedMenuCategoryId === 'uncategorized') {
+                return !p.menu_category_id;
+            }
+            if (selectedMenuCategoryId === 'campaigns') return true; // Handled separately in render
 
             const findNode = (nodes: any[], id: string): any => {
                 for (const node of nodes) {
@@ -204,6 +202,8 @@ export default function SalesMenuPage() {
     }, []);
 
     const handleProductClick = (product: Product) => {
+        setSelectedCampaign(null);
+        setFinalAmount(undefined);
         setCart(prev => {
             const existing = prev.find(item => item.id === product.id);
             if (existing) {
@@ -217,7 +217,29 @@ export default function SalesMenuPage() {
         });
     };
 
+    const handleCampaignClick = (campaign: any) => {
+        setSelectedCampaign(campaign);
+        const items = campaign.products.map((p: any) => ({
+            id: p.product_id,
+            name: p.name,
+            price: Number(p.price),
+            quantity: p.quantity
+        }));
+        setCart(items);
+
+        const subtotal = items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
+        let total = subtotal;
+        if (campaign.discount_type === 'amount') {
+            total = Math.max(0, subtotal - Number(campaign.discount_amount));
+        } else {
+            total = subtotal * (1 - Number(campaign.discount_amount) / 100);
+        }
+        setFinalAmount(Number(total.toFixed(2)));
+    };
+
     const handleUpdateQuantity = (id: string, delta: number) => {
+        setSelectedCampaign(null); // Reset campaign if manual change
+        setFinalAmount(undefined);
         setCart(prev => prev.map(item => {
             if (item.id === id) {
                 const newQty = Math.max(1, item.quantity + delta);
@@ -228,14 +250,21 @@ export default function SalesMenuPage() {
     };
 
     const handleRemoveItem = (id: string) => {
+        setSelectedCampaign(null); // Reset campaign if manual change
+        setFinalAmount(undefined);
         setCart(prev => prev.filter(item => item.id !== id));
     };
 
     const handleInitiateOrder = () => {
-        // Updated check: Ensure we have a channel selected OR available to select?
-        // Actually logic was: if (cart.length === 0 || !defaultChannelId) return;
-        // Now valid selection happens in dialog. So just check cart.
         if (cart.length === 0) return;
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        // If a campaign is selected, we keep the finalAmount that was set by handleCampaignClick.
+        // If not, we set it to the base total.
+        if (!selectedCampaign) {
+            setFinalAmount(total);
+        }
+
         setIsConfirmDialogOpen(true);
     };
 
@@ -243,6 +272,10 @@ export default function SalesMenuPage() {
 
     // Daily Total Logic
     const [dailyTotal, setDailyTotal] = useState(0);
+
+    // Daily Sales List
+    const [dailySales, setDailySales] = useState<any[]>([]);
+    const [isLoadingSales, setIsLoadingSales] = useState(false);
 
     const fetchDailyTotal = async () => {
         try {
@@ -260,9 +293,63 @@ export default function SalesMenuPage() {
         }
     };
 
+    const fetchDailySales = async () => {
+        setIsLoadingSales(true);
+        try {
+            // Get today's date in YYYY-MM-DD format
+            const localDate = new Date();
+            const offset = localDate.getTimezoneOffset();
+            const localISOTime = new Date(localDate.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+
+            // Fetch today's income transactions (sales)
+            const res = await axios.get(`/api/transactions?type=income&date=${localISOTime}`);
+            setDailySales(res.data.data || []);
+        } catch (error) {
+            console.error('Failed to fetch daily sales:', error);
+            setDailySales([]);
+        } finally {
+            setIsLoadingSales(false);
+        }
+    };
+
+    const handleDeleteOrder = async (transactionId: string, description: string) => {
+        if (!confirm(`"${description}" işlemini kalıcı olarak silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz!`)) {
+            return;
+        }
+
+        try {
+            await axios.delete(`/api/transactions/${transactionId}`);
+            // Refresh lists
+            fetchDailySales();
+            fetchDailyTotal();
+        } catch (error: any) {
+            console.error('Failed to delete transaction:', error);
+            alert(error.response?.data?.error || 'İşlem silinemedi.');
+        }
+    };
+
     useEffect(() => {
         fetchDailyTotal();
-    }, []);
+        fetchDailySales();
+
+        // If orderId is provided, fetch the existing order data
+        if (orderId) {
+            const fetchOrder = async () => {
+                try {
+                    const res = await axios.get(`/api/orders/${orderId}`);
+                    if (res.data.data) {
+                        const order = res.data.data;
+                        if (Array.isArray(order.items)) {
+                            setCart(order.items);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch order:', err);
+                }
+            };
+            fetchOrder();
+        }
+    }, [orderId]);
 
     // Finalize Order
     const handleFinalizeOrder = async () => {
@@ -270,35 +357,55 @@ export default function SalesMenuPage() {
 
         setIsProcessing(true);
         try {
-            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const actualAmount = finalAmount !== undefined ? finalAmount : cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const baseTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discountAmount = Math.max(0, baseTotal - actualAmount);
 
             // Generate summary description
             const summary = cart.map(item => `${item.name} x${item.quantity}`).join(', ');
 
             const payload = {
                 type: 'income',
-                amount: totalAmount,
-                description: `Adisyon: ${summary}`,
+                amount: actualAmount,
+                base_amount: baseTotal,
+                discount_amount: discountAmount,
+                description: selectedCampaign ? `Kampanya: ${selectedCampaign.name}` : `Adisyon: ${summary}`,
                 category_id: selectedCategoryId,
                 channel_id: selectedChannelId,
-                // CRITICAL: Use Turkey time (UTC+3) to avoid date shifting
-                // Direct offset calculation is more reliable than toLocaleString
-                transaction_date: (() => {
-                    const now = new Date();
-                    // Add 3 hours (Turkey is UTC+3) to UTC time
-                    const turkeyTime = new Date(now.getTime() + (3 * 60 * 60 * 1000));
-                    return turkeyTime.toISOString();
-                })()
+                transaction_date: new Date().toISOString(),
+                campaign_id: selectedCampaign?.id || null,
+                campaign_code: selectedCampaign?.unique_code || null,
+                table_id: tableId || null,
+                order_id: orderId || null,
+                items: cart.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    unit_price: item.price,
+                    total_price: item.price * item.quantity,
+                    is_stock: true // Assume all sales items are stock related for now, or let backend decide
+                }))
             };
 
             await axios.post('/api/transactions', payload);
 
+            // If it's a table order, we might want to close the order in the 'orders' table too
+            // or mark it as paid. The backend transaction logic usually handles this if integrated.
+            // For now, let's at least ensure table status is updated if not already done.
+            if (tableId) {
+                await axios.patch(`/api/tables/${tableId}`, { status: 'available' });
+            }
+
             setCart([]); // Clear cart on success
+            setFinalAmount(undefined); // Reset final amount
+            setSelectedCampaign(null); // Clear selected campaign
             setIsConfirmDialogOpen(false); // Close dialog
 
             // Optimistic update
-            setDailyTotal(prev => prev + totalAmount);
-            setTimeout(() => fetchDailyTotal(), 500);
+            setDailyTotal(prev => prev + actualAmount);
+            setTimeout(() => {
+                fetchDailyTotal();
+                fetchDailySales();
+            }, 500);
 
         } catch (error: any) {
             console.error("Sale failed", error);
@@ -346,6 +453,20 @@ export default function SalesMenuPage() {
                         >
                             Tümü
                         </Button>
+                        {campaigns.length > 0 && (
+                            <Button
+                                variant={selectedMenuCategoryId === 'campaigns' ? 'default' : 'ghost'}
+                                size="sm"
+                                onClick={() => setSelectedMenuCategoryId('campaigns')}
+                                className={cn(
+                                    "text-xs h-7 whitespace-nowrap",
+                                    selectedMenuCategoryId === 'campaigns' ? "bg-orange-600 hover:bg-orange-700" : ""
+                                )}
+                            >
+                                <Tag className="h-3 w-3 mr-1" />
+                                Kampanyalar
+                            </Button>
+                        )}
                         {categories.map((cat: any) => (
                             <Button
                                 key={cat.id}
@@ -357,6 +478,16 @@ export default function SalesMenuPage() {
                                 {cat.name}
                             </Button>
                         ))}
+                        {products.some(p => !p.menu_category_id && p.is_active) && (
+                            <Button
+                                variant={selectedMenuCategoryId === 'uncategorized' ? 'default' : 'ghost'}
+                                size="sm"
+                                onClick={() => setSelectedMenuCategoryId('uncategorized')}
+                                className="text-xs h-7 whitespace-nowrap"
+                            >
+                                Diğer
+                            </Button>
+                        )}
                     </div>
                 }
             >
@@ -419,6 +550,31 @@ export default function SalesMenuPage() {
                                 return (
                                     <div className="flex items-center justify-center py-20 opacity-50">
                                         <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+                                    </div>
+                                );
+                            }
+
+                            if (selectedMenuCategoryId === 'campaigns') {
+                                return (
+                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-20">
+                                        {campaigns.map(campaign => {
+                                            const baseTotal = (campaign.products || []).reduce((acc: number, p: any) => acc + (Number(p.price || 0) * p.quantity), 0);
+                                            const finalPrice = campaign.discount_type === 'amount'
+                                                ? Math.max(0, baseTotal - Number(campaign.discount_amount))
+                                                : baseTotal * (1 - Number(campaign.discount_amount) / 100);
+
+                                            return (
+                                                <ProductCard
+                                                    key={campaign.id}
+                                                    name={campaign.name}
+                                                    price={finalPrice}
+                                                    originalPrice={baseTotal}
+                                                    color="orange"
+                                                    image_url={campaign.image_url}
+                                                    onClick={() => handleCampaignClick(campaign)}
+                                                />
+                                            );
+                                        })}
                                     </div>
                                 );
                             }
@@ -512,6 +668,59 @@ export default function SalesMenuPage() {
                                 </div>
                             );
                         })()}
+
+                        {/* Daily Sales List - Moved inside the scrollable container */}
+                        <div className="mt-12 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-24">
+                            <div className="p-4 border-b border-slate-100 bg-slate-50">
+                                <h3 className="font-semibold text-lg text-slate-800">Bugünün Satışları</h3>
+                                <p className="text-xs text-slate-500 mt-1">Tamamlanan siparişler</p>
+                            </div>
+
+                            <div className="p-4">
+                                {isLoadingSales ? (
+                                    <div className="flex items-center justify-center py-8 text-slate-400">
+                                        <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                                        Yükleniyor...
+                                    </div>
+                                ) : dailySales.length === 0 ? (
+                                    <div className="text-center py-8 text-slate-400">
+                                        <p>Henüz tamamlanmış sipariş yok.</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {dailySales.map((transaction: any) => (
+                                            <div
+                                                key={transaction.id}
+                                                className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors"
+                                            >
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-3 mb-1">
+                                                        <span className="font-semibold text-slate-800">#{transaction.description}</span>
+                                                        <span className="text-xs text-slate-500">
+                                                            {new Date(transaction.transaction_date || transaction.created_at).toLocaleTimeString('tr-TR', {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            })}
+                                                        </span>
+                                                    </div>
+                                                    <div className="mt-1 font-semibold text-emerald-600">
+                                                        ₺{Number(transaction.amount).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                    onClick={() => handleDeleteOrder(transaction.id, transaction.description)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     {/* Right: Order Summary. Hidden on mobile, shown on lg screens. */}
@@ -522,6 +731,7 @@ export default function SalesMenuPage() {
                             onRemove={handleRemoveItem}
                             onConfirm={handleInitiateOrder}
                             isProcessing={isProcessing}
+                            finalAmount={finalAmount}
                         />
                     </div>
 
@@ -537,7 +747,7 @@ export default function SalesMenuPage() {
                                         <span>Sepeti Görüntüle</span>
                                     </div>
                                     <span className="font-bold text-lg">
-                                        ₺{cart.reduce((acc, item) => acc + (item.price * item.quantity), 0).toLocaleString('tr-TR')}
+                                        ₺{(finalAmount !== undefined ? finalAmount : cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)).toLocaleString('tr-TR')}
                                     </span>
                                 </Button>
                             </SheetTrigger>
@@ -555,6 +765,7 @@ export default function SalesMenuPage() {
                                             handleInitiateOrder();
                                         }}
                                         isProcessing={isProcessing}
+                                        finalAmount={finalAmount}
                                     />
                                 </div>
                             </SheetContent>
@@ -608,6 +819,43 @@ export default function SalesMenuPage() {
                                     </Select>
                                 </div>
                             </div>
+
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="amount" className="text-right">
+                                    Tahsil Edilecek
+                                </Label>
+                                <div className="col-span-3">
+                                    <div className="relative">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₺</div>
+                                        <input
+                                            type="number"
+                                            id="amount"
+                                            className="w-full pl-7 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold text-lg"
+                                            value={finalAmount}
+                                            onChange={(e) => setFinalAmount(Number(e.target.value))}
+                                        />
+                                    </div>
+                                    {(() => {
+                                        const originalTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                                        const displayAmount = finalAmount !== undefined ? finalAmount : originalTotal;
+                                        if (displayAmount < originalTotal) {
+                                            const discount = originalTotal - displayAmount;
+                                            return (
+                                                <div className="mt-2 flex items-center gap-2">
+                                                    <span className="text-sm text-slate-400 line-through">
+                                                        ₺{originalTotal.toLocaleString('tr-TR')}
+                                                    </span>
+                                                    <span className="text-xs font-bold px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">
+                                                        ₺{discount.toLocaleString('tr-TR')} indirim
+                                                    </span>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="channel" className="text-right">
                                     Ödeme Yöntemi
@@ -645,7 +893,7 @@ export default function SalesMenuPage() {
                         </div>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setIsConfirmDialogOpen(false)}>İptal</Button>
-                            <Button onClick={handleFinalizeOrder} disabled={isProcessing}>
+                            <Button onClick={handleFinalizeOrder} disabled={isProcessing || !selectedChannelId}>
                                 {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Satışı Onayla
                             </Button>

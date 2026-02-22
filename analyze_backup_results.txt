@@ -1,0 +1,9 @@
+📦 Analyzing Backup Data...
+
+👤 User: test3@test.com (cnr2)
+   - Transactions in backup: 215
+   - Products in backup: 12
+
+👤 User: ozan.demirci28@gmail.com (Kullanıcı)
+   - Transactions in backup: 29
+   - Products in backup: 48

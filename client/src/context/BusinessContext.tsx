@@ -15,18 +15,21 @@ interface BusinessContextType {
     isLoading: boolean;
     switchBusiness: (businessId: string) => Promise<void>;
     fetchBusinesses: () => Promise<void>;
+    hasPendingOrders: boolean;
+    hasServiceRequests: boolean;
+    refreshOrderState: () => Promise<void>;
 }
 
 const BusinessContext = createContext<BusinessContextType | undefined>(undefined);
 
 export const BusinessProvider = ({ children }: { children: ReactNode }) => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading: authLoading } = useAuth();
     const [businesses, setBusinesses] = useState<Business[]>([]);
     const [activeBusiness, setActiveBusiness] = useState<Business | null>(null);
     const [isLoading, setIsLoading] = useState(false); // Do not block initial load
 
     const fetchBusinesses = async () => {
-        if (!isAuthenticated) return;
+        if (!isAuthenticated || authLoading) return;
 
         setIsLoading(true);
         try {
@@ -84,10 +87,49 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated && !authLoading) {
             fetchBusinesses();
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, authLoading]);
+
+    // Global Order Monitoring (Moved from GlobalOrderMonitor)
+    const [hasPendingOrders, setHasPendingOrders] = useState(false);
+    const [hasServiceRequests, setHasServiceRequests] = useState(false);
+
+    const refreshOrderState = async () => {
+        if (!isAuthenticated || authLoading) return;
+        try {
+            const tablesRes = await axios.get('/api/tables');
+            const activeTables = tablesRes.data.data.filter((t: any) => t.status === 'active');
+
+            const foundServiceRequest = tablesRes.data.data.some((t: any) => t.service_request);
+            setHasServiceRequests(foundServiceRequest);
+
+            let foundPending = false;
+
+            await Promise.all(activeTables.map(async (table: any) => {
+                try {
+                    const orderRes = await axios.get(`/api/table-orders/${table.id}`);
+                    if (orderRes.data.data && orderRes.data.data.status === 'pending') {
+                        foundPending = true;
+                    }
+                } catch (e) { /* ignore */ }
+            }));
+
+            setHasPendingOrders(foundPending);
+        } catch (err) {
+            console.error("Order Check Error:", err);
+        }
+    };
+
+    useEffect(() => {
+        if (!isAuthenticated || authLoading) return;
+
+        refreshOrderState(); // Initial check
+        const interval = setInterval(refreshOrderState, 3000); // 3s Interval
+        return () => clearInterval(interval);
+    }, [isAuthenticated, authLoading]);
+
 
     return (
         <BusinessContext.Provider value={{
@@ -95,7 +137,10 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
             activeBusiness,
             isLoading,
             switchBusiness,
-            fetchBusinesses
+            fetchBusinesses,
+            hasPendingOrders,
+            hasServiceRequests,
+            refreshOrderState
         }}>
             {children}
         </BusinessContext.Provider>

@@ -124,7 +124,7 @@ export default function Login() {
                 </Card>
 
                 <p className="mt-8 text-center text-sm text-slate-500">
-                    Hesabınız yok mu? <Link to="/register" className="font-medium text-primary hover:underline">Kaydolun</Link>
+                    Hesabınız yok mu? <Link to="/register" className="font-medium text-primary hover:underline">Başvuru Yapın</Link>
                 </p>
             </div>
         </div>

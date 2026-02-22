@@ -1,0 +1,14 @@
+Start Deep Investigation
+🔍 Listing ALL users in public.users...
+{"id":"ec606148-bad2-45ed-8e51-83c2422e8832","email":"ahmet@yilmazmarket.com","full_name":"Ahmet Yılmaz","role":"OWNER","deleted_at":null}
+{"id":"11111111-1111-1111-1111-111111111111","email":"usera@test.com","full_name":"User A","role":"OWNER","deleted_at":null}
+{"id":"22222222-2222-2222-2222-222222222222","email":"userb@test.com","full_name":"User B","role":"OWNER","deleted_at":null}
+
+🔍 Attempting to query auth.users...
+❌ Could not query auth.users: "auth.users" nesnesi mevcut değil
+
+🔍 Checking for orphaned transactions...
+✅ No orphaned transactions found.
+
+🔍 Global Transaction Count:
+Total transactions in DB: 20
