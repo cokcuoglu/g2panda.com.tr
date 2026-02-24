@@ -13,6 +13,7 @@ interface Category {
     name: string;
     type: 'income' | 'expense';
     color: string | null;
+    is_default?: boolean;
     default_channel_id?: string | null;
     form_channel_ids?: string[];
     service_commission_rate?: number;
@@ -35,6 +36,7 @@ export const CategoryManager = () => {
         name: string;
         type: 'income' | 'expense';
         color: string | null;
+        is_default: boolean;
         default_channel_id: string | null;
         form_channel_ids: string[];
         service_commission_rate: number;
@@ -43,6 +45,7 @@ export const CategoryManager = () => {
         name: '',
         type: 'expense',
         color: COLORS[0],
+        is_default: false,
         default_channel_id: null,
         form_channel_ids: [],
         service_commission_rate: 0,
@@ -96,6 +99,7 @@ export const CategoryManager = () => {
                 name: category.name,
                 type: category.type,
                 color: category.color || COLORS[0],
+                is_default: !!category.is_default,
                 default_channel_id: category.default_channel_id || null,
                 form_channel_ids: category.form_channel_ids || [],
                 service_commission_rate: category.service_commission_rate || 0,
@@ -107,6 +111,7 @@ export const CategoryManager = () => {
                 name: '',
                 type: 'expense',
                 color: COLORS[0],
+                is_default: false,
                 default_channel_id: null,
                 form_channel_ids: [],
                 service_commission_rate: 0,
@@ -184,7 +189,14 @@ export const CategoryManager = () => {
                                                     <span className="text-xs font-bold text-white opacity-90">{cat.name.substring(0, 1)}</span>
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-semibold text-sm text-slate-700">{cat.name}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-semibold text-sm text-slate-700">{cat.name}</span>
+                                                        {cat.is_default && (
+                                                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                                                Varsayılan
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     {(cat.form_channel_ids?.length || 0) > 0 && (
                                                         <span className="text-[10px] text-slate-400 font-medium">
                                                             {cat.form_channel_ids?.length} Ödeme Aracı Bağlı
@@ -230,7 +242,14 @@ export const CategoryManager = () => {
                                                     <span className="text-xs font-bold text-white opacity-90">{cat.name.substring(0, 1)}</span>
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-semibold text-sm text-slate-700">{cat.name}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-semibold text-sm text-slate-700">{cat.name}</span>
+                                                        {cat.is_default && (
+                                                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200">
+                                                                Varsayılan
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <span className="text-[10px] text-slate-400 font-medium">Gider Kalemi</span>
                                                 </div>
                                             </div>
@@ -420,6 +439,30 @@ export const CategoryManager = () => {
                                     ))}
                                 </div>
                             </div>
+
+                            <div className="flex items-center justify-between p-3 border rounded-lg bg-slate-50 border-slate-200">
+                                <div className="space-y-0.5">
+                                    <Label className="text-base font-medium text-slate-700">Varsayılan Kategori Yap</Label>
+                                    <p className="text-xs text-slate-500">
+                                        Satış gibi işlemlerde öncelikli olarak seçili gelir.
+                                    </p>
+                                </div>
+                                <div
+                                    className={cn(
+                                        "w-11 h-6 rounded-full transition-colors cursor-pointer relative",
+                                        formData.is_default ? "bg-emerald-500" : "bg-slate-300"
+                                    )}
+                                    onClick={() => setFormData({ ...formData, is_default: !formData.is_default })}
+                                >
+                                    <div
+                                        className={cn(
+                                            "w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform shadow-sm",
+                                            formData.is_default ? "translate-x-5.5 left-0.5" : "translate-x-0.5 left-0"
+                                        )}
+                                    />
+                                </div>
+                            </div>
+
                             <DialogFooter>
                                 <Button type="submit" disabled={isSaving}>
                                     {isSaving ? 'Kaydediliyor...' : 'Kaydet'}

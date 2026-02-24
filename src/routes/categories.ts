@@ -47,11 +47,16 @@ router.get('/', async (req: Request, res: Response) => {
 // POST /api/categories
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const { name, type, color, expense_type, default_channel_id, channel_ids, service_commission_rate, courier_service_rate } = req.body;
+        const { name, type, color, expense_type, default_channel_id, channel_ids, service_commission_rate, courier_service_rate, is_default } = req.body;
+
+        // If this one is set as default, unset others of the same type
+        if (is_default) {
+            await req.db.query(`UPDATE categories SET is_default = false WHERE user_id = $1 AND type = $2`, [req.user?.id, type]);
+        }
 
         const query = `
-            INSERT INTO categories (name, type, color, user_id, expense_type, default_channel_id, service_commission_rate, courier_service_rate) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+            INSERT INTO categories (name, type, color, user_id, expense_type, default_channel_id, service_commission_rate, courier_service_rate, is_default) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
             RETURNING *
         `;
         const result = await req.db.query(query, [
@@ -62,7 +67,8 @@ router.post('/', async (req: Request, res: Response) => {
             expense_type || null,
             default_channel_id || null,
             service_commission_rate || 0,
-            courier_service_rate || 0
+            courier_service_rate || 0,
+            !!is_default
         ]);
         const newCategory = result.rows[0];
 
@@ -88,13 +94,18 @@ router.post('/', async (req: Request, res: Response) => {
 router.put('/:id', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { name, type, color, expense_type, default_channel_id, channel_ids, service_commission_rate, courier_service_rate } = req.body;
+        const { name, type, color, expense_type, default_channel_id, channel_ids, service_commission_rate, courier_service_rate, is_default } = req.body;
+
+        // If this one is set as default, unset others of the same type
+        if (is_default) {
+            await req.db.query(`UPDATE categories SET is_default = false WHERE user_id = $1 AND type = $2 AND id != $3`, [req.user?.id, type, id]);
+        }
 
         const query = `
             UPDATE categories 
             SET name = $1, type = $2, color = $3, expense_type = $4, default_channel_id = $5, 
-                service_commission_rate = $6, courier_service_rate = $7, updated_at = NOW()
-            WHERE id = $8 AND deleted_at IS NULL
+                service_commission_rate = $6, courier_service_rate = $7, is_default = $8, updated_at = NOW()
+            WHERE id = $9 AND deleted_at IS NULL
             RETURNING *
         `;
 
@@ -106,6 +117,7 @@ router.put('/:id', async (req: Request, res: Response) => {
             default_channel_id || null,
             service_commission_rate || 0,
             courier_service_rate || 0,
+            !!is_default,
             id
         ]);
 

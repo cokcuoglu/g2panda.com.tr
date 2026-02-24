@@ -35,6 +35,7 @@ interface TableOrderInfo {
     item_count?: number;
     status?: 'pending' | 'confirmed' | 'completed' | 'rejected';
     updated_at?: string;
+    order_type?: string;
 }
 
 export default function TableOrdersPage() {
@@ -69,7 +70,8 @@ export default function TableOrdersPage() {
                             item_count: Array.isArray(order.items) ? order.items.length : 0,
                             duration_minutes: Math.floor((Date.now() - new Date(order.created_at).getTime()) / 60000),
                             status: order.status,
-                            updated_at: order.updated_at
+                            updated_at: order.updated_at,
+                            order_type: order.order_type
                         };
                     }
                 } catch (err) {
@@ -154,8 +156,8 @@ export default function TableOrdersPage() {
                                 >
                                     {isActive && (
                                         <div className="absolute top-0 right-0 p-1 z-10">
-                                            {/* Blinking for pending (new) orders, solid for confirmed */}
-                                            {order?.status === 'pending' ? (
+                                            {/* Blinking for pending QR orders, solid for confirmed/merchant */}
+                                            {order?.status === 'pending' && (!order.order_type || order.order_type !== 'merchant') ? (
                                                 <>
                                                     <div className="h-3 w-3 rounded-full bg-orange-500 animate-ping absolute" />
                                                     <div className="h-3 w-3 rounded-full bg-orange-500 relative" />

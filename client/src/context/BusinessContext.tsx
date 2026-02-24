@@ -7,17 +7,20 @@ interface Business {
     id: string;
     name: string;
     type?: string;
+    is_open?: boolean;
 }
 
 interface BusinessContextType {
     businesses: Business[];
     activeBusiness: Business | null;
+    isOpen: boolean;
     isLoading: boolean;
     switchBusiness: (businessId: string) => Promise<void>;
     fetchBusinesses: () => Promise<void>;
     hasPendingOrders: boolean;
     hasServiceRequests: boolean;
     refreshOrderState: () => Promise<void>;
+    setIsOpen: (open: boolean) => void;
 }
 
 const BusinessContext = createContext<BusinessContextType | undefined>(undefined);
@@ -26,6 +29,7 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
     const { isAuthenticated, isLoading: authLoading } = useAuth();
     const [businesses, setBusinesses] = useState<Business[]>([]);
     const [activeBusiness, setActiveBusiness] = useState<Business | null>(null);
+    const [isOpen, setIsOpen] = useState(true);
     const [isLoading, setIsLoading] = useState(false); // Do not block initial load
 
     const fetchBusinesses = async () => {
@@ -39,15 +43,15 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
 
             // Set active business logic
             if (businessList.length > 0) {
-                // If we have a stored active business ID, try to find it
                 const storedBusinessId = localStorage.getItem('active_business_id');
                 const found = businessList.find((b: Business) => b.id === storedBusinessId);
 
                 if (found) {
                     setActiveBusiness(found);
+                    setIsOpen(found.is_open ?? true);
                 } else {
-                    // Default to first
                     setActiveBusiness(businessList[0]);
+                    setIsOpen(businessList[0].is_open ?? true);
                     localStorage.setItem('active_business_id', businessList[0].id);
                 }
             } else {
@@ -55,10 +59,6 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch (error) {
             console.error('Error fetching businesses:', error);
-            // Mock data for MVP if backend is empty/failing during dev
-            if (businesses.length === 0) {
-                // Optionally set dummy data or leave empty
-            }
         } finally {
             setIsLoading(false);
         }
@@ -69,15 +69,11 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
             const target = businesses.find(b => b.id === businessId);
             if (!target) return;
 
-            // Optimistic UI update
             setActiveBusiness(target);
+            setIsOpen(target.is_open ?? true);
             localStorage.setItem('active_business_id', target.id);
 
-            // Notify backend to switch session context (if needed)
             await axios.post('/api/businesses/switch', { business_id: businessId });
-
-            // Reload page to refresh all data with new context
-            // This is a simple way to ensure all active queries (Dashboard, Settings, etc) strictly obey the new context
             window.location.reload();
 
         } catch (error) {
@@ -92,33 +88,43 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [isAuthenticated, authLoading]);
 
-    // Global Order Monitoring (Moved from GlobalOrderMonitor)
+    // Global Monitoring (Orders + Business Status)
     const [hasPendingOrders, setHasPendingOrders] = useState(false);
     const [hasServiceRequests, setHasServiceRequests] = useState(false);
 
     const refreshOrderState = async () => {
         if (!isAuthenticated || authLoading) return;
         try {
-            const tablesRes = await axios.get('/api/tables');
-            const activeTables = tablesRes.data.data.filter((t: any) => t.status === 'active');
+            // Also fetch business status to keep isOpen reactive across tabs
+            const [tablesRes, statusRes] = await Promise.all([
+                axios.get('/api/tables'),
+                axios.get('/api/business-status')
+            ]);
 
+            if (statusRes.data.success) {
+                setIsOpen(statusRes.data.data.is_open);
+            }
+
+            const activeTables = tablesRes.data.data.filter((t: any) => t.status === 'active');
             const foundServiceRequest = tablesRes.data.data.some((t: any) => t.service_request);
             setHasServiceRequests(foundServiceRequest);
 
             let foundPending = false;
-
             await Promise.all(activeTables.map(async (table: any) => {
                 try {
                     const orderRes = await axios.get(`/api/table-orders/${table.id}`);
-                    if (orderRes.data.data && orderRes.data.data.status === 'pending') {
-                        foundPending = true;
+                    if (orderRes.data.data) {
+                        const order = orderRes.data.data;
+                        if (order.status === 'pending' && order.order_type !== 'merchant') {
+                            foundPending = true;
+                        }
                     }
                 } catch (e) { /* ignore */ }
             }));
 
             setHasPendingOrders(foundPending);
         } catch (err) {
-            console.error("Order Check Error:", err);
+            console.error("Order/Status Check Error:", err);
         }
     };
 
@@ -126,7 +132,7 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
         if (!isAuthenticated || authLoading) return;
 
         refreshOrderState(); // Initial check
-        const interval = setInterval(refreshOrderState, 3000); // 3s Interval
+        const interval = setInterval(refreshOrderState, 5000); // 5s Interval
         return () => clearInterval(interval);
     }, [isAuthenticated, authLoading]);
 
@@ -135,12 +141,14 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
         <BusinessContext.Provider value={{
             businesses,
             activeBusiness,
+            isOpen,
             isLoading,
             switchBusiness,
             fetchBusinesses,
             hasPendingOrders,
             hasServiceRequests,
-            refreshOrderState
+            refreshOrderState,
+            setIsOpen
         }}>
             {children}
         </BusinessContext.Provider>

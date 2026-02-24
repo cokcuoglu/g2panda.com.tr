@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { cn } from "@/lib/utils";
 import { Layout } from '@/components/Layout';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, XCircle, Clock, MapPin, ChevronDown, ChevronUp, Archive, Receipt } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -33,7 +35,6 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Label } from "@/components/ui/label";
-import { Loader2, CheckCircle, XCircle, Clock, MapPin, ChevronDown, ChevronUp, Archive } from 'lucide-react';
 
 export default function IncomingOrdersPage() {
     const [todayOrders, setTodayOrders] = useState<any[]>([]);
@@ -79,7 +80,7 @@ export default function IncomingOrdersPage() {
 
     const fetchTodayOrders = async () => {
         try {
-            const res = await axios.get('/api/orders?archived=false&limit=100');
+            const res = await axios.get('/api/orders?archived=false&exclude_type=dine-in&limit=100');
             const newOrders = res.data.data;
             console.log("Incoming Orders Debug:", newOrders.map((o: any) => ({ id: o.id, type: o.order_type, status: o.status })));
             setTodayOrders(newOrders);
@@ -128,7 +129,7 @@ export default function IncomingOrdersPage() {
 
     const fetchArchivedOrders = async () => {
         try {
-            const res = await axios.get(`/api/orders?archived=true&limit=${archiveLimit}&page=${archivePage}`);
+            const res = await axios.get(`/api/orders?archived=true&exclude_type=dine-in&limit=${archiveLimit}&page=${archivePage}`);
             setArchivedOrders(res.data.data);
             setArchivePagination(res.data.pagination);
         } catch (error) {
@@ -210,7 +211,7 @@ export default function IncomingOrdersPage() {
 
     if (loading) {
         return (
-            <Layout title="Gelen Siparişler" description="QR Menü Sipariş Yönetimi">
+            <Layout title="Online Siparişler" description="QR Menü Sipariş Yönetimi">
                 <div className="flex justify-center p-10">
                     <Loader2 className="animate-spin text-slate-400" />
                 </div>
@@ -219,7 +220,7 @@ export default function IncomingOrdersPage() {
     }
 
     return (
-        <Layout title="Gelen Siparişler" description="QR Menü Sipariş Yönetimi">
+        <Layout title="Online Siparişler" description="QR Menü Sipariş Yönetimi">
             {/* Active Orders Section */}
             <div className="mb-8">
                 <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -302,22 +303,50 @@ export default function IncomingOrdersPage() {
                                         </div>
                                     )}
 
-                                    <div className="space-y-2 mb-4 bg-slate-50 p-2.5 rounded-lg text-sm">
+                                    <div className="space-y-2 mb-4">
                                         {order.items.map((item: any, idx: number) => {
                                             const hasItemDiscount = order.order_type === 'takeaway' && item.discountPercent > 0;
                                             const discountedPrice = hasItemDiscount ? item.price * (1 - item.discountPercent / 100) : item.price;
+                                            const confirmedQty = item.confirmed_quantity || 0;
+                                            const newQty = item.quantity - confirmedQty;
+                                            const isNew = newQty > 0;
+
                                             return (
-                                                <div key={idx} className="flex justify-between items-start">
-                                                    <div className="flex flex-col">
-                                                        <span className="font-medium text-slate-800">{item.quantity}x {item.name}</span>
+                                                <div key={idx} className={cn(
+                                                    "flex items-center gap-3 p-2.5 rounded-xl border transition-all hover:bg-white hover:shadow-md group/item",
+                                                    isNew ? "bg-orange-50/50 border-orange-200" : "bg-slate-50 border-slate-100"
+                                                )}>
+                                                    <div className={cn(
+                                                        "flex items-center justify-center min-w-[36px] h-9 rounded-lg font-bold text-sm shadow-sm group-hover/item:scale-110 transition-transform",
+                                                        isNew ? "bg-orange-500 text-white" : "bg-slate-900 text-white"
+                                                    )}>
+                                                        {item.quantity}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="font-semibold text-slate-900 truncate text-[13px] leading-tight tracking-tight">
+                                                                {item.name}
+                                                            </div>
+                                                            {isNew && (
+                                                                <span className="px-1.5 py-0.5 bg-orange-500 text-white text-[9px] font-black rounded-md animate-pulse uppercase tracking-wider">
+                                                                    {newQty} YENİ
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                         {hasItemDiscount && (
-                                                            <span className="text-[10px] text-emerald-600 font-bold uppercase">%{item.discountPercent} Gel-Al İndirimi</span>
+                                                            <div className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mt-0.5">
+                                                                %{item.discountPercent} Gel-Al İndirimi
+                                                            </div>
                                                         )}
                                                     </div>
-                                                    <div className="flex flex-col items-end">
-                                                        <span className="font-bold text-slate-900">{Number(discountedPrice * item.quantity).toLocaleString('tr-TR')} ₺</span>
+                                                    <div className="text-right shrink-0">
+                                                        <div className="font-bold text-slate-900 text-sm">
+                                                            {Number(discountedPrice * item.quantity).toLocaleString('tr-TR')} ₺
+                                                        </div>
                                                         {hasItemDiscount && (
-                                                            <span className="text-[11px] text-slate-400 line-through">{Number(item.price * item.quantity).toLocaleString('tr-TR')} ₺</span>
+                                                            <div className="text-[10px] text-slate-400 line-through">
+                                                                {Number(item.price * item.quantity).toLocaleString('tr-TR')} ₺
+                                                            </div>
                                                         )}
                                                     </div>
                                                 </div>
@@ -333,12 +362,13 @@ export default function IncomingOrdersPage() {
 
                                     {order.status === 'pending' && (
                                         <div className="flex gap-2">
+
                                             <Button
                                                 className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
                                                 size="sm"
                                                 onClick={() => handleOpenFinalize(order)}
                                             >
-                                                <CheckCircle className="mr-1 h-4 w-4" /> Onayla
+                                                <Receipt className="mr-1 h-4 w-4" /> Ödeme Al
                                             </Button>
                                             <Button
                                                 variant="outline"

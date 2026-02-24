@@ -6,6 +6,7 @@ import { Layout } from '@/components/Layout';
 import { ProductCard } from '@/components/sales/ProductCard';
 import { OrderSummary } from '@/components/sales/OrderSummary';
 import { useAuth } from '@/context/AuthContext';
+import { useBusiness } from '@/context/BusinessContext';
 import { AlertCircle, Loader2, TrendingUp, Trash2, Tag } from 'lucide-react';
 
 import {
@@ -58,6 +59,7 @@ export default function SalesMenuPage() {
     const orderId = searchParams.get('orderId');
 
     const { hasPermission } = useAuth();
+    const { isOpen } = useBusiness();
     const [cart, setCart] = useState<OrderItem[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -177,7 +179,9 @@ export default function SalesMenuPage() {
                 // const pChans = chanRes.data.data.filter((c: any) => c.type === 'payment');
                 setPaymentChannels(chanData);
 
-                const firstIncome = incomeCats[0];
+                const firstIncome = incomeCats.find((c: any) =>
+                    ['Dükkan', 'Mağaza', 'Genel Satış', 'Mağaza Satışı'].includes(c.name)
+                ) || incomeCats.find((c: any) => c.is_default) || incomeCats[0];
 
                 if (firstIncome) {
                     setDefaultCategoryId(firstIncome.id);
@@ -256,6 +260,10 @@ export default function SalesMenuPage() {
     };
 
     const handleInitiateOrder = () => {
+        if (!isOpen) {
+            alert("İşletme şu anda kapalı. Finansal işlem yapılamaz.");
+            return;
+        }
         if (cart.length === 0) return;
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 

@@ -37,7 +37,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
         { title: 'Özet', icon: LayoutDashboard, href: '/', roles: ['owner', 'accountant', 'staff'] },
         { title: 'Masa Siparişleri', icon: LayoutIcon, href: '/tables', roles: ['owner', 'staff'] },
         { title: 'Satış Menüsü', icon: ShoppingCart, href: '/sales', roles: ['owner', 'staff'] },
-        { title: 'Gelen Siparişler', icon: Receipt, href: '/orders', roles: ['owner', 'staff'] },
+        { title: 'Online Siparişler', icon: Receipt, href: '/orders', roles: ['owner', 'staff'] },
         { title: 'Müşteriler', icon: Users, href: '/customers', roles: ['owner', 'staff'] },
         { title: 'Giderler', icon: TrendingDown, href: '/expenses', roles: ['owner', 'accountant'] },
         {
@@ -47,6 +47,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
             roles: ['owner', 'accountant'],
             children: [
                 { title: 'Hammaddeler', href: '/inventory/raw-materials', icon: Package },
+                { title: 'Ara Ürünler', href: '/inventory/intermediate-products', icon: Package },
                 { title: 'Stok Girişleri', href: '/inventory/stock-entries', icon: TrendingUp },
                 { title: 'Stok Durumu', href: '/inventory/stock-status', icon: LayoutDashboard },
             ]
@@ -231,14 +232,14 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
             />
 
             <aside className={cn(
-                "fixed top-0 left-0 bottom-0 z-50 w-64 bg-white border-r border-slate-200 transition-transform duration-300 ease-in-out md:static md:translate-x-0 flex flex-col h-screen",
+                "fixed top-0 left-0 bottom-0 z-50 w-64 bg-white border-r border-slate-200 transition-transform duration-300 ease-in-out md:static md:translate-x-0 flex flex-col h-full",
                 isOpen ? "translate-x-0" : "-translate-x-full",
                 className
             )}>
                 {/* Brand Logo */}
-                <div className="p-6 border-b border-slate-50">
+                <div className="p-6 border-b border-slate-50 shrink-0">
                     <div className="flex items-center gap-3">
-                        <div className="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                        <div className="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
                             <img
                                 src={user?.business_logo_url || "/favicon.png"}
                                 alt="Logo"
@@ -257,9 +258,9 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                 </nav>
 
                 {/* User Info & Logout */}
-                < div className="p-4 border-t border-slate-100 bg-slate-50/30" >
+                < div className="p-4 border-t border-slate-100 bg-slate-50/30 shrink-0" >
                     <div className="flex items-center gap-3 px-3 py-2 mb-3">
-                        <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600 border border-white shadow-sm overflow-hidden">
+                        <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600 border border-white shadow-sm overflow-hidden shrink-0">
                             {user?.email?.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex flex-col min-w-0">
@@ -272,7 +273,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
                     <Button
                         variant="ghost"
                         onClick={logout}
-                        className="w-full justify-start text-slate-500 hover:text-red-600 hover:bg-red-50 gap-3 px-3 h-10 rounded-lg"
+                        className="w-full justify-start text-slate-500 hover:text-red-600 hover:bg-red-50 gap-3 px-3 h-10 rounded-lg shrink-0"
                     >
                         <LogOut className="h-5 w-5" />
                         <span>Çıkış Yap</span>

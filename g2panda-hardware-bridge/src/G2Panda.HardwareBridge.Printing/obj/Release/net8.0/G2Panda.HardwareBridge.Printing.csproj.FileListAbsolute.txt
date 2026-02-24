@@ -1,0 +1,15 @@
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\G2Panda.HardwareBridge.Printing.csproj.AssemblyReference.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\G2Panda.HardwareBridge.Printing.GeneratedMSBuildEditorConfig.editorconfig
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\G2Panda.HardwareBridge.Printing.AssemblyInfoInputs.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\G2Panda.HardwareBridge.Printing.AssemblyInfo.cs
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\G2Panda.HardwareBridge.Printing.csproj.CoreCompileInputs.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\bin\Release\net8.0\G2Panda.HardwareBridge.Printing.deps.json
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\bin\Release\net8.0\G2Panda.HardwareBridge.Printing.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\bin\Release\net8.0\G2Panda.HardwareBridge.Printing.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\bin\Release\net8.0\G2Panda.HardwareBridge.Core.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\bin\Release\net8.0\G2Panda.HardwareBridge.Core.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\G2Panda..D48939F4.Up2Date
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\G2Panda.HardwareBridge.Printing.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\refint\G2Panda.HardwareBridge.Printing.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\G2Panda.HardwareBridge.Printing.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Printing\obj\Release\net8.0\ref\G2Panda.HardwareBridge.Printing.dll

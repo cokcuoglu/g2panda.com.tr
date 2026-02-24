@@ -1,0 +1,2 @@
+﻿src/routes/inventory/produce.ts(49,17): error TS1127: Invalid character.
+src/routes/inventory/produce.ts(117,1): error TS1160: Unterminated template literal.

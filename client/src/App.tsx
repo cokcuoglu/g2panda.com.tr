@@ -22,6 +22,9 @@ const CustomersPage = lazy(() => import('@/pages/CustomersPage'));
 const TableOrdersPage = lazy(() => import('@/pages/TableOrdersPage'));
 // Inventory Management Pages
 const RawMaterialsPage = lazy(() => import('@/pages/inventory/RawMaterialsPage'));
+const IntermediateProductsPage = lazy(() => import('@/pages/inventory/IntermediateProductsPage'));
+const IntermediateRecipePage = lazy(() => import('@/pages/inventory/IntermediateRecipePage'));
+const IntermediateProducePage = lazy(() => import('@/pages/inventory/IntermediateProducePage'));
 const StockEntriesPage = lazy(() => import('@/pages/inventory/StockEntriesPage'));
 const StockStatusPage = lazy(() => import('@/pages/inventory/StockStatusPage'));
 // Campaigns are handled via Settings tab now
@@ -47,6 +50,8 @@ function App() {
               <Route path="/register" element={<Register />} />
               {/* Public Menu Route - No Auth Required */}
               <Route path="/menu/:userId" element={<PublicMenuPage />} />
+              {/* Gel-Al (Takeaway) QR Route - forces takeaway mode */}
+              <Route path="/menu/:userId/takeaway" element={<PublicMenuPage />} />
               <Route
                 path="/"
                 element={
@@ -160,6 +165,30 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <RawMaterialsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/inventory/intermediate-products"
+                element={
+                  <ProtectedRoute>
+                    <IntermediateProductsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/inventory/intermediate-recipes/:id"
+                element={
+                  <ProtectedRoute>
+                    <IntermediateRecipePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/inventory/produce/:id"
+                element={
+                  <ProtectedRoute>
+                    <IntermediateProducePage />
                   </ProtectedRoute>
                 }
               />

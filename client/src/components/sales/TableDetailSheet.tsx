@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ProductCard } from '@/components/sales/ProductCard';
 import { OrderSummary } from '@/components/sales/OrderSummary';
-import { Loader2, Search, Tag, QrCode, CheckCircle2 } from 'lucide-react';
+import { Loader2, Search, Tag, QrCode, CheckCircle2, Printer } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import QRCode from "react-qr-code";
 import { useAuth } from '@/context/AuthContext';
@@ -69,6 +69,7 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const { user } = useAuth();
+    const { isOpen, refreshOrderState } = useBusiness();
 
     // QR Code Dialog State
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
@@ -106,8 +107,11 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
             setPaymentChannels(chanRes.data.data || []);
 
             const incomeCats = incCatRes.data.data || [];
-            // Find "Dükkan" or default
-            const defaultCat = incomeCats.find((c: any) => c.name === 'Dükkan') || incomeCats[0];
+            // Find "Dükkan", "Mağaza", "Genel Satış", "Mağaza Satışı" or default
+            const defaultCat = incomeCats.find((c: any) =>
+                ['Dükkan', 'Mağaza', 'Genel Satış', 'Mağaza Satışı'].includes(c.name)
+            ) || incomeCats.find((c: any) => c.is_default) || incomeCats[0];
+
             if (defaultCat) {
                 setPaymentCategoryId(defaultCat.id);
                 if (defaultCat.default_channel_id) {
@@ -168,6 +172,10 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
 
     const handleSaveAdisyon = async () => {
         if (!table) return;
+        if (!isOpen) {
+            alert("İşletme şu anda kapalı. Finansal işlem yapılamaz.");
+            return;
+        }
         setIsSaving(true);
         try {
             let currentOrderId = orderId;
@@ -184,21 +192,32 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
                 return sum + ((price - discount) * item.quantity);
             }, 0);
 
-            await axios.put(`/api/table-orders/${currentOrderId}`, {
+            const response = await axios.put(`/api/table-orders/${currentOrderId}`, {
                 items: cart,
                 total_amount: total
             });
 
+            if (response.data.data) {
+                setCart(response.data.data.items || []);
+                setOrderStatus(response.data.data.status);
+                // Also trigger a full refresh to be absolutely safe
+                fetchData();
+            }
+
             onOrderUpdated?.();
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to save adisyon:', err);
-            alert('Adisyon kaydedilemedi.');
+            alert(err.response?.data?.error || 'Adisyon kaydedilemedi.');
         } finally {
             setIsSaving(false);
         }
     };
 
     const handleFinalize = async () => {
+        if (!isOpen) {
+            alert("İşletme şu anda kapalı. Finansal işlem yapılamaz.");
+            return;
+        }
         if (!table || !orderId) return;
         const total = cart.reduce((sum, item) => {
             const price = item.price;
@@ -209,7 +228,46 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
         setIsPaymentDialogOpen(true);
     };
 
-    const { refreshOrderState } = useBusiness();
+
+    const handlePrintBill = async () => {
+        if (!table) return;
+        setIsSaving(true);
+        try {
+            let currentOrderId = orderId;
+
+            // If no active order but there are items in cart, save it first
+            if (!currentOrderId && cart.length > 0) {
+                const res = await axios.post('/api/table-orders', { tableId: table.id });
+                currentOrderId = res.data.data.id;
+
+                const total = cart.reduce((sum, item) => {
+                    const price = item.price;
+                    const discount = item.discount_percent ? (price * item.discount_percent / 100) : 0;
+                    return sum + ((price - discount) * item.quantity);
+                }, 0);
+
+                await axios.put(`/api/table-orders/${currentOrderId}`, {
+                    items: cart,
+                    total_amount: total
+                });
+
+                setOrderId(currentOrderId);
+                setOrderStatus('confirmed');
+                onOrderUpdated?.();
+            }
+
+            if (currentOrderId) {
+                await axios.post(`/api/hardware/print-order/${currentOrderId}`);
+            } else {
+                alert('Yazdıracak bir sipariş bulunamadı. Lütfen önce ürün ekleyin.');
+            }
+        } catch (err: any) {
+            console.error('Print failed:', err);
+            alert('Yazıcıya gönderilemedi. Lütfen donanım köprüsünü kontrol edin.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     const handleDismissServiceRequest = async () => {
         if (!table) return;
@@ -224,6 +282,10 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
 
     const handleConfirmPayment = async () => {
         if (!orderId || !paymentCategoryId || !paymentChannelId) return;
+        if (!isOpen) {
+            alert("İşletme şu anda kapalı. Finansal işlem yapılamaz.");
+            return;
+        }
         setIsSaving(true);
         try {
             // Clear any service request before finalizing
@@ -231,11 +293,23 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
                 await axios.patch(`/api/tables/${table.id}/service-request`, { type: 'none' }).catch(() => { });
             }
 
-            await axios.post(`/api/orders/${orderId}/finalize`, {
+            const parsedAmount = finalAmount === '' ? undefined : parseFloat(finalAmount);
+
+            const finalRes = await axios.post(`/api/orders/${orderId}/finalize`, {
                 category_id: paymentCategoryId,
                 channel_id: paymentChannelId,
-                final_amount: parseFloat(finalAmount)
+                final_amount: parsedAmount
             });
+
+            // Auto-print receipt after successful payment
+            if (finalRes.data.data) {
+                try {
+                    await axios.post(`/api/hardware/print-transaction/${finalRes.data.data.id}`);
+                } catch (pErr) {
+                    console.error('Auto-print failed:', pErr);
+                }
+            }
+
             setIsPaymentDialogOpen(false);
             refreshOrderState();
             onOrderUpdated?.();
@@ -250,10 +324,18 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
 
     const handleConfirmOrder = async () => {
         if (!orderId) return;
+        if (!isOpen) {
+            alert("İşletme şu anda kapalı. İşlem yapılamaz.");
+            return;
+        }
         setIsSaving(true);
         try {
-            await axios.put(`/api/orders/${orderId}/status`, { status: "confirmed" });
-            setOrderStatus('confirmed');
+            const response = await axios.put(`/api/orders/${orderId}/status`, { status: "confirmed" });
+            if (response.data.data) {
+                setCart(response.data.data.items || []);
+                setOrderStatus(response.data.data.status);
+                fetchData();
+            }
             onOrderUpdated?.(); // Notify parent to update list
         } catch (err: any) {
             console.error('Confirm failed:', err);
@@ -295,8 +377,14 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
                             <QrCode className="h-4 w-4" />
                             QR Menü
                         </Button>
+                        {(orderId || cart.length > 0) && (
+                            <Button variant="outline" size="sm" className="gap-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50" onClick={handlePrintBill} disabled={isSaving}>
+                                <Printer className="h-4 w-4" />
+                                Adisyon Yazdır
+                            </Button>
+                        )}
                         {orderStatus === 'pending' && (
-                            <Button size="sm" className="gap-2 bg-orange-500 hover:bg-orange-600 text-white animate-pulse" onClick={handleConfirmOrder} disabled={isSaving}>
+                            <Button size="sm" className="gap-2 bg-orange-500 hover:bg-orange-600 text-white" onClick={handleConfirmOrder} disabled={isSaving}>
                                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                                 Siparişi Onayla
                             </Button>
@@ -380,6 +468,7 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
                             onRemove={handleRemoveItem}
                             onConfirm={handleFinalize}
                             onSave={handleSaveAdisyon}
+                            onPrint={orderId ? handlePrintBill : undefined}
                             isProcessing={isSaving}
                         />
                     </div>

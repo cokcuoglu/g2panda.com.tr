@@ -17,6 +17,11 @@ declare global {
 }
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    // Bypass auth for public QR menu order submissions (no token on customer device)
+    if (req.path.startsWith('/orders/public/')) {
+        return next();
+    }
+
     // 1. Assume req.user.id is already populated by a previous JWT validator
     if (!req.user || !req.user.id) {
         // In a real scenario, we might want to throw 401 here if this middleware 

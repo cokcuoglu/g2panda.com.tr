@@ -150,8 +150,8 @@ router.post('/', async (req: any, res: Response) => {
         if (channel_id === '') channel_id = null;
 
         // Validation
-        if (!amount || amount <= 0) {
-            return res.status(400).json({ success: false, error: 'Amount must be greater than 0' });
+        if (amount === undefined || amount === null || amount < 0 || amount === '') {
+            return res.status(400).json({ success: false, error: 'Tutar 0 veya daha büyük olmalıdır' });
         }
         if (!['income', 'expense'].includes(type)) {
             return res.status(400).json({ success: false, error: 'Invalid transaction type' });
@@ -485,8 +485,8 @@ router.put('/:id', async (req: any, res: Response) => {
         const { amount, description, transaction_date, category_id, channel_id } = req.body;
 
         // Validate if provided
-        if (amount !== undefined && amount <= 0) {
-            return res.status(400).json({ success: false, error: 'Amount must be greater than 0' });
+        if (amount !== undefined && amount < 0) {
+            return res.status(400).json({ success: false, error: 'Tutar 0 veya daha büyük olmalıdır' });
         }
 
         // Build dynamic update
@@ -571,7 +571,15 @@ router.delete('/:id', async (req: any, res: Response) => {
             return res.status(404).json({ success: false, error: 'Transaction not found' });
         }
 
-        res.json({ success: true, message: 'Transaction deleted successfully' });
+        // Auto-delete associated expenses (commissions, courier fees, etc.)
+        const linkedNote = `Bağlı İşlem ID: ${id}`;
+        await req.db.query(`
+            UPDATE transactions 
+            SET deleted_at = NOW() 
+            WHERE notes = $1 AND deleted_at IS NULL
+        `, [linkedNote]);
+
+        res.json({ success: true, message: 'Transaction and associated expenses deleted successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, error: 'Internal Server Error' });

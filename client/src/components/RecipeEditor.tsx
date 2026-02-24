@@ -12,6 +12,7 @@ interface RawMaterial {
     id: string;
     name: string;
     unit: string;
+    is_intermediate?: boolean;
 }
 
 interface RecipeItem {
@@ -81,7 +82,7 @@ export function RecipeEditor({ productId, productName, open, onOpenChange }: Rec
 
         setRecipeItems([...recipeItems, {
             raw_material_id: selectedMaterial,
-            raw_material_name: material.name,
+            raw_material_name: material.is_intermediate ? `🔄 [Ara Ürün] ${material.name}` : material.name,
             quantity,
             unit: material.unit,
             unit_price: 0,
@@ -153,7 +154,7 @@ export function RecipeEditor({ productId, productName, open, onOpenChange }: Rec
                                                 .filter(m => !recipeItems.some(item => item.raw_material_id === m.id))
                                                 .map(material => (
                                                     <SelectItem key={material.id} value={material.id}>
-                                                        {material.name} ({material.unit})
+                                                        {material.is_intermediate ? '🔄 [Ara Ürün] ' : ''}{material.name} ({material.unit})
                                                     </SelectItem>
                                                 ))}
                                         </SelectContent>

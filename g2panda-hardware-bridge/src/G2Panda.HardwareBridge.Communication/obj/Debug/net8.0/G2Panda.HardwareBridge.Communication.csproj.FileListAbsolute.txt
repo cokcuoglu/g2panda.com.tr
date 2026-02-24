@@ -1,0 +1,15 @@
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\G2Panda.HardwareBridge.Communication.csproj.AssemblyReference.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\G2Panda.HardwareBridge.Communication.GeneratedMSBuildEditorConfig.editorconfig
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\G2Panda.HardwareBridge.Communication.AssemblyInfoInputs.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\G2Panda.HardwareBridge.Communication.AssemblyInfo.cs
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\G2Panda.HardwareBridge.Communication.csproj.CoreCompileInputs.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\bin\Debug\net8.0\G2Panda.HardwareBridge.Communication.deps.json
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\bin\Debug\net8.0\G2Panda.HardwareBridge.Communication.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\bin\Debug\net8.0\G2Panda.HardwareBridge.Communication.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\bin\Debug\net8.0\G2Panda.HardwareBridge.Core.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\bin\Debug\net8.0\G2Panda.HardwareBridge.Core.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\G2Panda..D409D787.Up2Date
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\G2Panda.HardwareBridge.Communication.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\refint\G2Panda.HardwareBridge.Communication.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\G2Panda.HardwareBridge.Communication.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Communication\obj\Debug\net8.0\ref\G2Panda.HardwareBridge.Communication.dll

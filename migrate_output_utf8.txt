@@ -1,0 +1,64 @@
+﻿Starting migration for Intermediate Products...
+Adding is_intermediate column to raw_materials...
+Creating intermediate_recipes table...
+node : Migration failed
+: error: uuid_generate_
+v4() fonksiyonu mevcut 
+de─şildir
+At line:1 char:1
++ node migrate_intermed
+iate_products.js > migr
+ate_output.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (Migration fai   
+ le...evcut de─şild    
+ir:String) [], Rem    o
+teException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+    at D:\Personal_Proj
+ect\g2panda_release\nod
+e_modules\pg-pool\index
+.js:45:11
+    at process.processT
+icksAndRejections (node
+:internal/process/task_
+queues:105:5)
+    at async migrate (D
+:\Personal_Project\g2pa
+nda_release\migrate_int
+ermediate_products.js:1
+6:9) {
+  length: 224,
+  severity: 'HATA',
+  code: '42883',
+  detail: undefined,
+  hint: 'Verilmi┼ş ad v
+e arg├╝man tiplerine uy
+an fonksiyon bulunamam─
+▒┼ş. Explicit type cast
+ eklemeniz gerekebilir.
+',
+  position: '108',
+  internalPosition: und
+efined,
+  internalQuery: undefi
+ned,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined
+,
+  file: 'parse_func.c',
+  line: '636',
+  routine: 'ParseFuncOr
+Column'
+}

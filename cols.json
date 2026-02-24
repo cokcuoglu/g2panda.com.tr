@@ -1,0 +1,16 @@
+[
+  "courier_service_rate",
+  "user_id",
+  "created_at",
+  "updated_at",
+  "deleted_at",
+  "service_commission_rate",
+  "id",
+  "is_default",
+  "is_active",
+  "name",
+  "type",
+  "color",
+  "icon",
+  "expense_type"
+]

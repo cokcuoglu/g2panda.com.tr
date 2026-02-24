@@ -10,14 +10,29 @@ import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
 import logger from './config/logger';
 
+import ordersRouter from './routes/orders';
 import transactionsRouter from './routes/transactions';
 import campaignsRouter from './routes/campaigns';
 import dashboardRouter from './routes/dashboard';
 import inventoryRouter from './routes/inventory';
+import categoriesRouter from './routes/categories';
+import channelsRouter from './routes/channels';
+import productsRouter from './routes/products';
+import tablesRouter from './routes/tables';
+import tableOrdersRouter from './routes/table_orders';
+import userRouter from './routes/user';
+import usersRouter from './routes/users';
+import reportsRouter from './routes/reports';
+import ocrRouter from './routes/ocr';
+import ocrAdvancedRouter from './routes/ocr_advanced';
+import customersRouter from './routes/customers';
+import businessesRouter from './routes/businesses';
+import businessStatusRouter from './routes/business_status';
+import { shopStatusMiddleware } from './middleware/shopStatus';
 import { query } from './db';
 import { initBackupScheduler } from './services/backupService';
 import { initArchiveScheduler } from './services/archiveService';
-
+import { startCronJobs } from './services/cronJobs';
 // Load environment variables
 dotenv.config();
 
@@ -27,6 +42,7 @@ const PORT = process.env.PORT || 7174;
 // Initialize Scheduled Tasks
 initBackupScheduler();
 initArchiveScheduler();
+startCronJobs();
 
 // Security Configurations
 app.set('trust proxy', 1); // Trust first proxy (Cloudflare)
@@ -117,7 +133,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health Check Endpoint
 app.get('/health', (req: Request, res: Response) => {
-    res.json({ status: 'ok' });
+    res.json({ status: 'ok', version: '1.4.2' });
 });
 
 // DEBUG LOGGING
@@ -131,39 +147,42 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRouter);
 
 import publicMenuRouter from './routes/public_menu';
+import publicOrdersRouter from './routes/public_orders';
 app.use('/api/public/menu', publicMenuRouter);
+// Public QR Order route - NO AUTH REQUIRED (must be before authMiddleware)
+app.use('/api/public/orders', publicOrdersRouter);
 
-import ordersRouter from './routes/orders';
-app.use('/api/orders', ordersRouter);
+// Public Order Routes (QR Menu - no auth required)
+// Must be BEFORE authMiddleware so unauthenticated customers can submit orders
+app.post('/api/orders/public/:userId', (req, res, next) => {
+    ordersRouter(req, res, next);
+});
 
 // Auth Middleware (RLS & Transaction) - Protects routes below
-// This assumes an upstream JWT validator has already populated req.user
 app.use('/api', authMiddleware);
 
-// Protected Routes
-app.use('/api/transactions', transactionsRouter);
-app.use('/api/campaigns', campaignsRouter);
-app.use('/api/dashboard', dashboardRouter);
-import categoriesRouter from './routes/categories';
-import channelsRouter from './routes/channels';
-import productsRouter from './routes/products';
-import tablesRouter from './routes/tables';
-import tableOrdersRouter from './routes/table_orders';
-import userRouter from './routes/user';
-import usersRouter from './routes/users'; // Import new router
-import reportsRouter from './routes/reports';
-import ocrRouter from './routes/ocr';
-import ocrAdvancedRouter from './routes/ocr_advanced';
-import customersRouter from './routes/customers';
-import businessesRouter from './routes/businesses';
-
+// Protected Routes (Categories/Channels/Products - always allow if they are mostly read?)
+// User might want to protect these too, but for now let's focus on Financial/Sales.
 app.use('/api/categories', categoriesRouter);
 app.use('/api/channels', channelsRouter);
 app.use('/api/products', productsRouter);
+
+// Financial/Order Routes - Protected by Shop Status
+// NOTE: /public/* paths are exempted inside shopStatusMiddleware itself.
+app.use('/api/transactions', shopStatusMiddleware, transactionsRouter);
+app.use('/api/orders', shopStatusMiddleware, ordersRouter);
+app.use('/api/table-orders', shopStatusMiddleware, tableOrdersRouter);
+app.use('/api/inventory', shopStatusMiddleware, inventoryRouter);
+
+// Other Protected Routes
 app.use('/api/tables', tablesRouter);
-app.use('/api/table-orders', tableOrdersRouter);
+app.use('/api/campaigns', campaignsRouter);
+app.use('/api/dashboard', dashboardRouter);
 app.use('/api/businesses', businessesRouter);
-app.use('/api/inventory', inventoryRouter);
+app.use('/api/business-status', businessStatusRouter);
+// (Moved up)
+
+// (Moved up)
 // Mount user router (handles /me) - Secure (RLS Active)
 app.use('/api/users/me', userRouter);
 // Mount users management router (handles list/status)
@@ -180,6 +199,9 @@ app.use('/api/customers', customersRouter);
 
 import auditLogsRouter from './routes/audit_logs';
 app.use('/api/audit-logs', auditLogsRouter);
+
+import hardwareRouter from './routes/hardware';
+app.use('/api/hardware', hardwareRouter);
 
 // For backward compatibility (frontend uses /api/auth/me)
 // Route /api/auth/me to the secure user router path
@@ -222,11 +244,17 @@ app.get('*', (req: Request, res: Response) => {
 // Global Error Handler
 app.use(errorHandler);
 
-// Start Server
+import { hardwareBridgeService } from './services/hardwareBridge';
+
 // Start Server
 const server = app.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
 });
+
+// Initialize Hardware Bridge WebSocket support
+hardwareBridgeService.init(server);
+
+export { server };
 
 // Handle Unhandled Promise Rejections
 process.on('unhandledRejection', (err: any) => {

@@ -4,6 +4,8 @@ import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Printer, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { TrendChart } from '@/components/dashboard/TrendChart';
@@ -31,6 +33,20 @@ export default function AllTransactionsPage() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [trendData, setTrendData] = useState<TrendData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [isPrinting, setIsPrinting] = useState<string | null>(null);
+
+    const handlePrint = async (txId: string) => {
+        setIsPrinting(txId);
+        try {
+            await axios.post(`/api/hardware/print-transaction/${txId}`);
+        } catch (err) {
+            console.error("Print failed", err);
+            alert("Yazıcıya gönderilemedi.");
+        } finally {
+            setIsPrinting(null);
+        }
+    };
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -113,8 +129,21 @@ export default function AllTransactionsPage() {
                                                     </Badge>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className={cn("text-right pr-6 font-semibold", t.type === 'income' ? 'text-emerald-600' : 'text-slate-900')}>
+                                            <TableCell className={cn("text-right font-semibold", t.type === 'income' ? 'text-emerald-600' : 'text-slate-900')}>
                                                 {t.type === 'income' ? '+' : '-'}{Number(t.amount).toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺
+                                            </TableCell>
+                                            <TableCell className="pr-6 text-right w-16">
+                                                {t.type === 'income' && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-slate-400 hover:text-primary"
+                                                        onClick={() => handlePrint(t.id)}
+                                                        disabled={isPrinting !== null}
+                                                    >
+                                                        {isPrinting === t.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Printer className="h-4 w-4" />}
+                                                    </Button>
+                                                )}
                                             </TableCell>
                                         </TableRow>
                                     ))

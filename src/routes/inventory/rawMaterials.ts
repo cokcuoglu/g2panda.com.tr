@@ -26,17 +26,17 @@ router.get('/', async (req: Request, res: Response) => {
 // POST /api/inventory/raw-materials
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const { name, unit, critical_stock_level, min_stock_level } = req.body;
+        const { name, unit, critical_stock_level, min_stock_level, is_intermediate } = req.body;
 
         if (!name || !unit) {
             return res.status(400).json({ success: false, error: 'Name and unit are required' });
         }
 
         const result = await req.db.query(`
-            INSERT INTO raw_materials (user_id, name, unit, critical_stock_level, min_stock_level)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO raw_materials (user_id, name, unit, critical_stock_level, min_stock_level, is_intermediate)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *
-        `, [req.user!.id, name, unit, critical_stock_level || 0, min_stock_level || 0]);
+        `, [req.user!.id, name, unit, critical_stock_level || 0, min_stock_level || 0, is_intermediate || false]);
 
         res.status(201).json({ success: true, data: result.rows[0] });
     } catch (err) {
@@ -49,7 +49,7 @@ router.post('/', async (req: Request, res: Response) => {
 router.put('/:id', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { name, unit, critical_stock_level, min_stock_level, is_active } = req.body;
+        const { name, unit, critical_stock_level, min_stock_level, is_active, is_intermediate } = req.body;
 
         const result = await req.db.query(`
             UPDATE raw_materials
@@ -59,10 +59,11 @@ router.put('/:id', async (req: Request, res: Response) => {
                 critical_stock_level = COALESCE($3, critical_stock_level),
                 min_stock_level = COALESCE($4, min_stock_level),
                 is_active = COALESCE($5, is_active),
+                is_intermediate = COALESCE($6, is_intermediate),
                 updated_at = NOW()
-            WHERE id = $6 AND user_id = $7 AND deleted_at IS NULL
+            WHERE id = $7 AND user_id = $8 AND deleted_at IS NULL
             RETURNING *
-        `, [name, unit, critical_stock_level, min_stock_level, is_active, id, req.user!.id]);
+        `, [name, unit, critical_stock_level, min_stock_level, is_active, is_intermediate !== undefined ? is_intermediate : null, id, req.user!.id]);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, error: 'Raw material not found' });

@@ -81,19 +81,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         const initAuth = async () => {
-            const storedToken = localStorage.getItem('token');
-            if (storedToken) {
-                setToken(storedToken);
-                axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+            try {
+                const storedToken = localStorage.getItem('token');
+                if (storedToken) {
+                    setToken(storedToken);
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
 
-                const decoded = parseJwt(storedToken);
-                // Initial optimistic set from token
-                setUser({ id: decoded?.id, role: decoded?.role || 'owner', email: decoded?.email, permissions: [] });
+                    const decoded = parseJwt(storedToken);
+                    // Initial optimistic set from token
+                    setUser({ id: decoded?.id, role: decoded?.role || 'owner', email: decoded?.email, permissions: [] });
 
-                // Fetch authoritative permissions
-                await fetchUserPermissions();
+                    // Fetch authoritative permissions
+                    await fetchUserPermissions();
+                }
+            } catch (err) {
+                console.error('initAuth failed', err);
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
         };
 
         initAuth();

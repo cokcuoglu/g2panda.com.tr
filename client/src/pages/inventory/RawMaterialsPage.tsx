@@ -39,7 +39,8 @@ export default function RawMaterialsPage() {
     const fetchMaterials = async () => {
         try {
             const response = await axios.get('/api/inventory/raw-materials');
-            setMaterials(response.data.data);
+            const pureRawMaterials = response.data.data.filter((m: any) => m.is_intermediate !== true);
+            setMaterials(pureRawMaterials);
         } catch (error) {
             alert('Hammaddeler yüklenemedi');
         } finally {

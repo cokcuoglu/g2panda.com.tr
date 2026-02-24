@@ -83,7 +83,8 @@ router.post('/public/:userId', async (req: Request, res: Response) => {
                     quantity: quantity,
                     price: price,
                     discount_percent: discountPercent,
-                    type: 'product'
+                    type: 'product',
+                    confirmed_quantity: 0
                 });
 
                 baseAmount += itemBaseTotal;
@@ -109,7 +110,8 @@ router.post('/public/:userId', async (req: Request, res: Response) => {
                     quantity: quantity,
                     price: originalPrice,
                     campaign_price: campaignPrice,
-                    type: 'campaign'
+                    type: 'campaign',
+                    confirmed_quantity: 0
                 });
 
                 baseAmount += itemBaseTotal;
@@ -231,6 +233,22 @@ router.post('/public/:userId', async (req: Request, res: Response) => {
 
         } else {
             // INSERT Logic (New Order)
+            let finalTableNumber = table_code || null;
+            let finalTableCode = table_code || null;
+
+            // Fetch table details if table_id is provided but info is missing (QR Menu flow)
+            if (table_id && (!finalTableNumber || !finalTableCode)) {
+                try {
+                    const tableRes = await pool.query('SELECT name, unique_code FROM tables WHERE id = $1', [table_id]);
+                    if (tableRes.rows.length > 0) {
+                        finalTableNumber = finalTableNumber || tableRes.rows[0].name;
+                        finalTableCode = finalTableCode || tableRes.rows[0].unique_code;
+                    }
+                } catch (tableErr) {
+                    console.error('Error fetching table details for public order:', tableErr);
+                }
+            }
+
             const prefix = (table_id || table_code) ? 'ADY' : 'ORD';
             const orderNumber = `${prefix}-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 100)}`;
 
@@ -248,7 +266,7 @@ router.post('/public/:userId', async (req: Request, res: Response) => {
             `;
 
             result = await pool.query(query, [
-                userId, orderNumber, table_code || null, JSON.stringify(validatedItems), totalAmount,
+                userId, orderNumber, finalTableNumber, JSON.stringify(validatedItems), totalAmount,
                 baseAmount, discountAmount, order_type || 'dine-in',
                 note, customerId,
                 customer_name || 'Misafir',
@@ -258,7 +276,7 @@ router.post('/public/:userId', async (req: Request, res: Response) => {
                 customer_district || null,
                 customer_neighborhood || null,
                 table_id || null,
-                table_code || null
+                finalTableCode
             ]);
 
             // If it's a table order, update table status to active and clear any old service requests
@@ -271,6 +289,7 @@ router.post('/public/:userId', async (req: Request, res: Response) => {
 
     } catch (err: any) {
         logger.error(`[POST-PUBLIC-ORDER ERROR] Error: ${err.message}`);
+        res.status(500).json({ success: false, error: err.message || 'Sipariş oluşturulamadı.' });
     }
 });
 
@@ -327,7 +346,7 @@ router.use(authMiddleware);
 // List orders (with filters)
 router.get('/', async (req: any, res: Response) => {
     try {
-        const { status, limit = '50', page = '1', date, archived } = req.query;
+        const { status, limit = '50', page = '1', date, archived, exclude_type } = req.query;
         const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
 
         let query = `SELECT * FROM orders WHERE user_id = $1 AND deleted_at IS NULL`;
@@ -336,6 +355,11 @@ router.get('/', async (req: any, res: Response) => {
         if (status) {
             params.push(status);
             query += ` AND status = $${params.length}`;
+        }
+
+        if (exclude_type) {
+            params.push(exclude_type);
+            query += ` AND order_type != $${params.length}`;
         }
 
         // Archival filter
@@ -356,6 +380,7 @@ router.get('/', async (req: any, res: Response) => {
 
         const result = await req.db.query(query, params);
 
+
         // Get total count for pagination
         let countQuery = `SELECT COUNT(*) FROM orders WHERE user_id = $1 AND deleted_at IS NULL`;
         const countParams: any[] = [req.user.id];
@@ -365,10 +390,21 @@ router.get('/', async (req: any, res: Response) => {
             countQuery += ` AND status = $${countParams.length}`;
         }
 
+        if (exclude_type) {
+            countParams.push(exclude_type);
+            countQuery += ` AND order_type != $${countParams.length}`;
+        }
+
         if (archived === 'true') {
             countQuery += ` AND archived_at IS NOT NULL`;
         } else if (archived === 'false') {
             countQuery += ` AND archived_at IS NULL`;
+        }
+
+        // Filter by date for count query
+        if (date) {
+            countParams.push(date);
+            countQuery += ` AND DATE(created_at) = $${countParams.length}`;
         }
 
         const countResult = await req.db.query(countQuery, countParams);
@@ -441,9 +477,26 @@ router.put('/:id/status', async (req: any, res: Response) => {
         const isFinalState = ['rejected', 'cancelled', 'completed'].includes(status);
         const setArchived = isFinalState ? `, archived_at = NOW()` : '';
 
+        // If status is 'confirmed', update items to set confirmed_quantity = quantity
+        let updatedItems;
+        if (status === 'confirmed') {
+            const orderRes = await req.db.query('SELECT items FROM orders WHERE id = $1', [id]);
+            if (orderRes.rows.length > 0) {
+                const items = orderRes.rows[0].items || [];
+                updatedItems = items.map((item: any) => ({
+                    ...item,
+                    confirmed_quantity: item.quantity
+                }));
+            }
+        }
+
+        const itemsUpdate = updatedItems ? `, items = $4` : '';
+        const updateParams = [status, id, req.user.id];
+        if (updatedItems) updateParams.push(JSON.stringify(updatedItems));
+
         const result = await req.db.query(
-            `UPDATE orders SET status = $1, updated_at = NOW() ${setArchived} WHERE id = $2 AND user_id = $3 RETURNING *`,
-            [status, id, req.user.id]
+            `UPDATE orders SET status = $1, updated_at = NOW() ${setArchived} ${itemsUpdate} WHERE id = $2 AND user_id = $3 RETURNING *`,
+            updateParams
         );
 
         // 2. If this was a table order and we reached a final state, set table back to available and clear requests
@@ -492,27 +545,47 @@ router.post('/:id/finalize', async (req: any, res: Response) => {
             }
 
             // Determine final transaction amount
-            const transactionAmount = final_amount ? parseFloat(final_amount) : order.total_amount;
-            const discountDiff = final_amount ? (order.total_amount - transactionAmount) : 0;
+            const hasFinalAmount = final_amount !== undefined && final_amount !== null && final_amount !== '';
+            const transactionAmount = hasFinalAmount ? parseFloat(final_amount) : order.total_amount;
+            const discountDiff = hasFinalAmount ? (order.total_amount - transactionAmount) : 0;
             const totalDiscount = (parseFloat(order.discount_amount || '0') + discountDiff);
 
             // 2. Create Transaction
+            let tableLabel = order.table_number;
+            if (!tableLabel) {
+                if (order.order_type === 'takeaway') {
+                    tableLabel = 'Gel-Al';
+                } else if (order.table_id) {
+                    // Try to fetch table name on the fly if missing (fallback for old orders)
+                    try {
+                        const tRes = await client.query('SELECT name FROM tables WHERE id = $1', [order.table_id]);
+                        if (tRes.rows.length > 0) {
+                            tableLabel = tRes.rows[0].name;
+                        }
+                    } catch (e) {
+                        console.error('Error fetching table name for description fallback:', e);
+                    }
+                }
+            }
+
             const createTxRes = await client.query(`
                 INSERT INTO transactions (
                     user_id, category_id, channel_id, type, amount, 
                     transaction_date, description, document_type, notes,
-                    base_amount, discount_amount
-                ) VALUES ($1, $2, $3, 'income', $4, NOW(), $5, 'order', $6, $7, $8)
+                    base_amount, discount_amount, table_id, table_number
+                ) VALUES ($1, $2, $3, 'income', $4, NOW(), $5, 'order', $6, $7, $8, $9, $10)
                 RETURNING id
             `, [
                 req.user.id,
                 category_id,
                 channel_id,
                 transactionAmount,
-                `Sipariş #${order.order_number} (${order.table_number || 'Masa yok'})`,
+                `Sipariş #${order.order_number} (${tableLabel || 'Masa yok'})`,
                 `Items: ${JSON.stringify(order.items)}`,
                 order.base_amount || order.total_amount,
-                totalDiscount
+                totalDiscount,
+                order.table_id || null,
+                order.order_type === 'takeaway' ? 'Al/Götür' : (order.table_number || null)
             ]);
 
             const transactionId = createTxRes.rows[0]?.id; // Retrieve ID if needed, but we don't use it yet (logging only)

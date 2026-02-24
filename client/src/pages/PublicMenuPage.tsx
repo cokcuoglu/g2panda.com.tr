@@ -1,7 +1,7 @@
 ﻿
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useLocation } from 'react-router-dom';
 import { Minus, Plus, ShoppingCart, Trash2, Loader2, Store, CheckCircle2, Receipt, Utensils, ShoppingBag } from 'lucide-react';
 import { CITIES } from '@/data/tr_cities';
 import {
@@ -37,7 +37,9 @@ interface OrderItem {
 export default function PublicMenuPage() {
     const { userId } = useParams();
     const [searchParams] = useSearchParams();
+    const location = useLocation();
     const tableId = searchParams.get('tableId');
+    const isTakeawayQr = searchParams.get('type') === 'takeaway' || location.pathname.endsWith('/takeaway');
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -46,7 +48,7 @@ export default function PublicMenuPage() {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderComplete, setOrderComplete] = useState(false);
-    const [orderType, setOrderType] = useState<'dine-in' | 'takeaway'>('dine-in');
+    const [orderType, setOrderType] = useState<'dine-in' | 'takeaway'>(isTakeawayQr ? 'takeaway' : 'dine-in');
     const [existingOrder, setExistingOrder] = useState<any>(null);
     const [requestingBill, setRequestingBill] = useState(false);
     const [hasRequestedBill, setHasRequestedBill] = useState(false);
@@ -179,7 +181,7 @@ export default function PublicMenuPage() {
         if (cart.length === 0) return;
         setIsSubmitting(true);
         try {
-            await axios.post(`/api/orders/public/${userId}`, {
+            await axios.post(`/api/public/orders/${userId}`, {
                 items: cart,
                 table_number: tableNumber,
                 note: orderNote,
@@ -730,46 +732,59 @@ export default function PublicMenuPage() {
                                     </div>
                                 )}
 
-                                {/* Order Type Selector */}
-                                <div className="mb-4">
-                                    <Label className="mb-2 block">Sipariş Tipi</Label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <button
-                                            onClick={() => setOrderType('dine-in')}
-                                            className={cn(
-                                                "px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2",
-                                                orderType === 'dine-in'
-                                                    ? "bg-slate-900 text-white shadow-md"
-                                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                                            )}
-                                        >
-                                            <Utensils className="h-4 w-4" />
-                                            Masada Ye
-                                        </button>
-                                        <button
-                                            onClick={() => setOrderType('takeaway')}
-                                            className={cn(
-                                                "px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2",
-                                                orderType === 'takeaway'
-                                                    ? "bg-emerald-600 text-white shadow-md"
-                                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                                            )}
-                                        >
-                                            <ShoppingBag className="h-4 w-4" />
-                                            Al/Götür
-                                        </button>
+                                {/* Order Type Selector - hidden when this is a dedicated takeaway QR or a Table QR */}
+                                {!isTakeawayQr && !tableId && (
+                                    <div className="mb-4">
+                                        <Label className="mb-2 block">Sipariş Tipi</Label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <button
+                                                onClick={() => setOrderType('dine-in')}
+                                                className={cn(
+                                                    "px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2",
+                                                    orderType === 'dine-in'
+                                                        ? "bg-slate-900 text-white shadow-md"
+                                                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                                                )}
+                                            >
+                                                <Utensils className="h-4 w-4" />
+                                                Masada Ye
+                                            </button>
+                                            <button
+                                                onClick={() => setOrderType('takeaway')}
+                                                className={cn(
+                                                    "px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2",
+                                                    orderType === 'takeaway'
+                                                        ? "bg-emerald-600 text-white shadow-md"
+                                                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                                                )}
+                                            >
+                                                <ShoppingBag className="h-4 w-4" />
+                                                Gel-Al
+                                            </button>
+                                        </div>
                                     </div>
-                                    {tableId && (
-                                        <p className="text-xs text-blue-600 mt-2 font-medium">
+                                )}
+
+                                {tableId && (
+                                    <div className="mb-4 p-4 bg-blue-50 border-2 border-blue-100 rounded-xl relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-16 h-16 bg-blue-600 rounded-bl-full opacity-10 flex items-start justify-end p-2 pb-4 pl-4 pointer-events-none">
+                                            <Utensils className="text-blue-900 w-8 h-8" />
+                                        </div>
+                                        <p className="text-sm font-semibold text-blue-900 flex items-center gap-2 mb-1">
+                                            <Utensils className="h-4 w-4 text-blue-600" />
+                                            Masada Ye
+                                        </p>
+                                        <p className="text-xs text-blue-700 font-medium leading-relaxed">
                                             📋 Bu sipariş bulunduğunuz masaya servis edilecektir.
                                         </p>
-                                    )}
-                                    {orderType === 'takeaway' && cart.some(item => item.discountPercent && item.discountPercent > 0) && (
-                                        <p className="text-xs text-emerald-600 mt-2 font-medium flex items-center gap-1">
-                                            <CheckCircle2 className="h-3 w-3" /> Al/Götür indirimi uygulandı!
-                                        </p>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
+
+                                {isTakeawayQr && cart.some(item => item.discountPercent && item.discountPercent > 0) && (
+                                    <p className="text-xs text-emerald-600 mb-4 font-medium flex items-center gap-1">
+                                        <CheckCircle2 className="h-3 w-3" /> Gel-Al indirimi uygulandı!
+                                    </p>
+                                )}
 
                                 {cart.map((item) => (
                                     <div key={item.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
@@ -817,21 +832,24 @@ export default function PublicMenuPage() {
                                 ))}
 
                                 <div className="pt-6 space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="table">Masa No</Label>
-                                        {tableId ? (
-                                            <div className="bg-slate-100 border border-slate-200 text-slate-500 px-3 py-2 rounded-md text-sm font-medium">
-                                                Masa QR Kodu ile Tanımlandı
-                                            </div>
-                                        ) : (
-                                            <Input
-                                                id="table"
-                                                placeholder="Örn: Masa 5"
-                                                value={tableNumber}
-                                                onChange={(e) => setTableNumber(e.target.value)}
-                                            />
-                                        )}
-                                    </div>
+                                    {/* Masa No - only shown when NOT in takeaway QR mode */}
+                                    {!isTakeawayQr && (
+                                        <div className="space-y-2">
+                                            <Label htmlFor="table">Masa No</Label>
+                                            {tableId ? (
+                                                <div className="bg-slate-100 border border-slate-200 text-slate-500 px-3 py-2 rounded-md text-sm font-medium">
+                                                    Masa QR Kodu ile Tanımlandı
+                                                </div>
+                                            ) : (
+                                                <Input
+                                                    id="table"
+                                                    placeholder="Örn: Masa 5"
+                                                    value={tableNumber}
+                                                    onChange={(e) => setTableNumber(e.target.value)}
+                                                />
+                                            )}
+                                        </div>
+                                    )}
 
                                     {/* Müşteri Bilgileri */}
                                     <div className="space-y-2">

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/xml">
+    <Product Id="*" Name="G2Panda Hardware Bridge" Language="1033" Version="1.0.0.0" Manufacturer="G2Panda" UpgradeCode="PUT-YOUR-GUID-HERE">
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        <MediaTemplate EmbedCab="yes" />
+
+        <Feature Id="ProductFeature" Title="G2Panda Hardware Bridge" Level="1">
+            <ComponentGroupRef Id="ProductComponents" />
+        </Feature>
+    </Product>
+
+    <Fragment>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="G2Panda Hardware Bridge" />
+            </Directory>
+        </Directory>
+    </Fragment>
+
+    <Fragment>
+        <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+            <Component Id="G2Panda.HardwareBridge.exe" Guid="PUT-YOUR-GUID-HERE">
+                <File Id="G2Panda.HardwareBridge.exe" Source="$(var.G2Panda.HardwareBridge.TargetDir)G2Panda.HardwareBridge.exe" KeyPath="yes" />
+                
+                <ServiceInstall
+                    Id="ServiceInstaller"
+                    Type="ownProcess"
+                    Name="G2PandaHardwareBridge"
+                    DisplayName="G2Panda Hardware Bridge"
+                    Description="Connects local printers to G2Panda Cloud"
+                    Start="auto"
+                    Account="LocalSystem"
+                    ErrorControl="normal" />
+                
+                <ServiceControl
+                    Id="StartService"
+                    Start="install"
+                    Stop="both"
+                    Remove="uninstall"
+                    Name="G2PandaHardwareBridge"
+                    Wait="yes" />
+            </Component>
+            
+            <!-- Add other DLLs here -->
+        </ComponentGroup>
+    </Fragment>
+</Wix>

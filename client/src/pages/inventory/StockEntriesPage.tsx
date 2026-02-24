@@ -14,6 +14,7 @@ interface RawMaterial {
     id: string;
     name: string;
     unit: string;
+    is_intermediate?: boolean;
 }
 
 interface StockEntry {
@@ -276,11 +277,13 @@ export default function StockEntriesPage() {
                                         <SelectValue placeholder="Hammadde seçin" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {materials.map((material) => (
-                                            <SelectItem key={material.id} value={material.id}>
-                                                {material.name} ({material.unit})
-                                            </SelectItem>
-                                        ))}
+                                        {materials
+                                            .filter(m => !m.is_intermediate)
+                                            .map((material) => (
+                                                <SelectItem key={material.id} value={material.id}>
+                                                    {material.name} ({material.unit})
+                                                </SelectItem>
+                                            ))}
                                     </SelectContent>
                                 </Select>
                             )}

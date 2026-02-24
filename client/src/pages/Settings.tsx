@@ -41,6 +41,8 @@ interface UserSettings {
     business_type: string;
     currency: string;
     locale: string;
+    auto_open_time: string;
+    auto_close_time: string;
 }
 
 import { useParams, useNavigate } from 'react-router-dom';
@@ -71,7 +73,9 @@ export default function Settings() {
         business_logo_url: '',
         business_type: '',
         currency: 'TRY',
-        locale: 'tr-TR'
+        locale: 'tr-TR',
+        auto_open_time: '',
+        auto_close_time: ''
     });
 
     const [originalData, setOriginalData] = useState<UserSettings | null>(null);
@@ -89,7 +93,9 @@ export default function Settings() {
                 business_logo_url: data.business_logo_url || '',
                 business_type: data.business_type || 'Perakende',
                 currency: data.currency || 'TRY',
-                locale: data.locale || 'tr-TR'
+                locale: data.locale || 'tr-TR',
+                auto_open_time: data.auto_open_time || '',
+                auto_close_time: data.auto_close_time || ''
             };
 
             setFormData(settings);
@@ -104,7 +110,9 @@ export default function Settings() {
                 business_logo_url: '',
                 business_type: 'Perakende',
                 currency: 'TRY',
-                locale: 'tr-TR'
+                locale: 'tr-TR',
+                auto_open_time: '',
+                auto_close_time: ''
             };
             setFormData(fallbackSettings);
             setOriginalData(fallbackSettings);
@@ -158,7 +166,9 @@ export default function Settings() {
                 business_logo_url: formData.business_logo_url,
                 business_type: formData.business_type.trim(),
                 currency: formData.currency,
-                locale: formData.locale
+                locale: formData.locale,
+                auto_open_time: formData.auto_open_time || null,
+                auto_close_time: formData.auto_close_time || null
             });
 
             setMessage({ type: 'success', text: 'Ayarlar başarıyla kaydedildi' });
@@ -367,6 +377,42 @@ export default function Settings() {
                                             </select>
                                         </div>
                                     </div>
+
+                                    {/* Auto Open / Close Time Section */}
+                                    <div className="pt-6 mt-6 border-t border-slate-100">
+                                        <div className="mb-4">
+                                            <h4 className="text-sm font-bold text-slate-800">Otomatik İşletme Saatleri (Z-Raporu)</h4>
+                                            <p className="text-xs text-slate-500 mt-1">
+                                                Dükkanın otomatik olarak açılacağı ve kapanacağı (Z-Raporu oluşturulacağı) saatleri belirleyin. <br />
+                                                <strong className="text-emerald-600">Önemli:</strong> Aynı saati (örn. 02:00 ve 02:00) girerseniz, dükkan belirlediğiniz saatte kapanıp anında Z-Raporunu alır ve 1 saniye sonra tekrar satışa hazır halde açılır. <br />İstemiyorsanız boş bırakabilirsiniz.
+                                            </p>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest" htmlFor="auto_open_time">Sistemi Açılış Saati</label>
+                                                <Input
+                                                    id="auto_open_time"
+                                                    type="time"
+                                                    value={formData.auto_open_time}
+                                                    onChange={e => setFormData({ ...formData, auto_open_time: e.target.value })}
+                                                    className="h-11 border-slate-200 focus:ring-primary/10 transition-all font-mono"
+                                                    disabled={!hasPermission('settings.write')}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest" htmlFor="auto_close_time">Otomatik Z-Raporu & Kapanış</label>
+                                                <Input
+                                                    id="auto_close_time"
+                                                    type="time"
+                                                    value={formData.auto_close_time}
+                                                    onChange={e => setFormData({ ...formData, auto_close_time: e.target.value })}
+                                                    className="h-11 border-slate-200 focus:ring-primary/10 transition-all font-mono"
+                                                    disabled={!hasPermission('settings.write')}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -390,15 +436,16 @@ export default function Settings() {
                                         Müşterilerinizin menüye şifresiz erişebilmesi için QR Kodu kullanın.
                                     </CardDescription>
                                 </CardHeader>
-                                <CardContent className="p-8 flex flex-col items-center justify-center space-y-6">
-                                    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                                        <QRCode
-                                            value={`${import.meta.env.VITE_PUBLIC_DOMAIN || 'https://g2panda.com.tr'}/menu/${user?.id}`}
-                                            size={200}
-                                        />
-                                    </div>
-                                    <div className="text-center space-y-2">
-                                        <p className="text-sm font-medium text-slate-500">Menü Bağlantısı</p>
+                                <CardContent className="p-8 space-y-8">
+                                    {/* Main Menu QR */}
+                                    <div className="flex flex-col items-center space-y-4">
+                                        <p className="text-sm font-semibold text-slate-700">📋 Genel Menü QR (Masa Siparişi)</p>
+                                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                            <QRCode
+                                                value={`${import.meta.env.VITE_PUBLIC_DOMAIN || 'https://g2panda.com.tr'}/menu/${user?.id}`}
+                                                size={180}
+                                            />
+                                        </div>
                                         <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
                                             <code className="text-xs text-slate-700 font-mono">
                                                 {`${import.meta.env.VITE_PUBLIC_DOMAIN || 'https://g2panda.com.tr'}/menu/${user?.id}`}
@@ -414,6 +461,37 @@ export default function Settings() {
                                             </Button>
                                         </div>
                                     </div>
+
+                                    {/* Takeaway QR */}
+                                    <div className="flex flex-col items-center space-y-4 border-t border-slate-100 pt-8">
+                                        <p className="text-sm font-semibold text-emerald-700">🛍️ Gel-Al QR (Paket Sipariş)</p>
+                                        <div className="bg-white p-4 rounded-xl border-2 border-emerald-200 shadow-sm">
+                                            <QRCode
+                                                value={`${import.meta.env.VITE_PUBLIC_DOMAIN || 'https://g2panda.com.tr'}/menu/${user?.id}/takeaway`}
+                                                size={180}
+                                                fgColor="#059669"
+                                            />
+                                        </div>
+                                        <div className="flex items-center gap-2 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                                            <code className="text-xs text-emerald-800 font-mono">
+                                                {`${import.meta.env.VITE_PUBLIC_DOMAIN || 'https://g2panda.com.tr'}/menu/${user?.id}/takeaway`}
+                                            </code>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6"
+                                                onClick={() => window.open(`${import.meta.env.VITE_PUBLIC_DOMAIN || 'https://g2panda.com.tr'}/menu/${user?.id}?type=takeaway`, '_blank')}
+                                            >
+                                                <ExternalLink className="h-4 w-4 text-emerald-500" />
+                                            </Button>
+                                        </div>
+                                        <p className="text-xs text-emerald-600 text-center max-w-xs">
+                                            Bu QR kodunu tarayan müşteriler sadece <strong>Gel-Al</strong> modunda sipariş verebilir.
+                                            Masa seçimi gösterilmez.
+                                        </p>
+                                    </div>
+
                                     <Alert className="bg-emerald-50 border-emerald-100 max-w-lg">
                                         <CheckCircle className="h-4 w-4 text-emerald-600" />
                                         <AlertDescription className="text-emerald-700 text-xs text-left">

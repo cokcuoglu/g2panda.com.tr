@@ -1,0 +1,15 @@
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\bin\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.deps.json
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\bin\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\bin\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\bin\Debug\net8.0\G2Panda.HardwareBridge.Core.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\bin\Debug\net8.0\G2Panda.HardwareBridge.Core.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.csproj.AssemblyReference.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.AssemblyInfoInputs.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.AssemblyInfo.cs
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.csproj.CoreCompileInputs.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\G2Panda..5FE2289B.Up2Date
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\refint\G2Panda.HardwareBridge.Infrastructure.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\G2Panda.HardwareBridge.Infrastructure.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Infrastructure\obj\Debug\net8.0\ref\G2Panda.HardwareBridge.Infrastructure.dll

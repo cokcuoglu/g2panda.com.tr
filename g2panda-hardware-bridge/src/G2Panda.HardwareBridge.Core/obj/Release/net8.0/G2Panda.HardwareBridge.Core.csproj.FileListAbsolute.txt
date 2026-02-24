@@ -1,0 +1,11 @@
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\bin\Release\net8.0\G2Panda.HardwareBridge.Core.deps.json
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\bin\Release\net8.0\G2Panda.HardwareBridge.Core.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\bin\Release\net8.0\G2Panda.HardwareBridge.Core.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\obj\Release\net8.0\G2Panda.HardwareBridge.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\obj\Release\net8.0\G2Panda.HardwareBridge.Core.AssemblyInfoInputs.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\obj\Release\net8.0\G2Panda.HardwareBridge.Core.AssemblyInfo.cs
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\obj\Release\net8.0\G2Panda.HardwareBridge.Core.csproj.CoreCompileInputs.cache
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\obj\Release\net8.0\G2Panda.HardwareBridge.Core.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\obj\Release\net8.0\refint\G2Panda.HardwareBridge.Core.dll
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\obj\Release\net8.0\G2Panda.HardwareBridge.Core.pdb
+D:\Personal_Project\g2panda_release\g2panda-hardware-bridge\src\G2Panda.HardwareBridge.Core\obj\Release\net8.0\ref\G2Panda.HardwareBridge.Core.dll

@@ -1,0 +1,256 @@
+[
+  {
+    "id": "9308b2a0-a52d-4e43-b231-8e825d9faa6c",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:13:35.183Z",
+    "closed_at": "2026-02-22T20:13:41.361Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T20:13:41.361Z"
+  },
+  {
+    "id": "f04379d8-1284-4f21-aa9a-1d59a8710adc",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:15:13.938Z",
+    "closed_at": "2026-02-22T20:15:26.651Z",
+    "total_income": "370.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 1,
+    "payment_breakdown": {
+      "Nakit": 370
+    },
+    "created_at": "2026-02-22T20:15:26.649Z"
+  },
+  {
+    "id": "c9203238-a66e-4046-8b67-f310e62a0814",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:18:59.215Z",
+    "closed_at": "2026-02-22T20:19:27.489Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T20:19:27.487Z"
+  },
+  {
+    "id": "294e334b-fbb5-49b9-bd67-b39cbc323325",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:20:10.737Z",
+    "closed_at": "2026-02-22T20:20:16.000Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T20:20:16.000Z"
+  },
+  {
+    "id": "300059dd-c8c0-4ed5-81e5-1e2dc922a49f",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:21:45.829Z",
+    "closed_at": "2026-02-22T20:21:52.672Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T20:21:52.672Z"
+  },
+  {
+    "id": "29504183-149e-4eff-bbee-9ba6b6c62847",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:22:32.770Z",
+    "closed_at": "2026-02-22T20:22:45.454Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T20:22:45.454Z"
+  },
+  {
+    "id": "b4f0bc35-4040-4868-a4fa-3464654da016",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:23:30.440Z",
+    "closed_at": "2026-02-22T20:24:09.620Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T20:24:09.620Z"
+  },
+  {
+    "id": "2cd4fdab-b578-4e8a-bcc9-59b03e0c678d",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:26:26.236Z",
+    "closed_at": "2026-02-22T20:29:01.204Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T20:29:01.204Z"
+  },
+  {
+    "id": "49aee910-3253-4069-ba69-6a21dcd5d9fb",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:32:45.550Z",
+    "closed_at": "2026-02-22T20:32:51.019Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T20:32:51.019Z"
+  },
+  {
+    "id": "470278e1-8e3a-4b06-9bbf-f4f277c38b40",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:37:44.916Z",
+    "closed_at": "2026-02-22T20:39:56.150Z",
+    "total_income": "30.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 2,
+    "payment_breakdown": {
+      "Nakit": 30
+    },
+    "created_at": "2026-02-22T20:39:56.148Z"
+  },
+  {
+    "id": "9b126026-cae7-4f9d-83c6-6ea6d614736d",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:43:22.026Z",
+    "closed_at": "2026-02-22T20:44:32.841Z",
+    "total_income": "306.50",
+    "total_expense": "0.00",
+    "order_count": 1,
+    "transaction_count": 1,
+    "payment_breakdown": {
+      "Nakit": 306.5
+    },
+    "created_at": "2026-02-22T20:44:32.841Z"
+  },
+  {
+    "id": "568ee5cf-968b-4e9f-9854-68b3dc02dfb3",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:44:47.356Z",
+    "closed_at": "2026-02-22T20:45:35.640Z",
+    "total_income": "212.00",
+    "total_expense": "0.00",
+    "order_count": 1,
+    "transaction_count": 1,
+    "payment_breakdown": {
+      "Sodexo": 212
+    },
+    "created_at": "2026-02-22T20:45:35.640Z"
+  },
+  {
+    "id": "dc3942e9-20ff-41dd-8e75-eaf5bc27f536",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:45:36.441Z",
+    "closed_at": "2026-02-22T20:49:57.358Z",
+    "total_income": "370.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 1,
+    "payment_breakdown": {
+      "Nakit": 370
+    },
+    "created_at": "2026-02-22T20:49:57.358Z"
+  },
+  {
+    "id": "9e0e35e4-a188-469f-9799-2d52ea2df14c",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:54:26.260Z",
+    "closed_at": "2026-02-22T20:55:29.807Z",
+    "total_income": "556.50",
+    "total_expense": "27.83",
+    "order_count": 1,
+    "transaction_count": 4,
+    "payment_breakdown": {
+      "Kredi kartı": 556.5
+    },
+    "created_at": "2026-02-22T20:55:29.805Z"
+  },
+  {
+    "id": "2f743c8d-01e6-45f7-b369-72a1ff77c74d",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T20:56:27.541Z",
+    "closed_at": "2026-02-22T21:03:06.372Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T21:03:06.372Z"
+  },
+  {
+    "id": "16a0a750-a839-4522-a1c8-2e70ab3a64f6",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T21:04:02.306Z",
+    "closed_at": "2026-02-22T21:04:03.453Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T21:04:03.453Z"
+  },
+  {
+    "id": "282dd0cd-b88d-4061-b686-c8bf4b9b161b",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T21:06:41.792Z",
+    "closed_at": "2026-02-22T21:06:42.822Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T21:06:42.822Z"
+  },
+  {
+    "id": "d1b1ad4e-b74b-42b6-bc17-e08f1335e6ef",
+    "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+    "opened_at": "2026-02-22T21:12:28.658Z",
+    "closed_at": "2026-02-22T21:12:41.328Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T21:12:41.328Z"
+  },
+  {
+    "id": "9ae2fb07-1ef1-4506-8830-ec29aa43915f",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T21:13:25.723Z",
+    "closed_at": "2026-02-22T22:00:00.023Z",
+    "total_income": "690.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 2,
+    "payment_breakdown": {
+      "Nakit": 690
+    },
+    "created_at": "2026-02-22T22:00:00.024Z"
+  },
+  {
+    "id": "ca322496-ec66-4b53-9ccc-eab7bd0f1da9",
+    "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+    "opened_at": "2026-02-22T22:01:00.028Z",
+    "closed_at": "2026-02-22T22:02:41.431Z",
+    "total_income": "0.00",
+    "total_expense": "0.00",
+    "order_count": 0,
+    "transaction_count": 0,
+    "payment_breakdown": {},
+    "created_at": "2026-02-22T22:02:41.429Z"
+  }
+]

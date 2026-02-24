@@ -15,10 +15,14 @@ router.get('/', async (req: Request, res: Response) => {
         // We use req.db here implicitly because RLS is active
         // But users table might be special if the policy allows selecting own user
         const result = await req.db.query(
-            'SELECT id, email, full_name, role, business_name, business_logo_url, currency, locale, permissions FROM users WHERE id = $1',
+            'SELECT id, email, full_name, role, business_name, business_logo_url, currency, locale, permissions, is_open, auto_open_time, auto_close_time FROM users WHERE id = $1',
             [req.user.id]
         );
         const user = result.rows[0];
+
+        // Format times to HH:mm
+        if (user && user.auto_open_time) user.auto_open_time = user.auto_open_time.substring(0, 5);
+        if (user && user.auto_close_time) user.auto_close_time = user.auto_close_time.substring(0, 5);
 
         if (!user) {
             return res.status(404).json({ success: false, error: 'User not found' });
@@ -59,7 +63,7 @@ router.put('/', async (req: Request, res: Response) => {
             return res.status(401).json({ success: false, error: 'Unauthorized' });
         }
 
-        const { full_name, business_name, business_type, business_logo_url, currency, locale } = req.body;
+        const { full_name, business_name, business_type, business_logo_url, currency, locale, auto_open_time, auto_close_time } = req.body;
 
         const result = await req.db.query(
             `UPDATE users 
@@ -68,10 +72,12 @@ router.put('/', async (req: Request, res: Response) => {
                  business_type = COALESCE($3, business_type),
                  currency = COALESCE($4, currency),
                  locale = COALESCE($5, locale),
-                 business_logo_url = COALESCE($6, business_logo_url)
-             WHERE id = $7
-             RETURNING id, email, full_name, role, business_name, business_logo_url, currency, locale`,
-            [full_name, business_name, business_type, currency, locale, business_logo_url, req.user.id]
+                 business_logo_url = COALESCE($6, business_logo_url),
+                 auto_open_time = $7,
+                 auto_close_time = $8
+             WHERE id = $9
+             RETURNING id, email, full_name, role, business_name, business_logo_url, currency, locale, auto_open_time, auto_close_time`,
+            [full_name, business_name, business_type, currency, locale, business_logo_url, auto_open_time || null, auto_close_time || null, req.user.id]
         );
 
         if (result.rows.length === 0) {

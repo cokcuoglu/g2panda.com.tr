@@ -76,8 +76,8 @@ router.post('/', async (req: Request, res: Response) => {
         logger.info(`[TableOrders-POST] Creating new order for table ${table.name} (${tableId})`);
 
         const newOrderRes = await req.db.query(
-            `INSERT INTO orders (user_id, table_id, table_code, table_number, order_number, status, total_amount, base_amount, discount_amount)
-             VALUES ($1, $2, $3, $4, $5, 'pending', 0, 0, 0)
+            `INSERT INTO orders (user_id, table_id, table_code, table_number, order_number, status, total_amount, base_amount, discount_amount, order_type)
+             VALUES ($1, $2, $3, $4, $5, 'pending', 0, 0, 0, 'merchant')
              RETURNING *`,
             [req.user.id, tableId, table.unique_code, table.name, orderNumber]
         );
@@ -109,12 +109,17 @@ router.put('/:id', async (req: Request, res: Response) => {
 
         logger.info(`[TableOrders-PUT] Updating order ${id}. Items: ${items?.length}, Total: ${total_amount}`);
 
+        const updatedItems = (items || []).map((item: any) => ({
+            ...item,
+            confirmed_quantity: item.quantity
+        }));
+
         const result = await req.db.query(
             `UPDATE orders 
              SET items = $1, total_amount = $2, updated_at = NOW()
              WHERE id = $3 AND user_id = $4 AND status IN ('pending', 'confirmed')
              RETURNING *`,
-            [JSON.stringify(items), total_amount, id, req.user.id]
+            [JSON.stringify(updatedItems), total_amount, id, req.user.id]
         );
 
         logger.info(`[TableOrders - PUT] Update result: ${result.rows.length} rows updated`);

@@ -8,7 +8,7 @@ router.get('/', async (req: any, res: Response) => {
         // For now, return a single business based on user's profile
         // In the future, this can be extended to support multiple businesses per user
         const userRes = await req.db.query(
-            'SELECT id, email, business_name, business_type FROM users WHERE id = $1',
+            'SELECT id, email, business_name, business_type, is_open FROM users WHERE id = $1',
             [req.user.id]
         );
 
@@ -22,7 +22,8 @@ router.get('/', async (req: any, res: Response) => {
         const businesses = [{
             id: user.id, // Using user ID as business ID for now
             name: user.business_name || 'İşletmem',
-            type: user.business_type || 'retail'
+            type: user.business_type || 'retail',
+            is_open: user.is_open
         }];
 
         res.json({ success: true, data: businesses });

@@ -1,8 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Minus, Plus, Trash2, ShoppingCart, Receipt, Save } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart, Receipt, Save, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 
@@ -20,11 +19,12 @@ interface OrderSummaryProps {
     onRemove: (id: string) => void;
     onConfirm: () => void;
     onSave?: () => void; // Support partial updates for table orders
+    onPrint?: () => void; // Quick print action
     isProcessing: boolean;
     finalAmount?: number;
 }
 
-export function OrderSummary({ items, onUpdateQuantity, onRemove, onConfirm, onSave, isProcessing, finalAmount }: OrderSummaryProps) {
+export function OrderSummary({ items, onUpdateQuantity, onRemove, onConfirm, onSave, onPrint, isProcessing, finalAmount }: OrderSummaryProps) {
     const subtotal = items.reduce((sum, item) => {
         const price = item.price;
         const discount = item.discount_percent ? (price * item.discount_percent / 100) : 0;
@@ -52,49 +52,75 @@ export function OrderSummary({ items, onUpdateQuantity, onRemove, onConfirm, onS
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {items.map((item) => (
-                            <div key={item.id} className="group flex flex-col gap-2 animate-in slide-in-from-left-2 duration-300">
-                                <div className="flex justify-between items-start">
-                                    <span className="font-semibold text-slate-800 text-sm">{item.name}</span>
-                                    <div className="flex flex-col items-end">
-                                        <span className={cn("font-semibold text-sm", item.discount_percent ? "text-emerald-600" : "text-slate-900")}>
-                                            {((item.price * (1 - (item.discount_percent || 0) / 100)) * item.quantity).toLocaleString('tr-TR')} TL
-                                        </span>
-                                        {item.discount_percent && item.discount_percent > 0 && (
-                                            <span className="text-[10px] text-slate-400 line-through">
-                                                {(item.price * item.quantity).toLocaleString('tr-TR')} TL
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
+                        {items.map((item) => {
+                            const confirmedQty = (item as any).confirmed_quantity || 0;
+                            const newQty = item.quantity - confirmedQty;
+                            const isNew = newQty > 0;
 
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3 bg-slate-100 rounded-lg p-1">
+                            return (
+                                <div key={item.id} className={cn(
+                                    "group flex flex-col gap-1 p-3 rounded-xl border transition-all duration-300 animate-in slide-in-from-right-4",
+                                    isNew ? "bg-orange-50/50 border-orange-200 shadow-sm shadow-orange-100" : "bg-slate-50/50 border-transparent hover:border-slate-200 hover:bg-white"
+                                )}>
+                                    <div className="flex items-start gap-3">
+                                        <div className={cn(
+                                            "flex items-center justify-center min-w-[32px] h-8 rounded-lg font-bold text-[13px] shadow-sm transition-transform group-hover:scale-110",
+                                            isNew ? "bg-orange-500 text-white shadow-orange-200" : "bg-slate-900 text-white shadow-slate-900/10"
+                                        )}>
+                                            {item.quantity}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2">
+                                                <div className="font-semibold text-slate-800 text-[13px] leading-tight group-hover:text-slate-950 transition-colors tracking-tight">
+                                                    {item.name}
+                                                </div>
+                                                {isNew && (
+                                                    <span className="px-1.5 py-0.5 bg-orange-500 text-white text-[9px] font-black rounded-md animate-pulse uppercase tracking-wider">
+                                                        {newQty} YENİ
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <span className={cn("font-bold text-sm tracking-tight", (item.discount_percent || 0) > 0 ? "text-emerald-600" : "text-slate-900")}>
+                                                    {((item.price * (1 - (item.discount_percent || 0) / 100)) * item.quantity).toLocaleString('tr-TR')} TL
+                                                </span>
+                                                {(item.discount_percent || 0) > 0 && (
+                                                    <span className="text-[10px] text-slate-400 line-through decoration-slate-300">
+                                                        {(item.price * item.quantity).toLocaleString('tr-TR')} TL
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
                                         <button
-                                            onClick={() => onUpdateQuantity(item.id, -1)}
-                                            className="h-7 w-7 flex items-center justify-center rounded-md bg-white text-slate-600 shadow-sm hover:text-rose-600 hover:shadow transition-all disabled:opacity-50"
-                                            disabled={item.quantity <= 1}
+                                            onClick={() => onRemove(item.id)}
+                                            className="text-slate-300 hover:text-rose-500 transition-colors p-1.5 hover:bg-rose-50 rounded-md -mr-1 -mt-1"
+                                            title="Ürünü Çıkar"
                                         >
-                                            <Minus className="h-3 w-3" />
-                                        </button>
-                                        <span className="text-sm font-bold w-4 text-center tabular-nums">{item.quantity}</span>
-                                        <button
-                                            onClick={() => onUpdateQuantity(item.id, 1)}
-                                            className="h-7 w-7 flex items-center justify-center rounded-md bg-white text-slate-600 shadow-sm hover:text-emerald-600 hover:shadow transition-all"
-                                        >
-                                            <Plus className="h-3 w-3" />
+                                            <Trash2 className="h-4 w-4" />
                                         </button>
                                     </div>
-                                    <button
-                                        onClick={() => onRemove(item.id)}
-                                        className="text-slate-400 hover:text-rose-600 transition-colors p-2"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </button>
+
+                                    <div className="flex items-center justify-start mt-2 ml-11">
+                                        <div className="flex items-center gap-1.5 bg-white border border-slate-100 rounded-lg p-0.5 shadow-sm">
+                                            <button
+                                                onClick={() => onUpdateQuantity(item.id, -1)}
+                                                className="h-6 w-6 flex items-center justify-center rounded-md text-slate-400 hover:bg-slate-50 hover:text-rose-500 transition-all disabled:opacity-30"
+                                                disabled={item.quantity <= 1}
+                                            >
+                                                <Minus className="h-3 w-3" />
+                                            </button>
+                                            <span className="text-[11px] font-bold w-4 text-center tabular-nums text-slate-700">{item.quantity}</span>
+                                            <button
+                                                onClick={() => onUpdateQuantity(item.id, 1)}
+                                                className="h-6 w-6 flex items-center justify-center rounded-md text-slate-400 hover:bg-slate-50 hover:text-emerald-500 transition-all"
+                                            >
+                                                <Plus className="h-3 w-3" />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <Separator className="mt-2" />
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </ScrollArea>
@@ -133,6 +159,18 @@ export function OrderSummary({ items, onUpdateQuantity, onRemove, onConfirm, onS
                         >
                             <Save className="mr-2 h-4 w-4" />
                             Adisyonu Güncelle
+                        </Button>
+                    )}
+
+                    {onPrint && (
+                        <Button
+                            variant="outline"
+                            className="w-full h-12 text-md font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                            disabled={items.length === 0 || isProcessing}
+                            onClick={onPrint}
+                        >
+                            <Printer className="mr-2 h-4 w-4" />
+                            Ara Adisyon Yazdır
                         </Button>
                     )}
 
