@@ -37,6 +37,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
         { title: 'Özet', icon: LayoutDashboard, href: '/', roles: ['owner', 'accountant', 'staff'] },
         { title: 'Masa Siparişleri', icon: LayoutIcon, href: '/tables', roles: ['owner', 'staff'] },
         { title: 'Satış Menüsü', icon: ShoppingCart, href: '/sales', roles: ['owner', 'staff'] },
+        { title: 'Günün Satışları', icon: TrendingUp, href: '/today-sales', roles: ['owner', 'staff'] },
         { title: 'Online Siparişler', icon: Receipt, href: '/orders', roles: ['owner', 'staff'] },
         { title: 'Müşteriler', icon: Users, href: '/customers', roles: ['owner', 'staff'] },
         { title: 'Giderler', icon: TrendingDown, href: '/expenses', roles: ['owner', 'accountant'] },

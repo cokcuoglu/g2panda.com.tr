@@ -10,6 +10,7 @@ const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const SalesMenuPage = lazy(() => import('@/pages/SalesMenuPage'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const Reports = lazy(() => import('@/pages/Reports'));
+const TodaySalesPage = lazy(() => import('@/pages/TodaySalesPage'));
 
 const Users = lazy(() => import('@/pages/Users'));
 const IncomePage = lazy(() => import('@/pages/IncomePage'));
@@ -73,6 +74,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <SalesMenuPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/today-sales"
+                element={
+                  <ProtectedRoute>
+                    <TodaySalesPage />
                   </ProtectedRoute>
                 }
               />

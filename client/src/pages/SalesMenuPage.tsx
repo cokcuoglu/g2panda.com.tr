@@ -7,7 +7,7 @@ import { ProductCard } from '@/components/sales/ProductCard';
 import { OrderSummary } from '@/components/sales/OrderSummary';
 import { useAuth } from '@/context/AuthContext';
 import { useBusiness } from '@/context/BusinessContext';
-import { AlertCircle, Loader2, TrendingUp, Trash2, Tag } from 'lucide-react';
+import { AlertCircle, Loader2, Tag } from 'lucide-react';
 
 import {
     Dialog,
@@ -278,67 +278,8 @@ export default function SalesMenuPage() {
 
 
 
-    // Daily Total Logic
-    const [dailyTotal, setDailyTotal] = useState(0);
-
-    // Daily Sales List
-    const [dailySales, setDailySales] = useState<any[]>([]);
-    const [isLoadingSales, setIsLoadingSales] = useState(false);
-
-    const fetchDailyTotal = async () => {
-        try {
-            console.log('Fetching daily total...');
-            // Normalize to YYYY-MM-DD in local time
-            const localDate = new Date();
-            const offset = localDate.getTimezoneOffset();
-            const localISOTime = new Date(localDate.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
-
-            const res = await axios.get(`/api/transactions/daily-total?date=${localISOTime}`);
-            console.log('Daily total response:', res.data);
-            setDailyTotal(res.data.total);
-        } catch (error) {
-            console.error("Failed to fetch daily total", error);
-        }
-    };
-
-    const fetchDailySales = async () => {
-        setIsLoadingSales(true);
-        try {
-            // Get today's date in YYYY-MM-DD format
-            const localDate = new Date();
-            const offset = localDate.getTimezoneOffset();
-            const localISOTime = new Date(localDate.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
-
-            // Fetch today's income transactions (sales)
-            const res = await axios.get(`/api/transactions?type=income&date=${localISOTime}`);
-            setDailySales(res.data.data || []);
-        } catch (error) {
-            console.error('Failed to fetch daily sales:', error);
-            setDailySales([]);
-        } finally {
-            setIsLoadingSales(false);
-        }
-    };
-
-    const handleDeleteOrder = async (transactionId: string, description: string) => {
-        if (!confirm(`"${description}" işlemini kalıcı olarak silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz!`)) {
-            return;
-        }
-
-        try {
-            await axios.delete(`/api/transactions/${transactionId}`);
-            // Refresh lists
-            fetchDailySales();
-            fetchDailyTotal();
-        } catch (error: any) {
-            console.error('Failed to delete transaction:', error);
-            alert(error.response?.data?.error || 'İşlem silinemedi.');
-        }
-    };
 
     useEffect(() => {
-        fetchDailyTotal();
-        fetchDailySales();
 
         // If orderId is provided, fetch the existing order data
         if (orderId) {
@@ -408,12 +349,7 @@ export default function SalesMenuPage() {
             setSelectedCampaign(null); // Clear selected campaign
             setIsConfirmDialogOpen(false); // Close dialog
 
-            // Optimistic update
-            setDailyTotal(prev => prev + actualAmount);
-            setTimeout(() => {
-                fetchDailyTotal();
-                fetchDailySales();
-            }, 500);
+            // Removed fetchDailyTotal and fetchDailySales calls
 
         } catch (error: any) {
             console.error("Sale failed", error);
@@ -502,23 +438,6 @@ export default function SalesMenuPage() {
                 <div className="flex flex-1 gap-6 h-full pb-6 pl-1 pr-1 overflow-hidden relative">
                     {/* Left: Product Grid */}
                     <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar pb-24 lg:pb-0">
-                        {/* Daily Stats Bar */}
-                        <div className="mb-6 flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
-                                    <TrendingUp className="h-5 w-5" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-slate-500 font-medium">Günlük Ciro</p>
-                                    <h3 className="text-xl font-bold text-slate-900">
-                                        ₺{dailyTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                                    </h3>
-                                </div>
-                            </div>
-                            <div className="text-xs text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full hidden sm:block">
-                                {new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
-                            </div>
-                        </div>
 
                         {(!defaultCategoryId || paymentChannels.length === 0) && (
                             <div className="mb-6 p-4 text-center text-rose-500 bg-rose-50 rounded-lg border border-rose-100">
@@ -677,58 +596,7 @@ export default function SalesMenuPage() {
                             );
                         })()}
 
-                        {/* Daily Sales List - Moved inside the scrollable container */}
-                        <div className="mt-12 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-24">
-                            <div className="p-4 border-b border-slate-100 bg-slate-50">
-                                <h3 className="font-semibold text-lg text-slate-800">Bugünün Satışları</h3>
-                                <p className="text-xs text-slate-500 mt-1">Tamamlanan siparişler</p>
-                            </div>
 
-                            <div className="p-4">
-                                {isLoadingSales ? (
-                                    <div className="flex items-center justify-center py-8 text-slate-400">
-                                        <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                                        Yükleniyor...
-                                    </div>
-                                ) : dailySales.length === 0 ? (
-                                    <div className="text-center py-8 text-slate-400">
-                                        <p>Henüz tamamlanmış sipariş yok.</p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-3">
-                                        {dailySales.map((transaction: any) => (
-                                            <div
-                                                key={transaction.id}
-                                                className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors"
-                                            >
-                                                <div className="flex-1">
-                                                    <div className="flex items-center gap-3 mb-1">
-                                                        <span className="font-semibold text-slate-800">#{transaction.description}</span>
-                                                        <span className="text-xs text-slate-500">
-                                                            {new Date(transaction.transaction_date || transaction.created_at).toLocaleTimeString('tr-TR', {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            })}
-                                                        </span>
-                                                    </div>
-                                                    <div className="mt-1 font-semibold text-emerald-600">
-                                                        ₺{Number(transaction.amount).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                                                    </div>
-                                                </div>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                    onClick={() => handleDeleteOrder(transaction.id, transaction.description)}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
                     </div>
 
                     {/* Right: Order Summary. Hidden on mobile, shown on lg screens. */}
