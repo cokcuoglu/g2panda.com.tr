@@ -32,7 +32,7 @@ export default function Login() {
                 // Based on previous AuthContext file, login only takes token. 
                 // Wait, I saw login(token) in AuthContext. Let me check AuthContext again.
                 login(response.data.data.token);
-                navigate('/');
+                navigate('/dashboard');
             } else {
                 setError('Geçersiz e-posta veya şifre.');
             }

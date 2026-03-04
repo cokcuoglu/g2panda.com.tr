@@ -6,6 +6,8 @@ import { Loader2 } from 'lucide-react';
 
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
+const Landing = lazy(() => import('@/pages/Landing'));
+const BlogDetail = lazy(() => import('@/pages/BlogDetail'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const SalesMenuPage = lazy(() => import('@/pages/SalesMenuPage'));
 const Settings = lazy(() => import('@/pages/Settings'));
@@ -53,8 +55,10 @@ function App() {
               <Route path="/menu/:userId" element={<PublicMenuPage />} />
               {/* Gel-Al (Takeaway) QR Route - forces takeaway mode */}
               <Route path="/menu/:userId/takeaway" element={<PublicMenuPage />} />
+              <Route path="/" element={<Landing />} />
+              <Route path="/blog" element={<BlogDetail />} />
               <Route
-                path="/"
+                path="/dashboard"
                 element={
                   <ProtectedRoute>
                     <Dashboard />
