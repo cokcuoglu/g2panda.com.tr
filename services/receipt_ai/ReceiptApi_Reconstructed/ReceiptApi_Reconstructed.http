@@ -1,0 +1,6 @@
+@ReceiptApi_Reconstructed_HostAddress = http://localhost:5148
+
+GET {{ReceiptApi_Reconstructed_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

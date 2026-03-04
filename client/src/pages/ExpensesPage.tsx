@@ -140,7 +140,7 @@ export default function ExpensesPage() {
                 ocr_record_id: data.ocr_id,
                 notes: data.raw_text || prev.notes,
                 vat_rate: data.vat_rate ? String(data.vat_rate) : prev.vat_rate,
-                vat_amount: data.vat_total ? String(data.vat_total) : prev.vat_amount,
+                vat_amount: data.vat_total !== undefined ? String(Number(data.vat_total).toFixed(2)) : prev.vat_amount,
                 invoice_number: data.details?.id || data.invoice_number || prev.invoice_number,
                 items: (data.items || []).map((it: any) => ({ ...it, is_tax_deductible: true }))
             };
@@ -294,182 +294,230 @@ export default function ExpensesPage() {
                                     )}
 
                                     <form onSubmit={handleSubmit} className="space-y-6">
-                                        {/* STEP 1: RECEIPT & ITEMS */}
+
+                                        {/* ── STEP 1: Fiş Bilgisi + Ham Veri ── */}
                                         {step === 1 && (
-                                            <div className="space-y-6">
-                                                <ReceiptScanner onScanComplete={handleScanComplete} className="mb-4" />
+                                            <div className="space-y-4">
+                                                <ReceiptScanner onScanComplete={handleScanComplete} className="mb-2" />
 
-                                                <div className="space-y-4">
-                                                    <div className="flex justify-between items-center mb-2">
-                                                        <Label className="text-sm font-bold text-slate-700">Fiş Kalemleri</Label>
-                                                        <Button
-                                                            type="button"
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-7 text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50"
-                                                            onClick={() => {
-                                                                setFormData({
-                                                                    ...formData,
-                                                                    items: [...formData.items, { name: '', quantity: 1, unit: 'adet', unit_price: 0, total_price: 0, vat_rate: 20, is_tax_deductible: true }]
-                                                                });
-                                                            }}
-                                                        >
-                                                            + Kalem Ekle
-                                                        </Button>
-                                                    </div>
-
-                                                    <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                                                        {formData.items.length === 0 ? (
-                                                            <div className="text-center py-8 border-2 border-dashed border-slate-100 rounded-lg text-slate-400 text-xs">
-                                                                Henüz kalem eklenmemiş. <br />Fiş tarayarak veya manuel ekleyebilirsiniz.
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex flex-col gap-2">
-                                                                {formData.items.map((item, idx) => (
-                                                                    <div key={idx} className="p-3 bg-slate-50 border border-slate-100 rounded-md space-y-2">
-                                                                        {/* Row 1: Name and Delete */}
-                                                                        <div className="flex gap-2 items-center">
-                                                                            <Input
-                                                                                className="h-8 text-xs bg-white flex-1"
-                                                                                placeholder="Ürün Adı"
-                                                                                value={item.name}
-                                                                                onChange={e => {
-                                                                                    const newItems = [...formData.items];
-                                                                                    newItems[idx].name = e.target.value;
-                                                                                    setFormData({ ...formData, items: newItems });
-                                                                                }}
-                                                                            />
-                                                                            <Button
-                                                                                type="button"
-                                                                                variant="ghost"
-                                                                                size="icon"
-                                                                                className="h-7 w-7 text-slate-300 hover:text-red-500"
-                                                                                onClick={() => {
-                                                                                    const newItems = formData.items.filter((_, i) => i !== idx);
-                                                                                    const totalSum = newItems.reduce((acc, i) => acc + i.total_price, 0);
-                                                                                    const totalVat = newItems.reduce((acc, i) => {
-                                                                                        const r = i.vat_rate || 0;
-                                                                                        return acc + (i.total_price - (i.total_price / (1 + r / 100)));
-                                                                                    }, 0);
-                                                                                    setFormData({ ...formData, items: newItems, amount: String(totalSum.toFixed(2)), vat_amount: String(totalVat.toFixed(2)) });
-                                                                                }}
-                                                                            >
-                                                                                <Trash2 className="h-3 w-3" />
-                                                                            </Button>
-                                                                        </div>
-                                                                        {/* Row 2: Quantity, Unit, Price, VAT */}
-                                                                        <div className="grid grid-cols-12 gap-2">
-                                                                            <div className="col-span-3">
-                                                                                <Input
-                                                                                    type="number"
-                                                                                    className="h-8 text-xs text-right bg-white"
-                                                                                    placeholder="Miktar"
-                                                                                    value={item.quantity || ''}
-                                                                                    onChange={e => {
-                                                                                        const newItems = [...formData.items];
-                                                                                        newItems[idx].quantity = Number(e.target.value);
-                                                                                        setFormData({ ...formData, items: newItems });
-                                                                                    }}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="col-span-3">
-                                                                                <select
-                                                                                    className="w-full h-8 text-[11px] border border-slate-200 rounded px-1 bg-white"
-                                                                                    value={item.unit || 'adet'}
-                                                                                    onChange={e => {
-                                                                                        const newItems = [...formData.items];
-                                                                                        newItems[idx].unit = e.target.value;
-                                                                                        setFormData({ ...formData, items: newItems });
-                                                                                    }}
-                                                                                >
-                                                                                    <option value="adet">Adet</option>
-                                                                                    <option value="kg">Kilo</option>
-                                                                                    <option value="lt">Litre</option>
-                                                                                    <option value="m">Metre</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div className="col-span-4">
-                                                                                <Input
-                                                                                    type="number"
-                                                                                    className="h-8 text-xs text-right bg-white"
-                                                                                    placeholder="Fiyat"
-                                                                                    value={item.total_price}
-                                                                                    onChange={e => {
-                                                                                        const newValue = Number(e.target.value);
-                                                                                        const newItems = [...formData.items];
-                                                                                        newItems[idx].total_price = newValue;
-                                                                                        // Recalc totals
-                                                                                        const totalSum = newItems.reduce((acc, i) => acc + i.total_price, 0);
-                                                                                        const totalVat = newItems.reduce((acc, i) => {
-                                                                                            const r = i.vat_rate || 0;
-                                                                                            return acc + (i.total_price - (i.total_price / (1 + r / 100)));
-                                                                                        }, 0);
-                                                                                        setFormData({ ...formData, items: newItems, amount: String(totalSum.toFixed(2)), vat_amount: String(totalVat.toFixed(2)) });
-                                                                                    }}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="col-span-2">
-                                                                                <select
-                                                                                    className="w-full h-8 text-[11px] border border-slate-200 rounded px-1 bg-white"
-                                                                                    value={item.vat_rate || ''}
-                                                                                    onChange={e => {
-                                                                                        const rate = Number(e.target.value);
-                                                                                        const newItems = [...formData.items];
-                                                                                        newItems[idx].vat_rate = rate;
-                                                                                        const totalVat = newItems.reduce((acc, i) => {
-                                                                                            const r = i.vat_rate || 0;
-                                                                                            return acc + (i.total_price - (i.total_price / (1 + r / 100)));
-                                                                                        }, 0);
-                                                                                        setFormData({ ...formData, items: newItems, vat_amount: String(totalVat.toFixed(2)) });
-                                                                                    }}
-                                                                                >
-                                                                                    <option value="0">%0</option>
-                                                                                    <option value="1">%1</option>
-                                                                                    <option value="10">%10</option>
-                                                                                    <option value="20">%20</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    {/* Summary & Globals Step 1 */}
-                                                    <div className="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-4">
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <div className="space-y-1">
-                                                                <Label className="text-xs">Genel Toplam</Label>
-                                                                <div className="text-lg font-bold text-slate-800">{formData.amount || '0.00'} ₺</div>
-                                                            </div>
-                                                            <div className="space-y-1 text-right">
-                                                                <Label className="text-xs">Toplam KDV</Label>
-                                                                <div className="text-sm font-medium text-slate-600">{formData.vat_amount || '0.00'} ₺</div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="grid grid-cols-2 gap-2">
-                                                            <div className="space-y-1">
-                                                                <Label className="text-xs">Fiş Tarihi</Label>
-                                                                <Input type="datetime-local" className="h-8 text-xs bg-white" value={formData.transaction_date} onChange={e => setFormData({ ...formData, transaction_date: e.target.value })} />
-                                                            </div>
-                                                            <div className="space-y-1">
-                                                                <Label className="text-xs">Fiş No</Label>
-                                                                <Input className="h-8 text-xs bg-white" placeholder="Fiş No" value={formData.invoice_number} onChange={e => setFormData({ ...formData, invoice_number: e.target.value })} />
-                                                            </div>
+                                                {/* Totals */}
+                                                <div className="grid grid-cols-2 gap-4 px-1">
+                                                    <div className="space-y-1">
+                                                        <Label className="text-xs text-slate-500">Genel Toplam (KDV Dahil)</Label>
+                                                        <div className="relative">
+                                                            <Input
+                                                                type="text"
+                                                                className="h-10 text-xl font-bold bg-white text-slate-800 pr-8 shadow-sm"
+                                                                value={formData.amount}
+                                                                onChange={e => setFormData({ ...formData, amount: e.target.value })}
+                                                            />
+                                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₺</span>
                                                         </div>
                                                     </div>
+                                                    <div className="space-y-1 text-right">
+                                                        <Label className="text-xs text-slate-500">Toplam KDV</Label>
+                                                        <div className="relative">
+                                                            <Input
+                                                                type="text"
+                                                                className="h-10 text-lg font-semibold bg-white text-slate-600 text-right pr-8 shadow-sm"
+                                                                value={formData.vat_amount}
+                                                                onChange={e => setFormData({ ...formData, vat_amount: e.target.value })}
+                                                            />
+                                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">₺</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Kurum / Açıklama */}
+                                                <div className="space-y-1">
+                                                    <Label className="text-xs">Kurum / Açıklama</Label>
+                                                    <Input
+                                                        className="h-9 text-sm bg-white"
+                                                        placeholder="Kurum adı veya açıklama"
+                                                        value={formData.description}
+                                                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                {/* Date + Invoice No */}
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div className="space-y-1">
+                                                        <Label className="text-xs">Fiş Tarihi</Label>
+                                                        <Input type="datetime-local" className="h-9 text-xs bg-white" value={formData.transaction_date} onChange={e => setFormData({ ...formData, transaction_date: e.target.value })} />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <Label className="text-xs">Fiş No</Label>
+                                                        <Input className="h-9 text-xs bg-white" placeholder="Fiş No" value={formData.invoice_number} onChange={e => setFormData({ ...formData, invoice_number: e.target.value })} />
+                                                    </div>
+                                                </div>
+
+                                                {/* Raw OCR Text */}
+                                                <div className="space-y-2 pt-2 border-t border-slate-100">
+                                                    <div className="flex items-center justify-between">
+                                                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Okunan Fiş Detayı (Ham Veri)</Label>
+                                                        <Badge variant="outline" className="text-[9px] h-4 bg-blue-50 text-blue-600 border-blue-100">AI Analiz</Badge>
+                                                    </div>
+                                                    <Textarea
+                                                        placeholder="Fiş okunduğunda detaylar burada görünecek..."
+                                                        value={formData.notes || ''}
+                                                        onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                                                        className="font-mono text-[11px] bg-slate-50 border-slate-200 min-h-[120px] resize-y leading-relaxed"
+                                                    />
+                                                    <p className="text-[10px] text-slate-400 italic">
+                                                        * Yapay zeka tarafından okunan ham metin. Hataları buradan manuel düzeltebilirsiniz.
+                                                    </p>
                                                 </div>
                                             </div>
                                         )}
 
-                                        {/* STEP 2: CLASSIFICATION & STOCK */}
+                                        {/* ── STEP 2: Fiş Kalemleri ── */}
                                         {step === 2 && (
+                                            <div className="space-y-4">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
+                                                        <Badge variant="outline" className="h-5 px-1.5 text-[10px] bg-rose-50 text-rose-600 border-rose-100 uppercase font-bold tracking-tight">ADIM 2</Badge>
+                                                        <h3 className="text-sm font-semibold text-slate-700">Fiş Kalemleri</h3>
+                                                    </div>
+                                                    {formData.items.length > 0 && (
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            className="text-[10px] h-6 text-rose-600 hover:text-rose-700 font-bold"
+                                                            onClick={() => {
+                                                                const total = formData.items.reduce((sum: number, item: any) => sum + Number(item.total_price || 0), 0).toFixed(2);
+                                                                setFormData({ ...formData, amount: total });
+                                                            }}
+                                                        >
+                                                            Toplamı Eşitle
+                                                        </Button>
+                                                    )}
+                                                </div>
+
+                                                {formData.items.length === 0 ? (
+                                                    <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-lg text-center">
+                                                        <p className="text-xs text-slate-400 italic">Bu fişte otomatik ürün detayı bulunamadı.</p>
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="mt-4 text-[11px]"
+                                                            onClick={() => setFormData({
+                                                                ...formData,
+                                                                items: [...formData.items, { name: '', total_price: '0', quantity: 1, vat_rate: 20, is_tax_deductible: true }]
+                                                            })}
+                                                        >
+                                                            <Plus className="h-3 w-3 mr-1" /> Kalem Ekle
+                                                        </Button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-3 max-h-[450px] overflow-y-auto pr-1">
+                                                        {formData.items.map((item: any, idx: number) => (
+                                                            <div key={idx} className="flex flex-col gap-3 p-4 bg-white border border-slate-100 rounded-xl shadow-sm border-l-4 border-l-rose-400">
+                                                                {/* Row 1: Product Name */}
+                                                                <div className="w-full">
+                                                                    <Input
+                                                                        className="h-10 text-[13px] w-full bg-slate-50/50 border-slate-200 focus:bg-white font-medium"
+                                                                        placeholder="Ürün adı"
+                                                                        value={item.name}
+                                                                        onChange={e => {
+                                                                            const newItems = [...formData.items];
+                                                                            newItems[idx].name = e.target.value;
+                                                                            setFormData({ ...formData, items: newItems });
+                                                                        }}
+                                                                    />
+                                                                </div>
+
+                                                                {/* Row 2: Price and Trash */}
+                                                                <div className="flex items-center justify-between gap-3 bg-slate-50/30 p-2 rounded-lg border border-slate-100/50">
+                                                                    <div className="flex items-center gap-2 flex-1">
+                                                                        <Label className="text-[10px] text-slate-400 uppercase font-bold shrink-0">TUTAR</Label>
+                                                                        <div className="relative flex-1 max-w-[200px]">
+                                                                            <Input
+                                                                                type="number"
+                                                                                className="h-10 w-full text-[14px] text-right font-bold pr-8 border-slate-200 bg-white shadow-sm"
+                                                                                value={item.total_price}
+                                                                                onChange={e => {
+                                                                                    const newItems = [...formData.items];
+                                                                                    newItems[idx].total_price = e.target.value;
+                                                                                    setFormData({ ...formData, items: newItems });
+                                                                                }}
+                                                                            />
+                                                                            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[12px] text-slate-400 font-bold pointer-events-none">₺</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <Button
+                                                                        type="button"
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        className="h-10 w-10 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg shrink-0"
+                                                                        onClick={() => {
+                                                                            const newItems = formData.items.filter((_: any, i: number) => i !== idx);
+                                                                            setFormData({ ...formData, items: newItems });
+                                                                        }}
+                                                                    >
+                                                                        <Trash2 className="h-5 w-5" />
+                                                                    </Button>
+                                                                </div>
+
+                                                                {/* Row 3: Tax toggle + VAT rate */}
+                                                                <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Switch
+                                                                            id={`tax-${idx}`}
+                                                                            className="scale-90"
+                                                                            checked={item.is_tax_deductible !== false}
+                                                                            onCheckedChange={(checked) => {
+                                                                                const newItems = [...formData.items];
+                                                                                newItems[idx].is_tax_deductible = checked;
+                                                                                setFormData({ ...formData, items: newItems });
+                                                                            }}
+                                                                        />
+                                                                        <Label htmlFor={`tax-${idx}`} className="text-[11px] text-slate-500 cursor-pointer select-none">Vergiye Tabii</Label>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Label className="text-[10px] text-slate-400 uppercase tracking-tighter font-semibold">KDV %</Label>
+                                                                        <Input
+                                                                            type="number"
+                                                                            className="h-8 w-16 text-[12px] p-1 text-center bg-slate-50 border-slate-200 font-bold"
+                                                                            value={item.vat_rate ?? 20}
+                                                                            onChange={e => {
+                                                                                const newItems = [...formData.items];
+                                                                                newItems[idx].vat_rate = e.target.value;
+                                                                                setFormData({ ...formData, items: newItems });
+                                                                            }}
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="w-full mt-2 text-[11px] h-8 border border-dashed border-slate-200 text-slate-500"
+                                                            onClick={() => setFormData({
+                                                                ...formData,
+                                                                items: [...formData.items, { name: '', total_price: '0', quantity: 1, vat_rate: 20, is_tax_deductible: true }]
+                                                            })}
+                                                        >
+                                                            <Plus className="h-3 w-3 mr-1" /> Kalem Ekle
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* ── STEP 3: Sınıflandırma + Kaydet ── */}
+                                        {step === 3 && (
                                             <div className="space-y-6">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <Badge variant="outline" className="h-5 px-1.5 text-[10px] bg-rose-50 text-rose-600 border-rose-100 uppercase font-bold tracking-tight">ADIM 3</Badge>
+                                                    <h3 className="text-sm font-semibold text-slate-700">Sınıflandırma</h3>
+                                                </div>
+
                                                 <div className="space-y-4 p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
-                                                    <h3 className="text-sm font-semibold text-slate-700 mb-2">Sınıflandırma</h3>
                                                     <div className="space-y-2">
-                                                        <label className="text-xs font-medium uppercase text-slate-500 tracking-wider">Kategori</label>
+                                                        <Label className="text-xs font-medium uppercase text-slate-500 tracking-wider">Kategori</Label>
                                                         <Select
                                                             value={formData.category_id}
                                                             onValueChange={val => setFormData({ ...formData, category_id: val })}
@@ -484,7 +532,7 @@ export default function ExpensesPage() {
                                                         </Select>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label className="text-xs font-medium uppercase text-slate-500 tracking-wider">Ödeme Hesabı</label>
+                                                        <Label className="text-xs font-medium uppercase text-slate-500 tracking-wider">Ödeme Hesabı</Label>
                                                         <Select value={formData.channel_id} onValueChange={val => setFormData({ ...formData, channel_id: val })}>
                                                             <SelectTrigger><SelectValue placeholder="Hesap" /></SelectTrigger>
                                                             <SelectContent>{channels.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
@@ -492,110 +540,66 @@ export default function ExpensesPage() {
                                                     </div>
                                                 </div>
 
-                                                <div className="space-y-4">
-                                                    <h3 className="text-sm font-semibold text-slate-700 mb-2">Stok & Vergi Ayarları</h3>
-                                                    <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                                                        {formData.items.map((item, idx) => (
-                                                            <div key={idx} className="p-3 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-between">
-                                                                <div>
-                                                                    <div className="font-medium text-sm text-slate-700">{item.name || 'İsimsiz Kalem'}</div>
-                                                                    <div className="text-xs text-slate-400">{item.total_price} ₺</div>
-                                                                </div>
-                                                                <div className="flex items-center gap-4">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Label className="text-[10px] uppercase text-slate-500">Stok?</Label>
-                                                                        <Switch
-                                                                            checked={item.is_stock}
-                                                                            className="scale-75"
-                                                                            onCheckedChange={(c) => {
-                                                                                const newItems = [...formData.items];
-                                                                                newItems[idx].is_stock = c;
-                                                                                setFormData({ ...formData, items: newItems });
-                                                                            }}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Label className="text-[10px] uppercase text-slate-500">Vergi Düş?</Label>
-                                                                        <Switch
-                                                                            checked={item.is_tax_deductible !== false}
-                                                                            className="scale-75"
-                                                                            onCheckedChange={(c) => {
-                                                                                const newItems = [...formData.items];
-                                                                                newItems[idx].is_tax_deductible = c;
-                                                                                setFormData({ ...formData, items: newItems });
-                                                                            }}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                                {/* Vergi Ayarları */}
+                                                <div className="space-y-3">
                                                     <div className="flex items-center justify-between p-3 border border-slate-100 rounded-lg">
                                                         <Label className="text-sm">Tüm Fiş Vergiden Düşülebilir</Label>
                                                         <Switch checked={formData.is_tax_deductible} onCheckedChange={c => setFormData({ ...formData, is_tax_deductible: c })} />
                                                     </div>
                                                 </div>
-                                            </div>
-                                        )}
 
-                                        {/* STEP 3: CONFIRMATION */}
-                                        {step === 3 && (
-                                            <div className="space-y-6">
-                                                <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-lg text-center">
-                                                    <div className="text-emerald-600 font-bold text-xl mb-1">{formData.amount} ₺</div>
-                                                    <div className="text-emerald-500 text-xs uppercase tracking-wide">Toplam Tutar</div>
-                                                </div>
-
-                                                <div className="space-y-4">
-                                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                                        <div className="text-slate-500">Kategori</div>
-                                                        <div className="font-medium text-right">{categories.find(c => c.id === formData.category_id)?.name || '-'}</div>
-
-                                                        <div className="text-slate-500">Ödeme</div>
-                                                        <div className="font-medium text-right">{channels.find(c => c.id === formData.channel_id)?.name || '-'}</div>
-
-                                                        <div className="text-slate-500">Tarih</div>
-                                                        <div className="font-medium text-right">{new Date(formData.transaction_date).toLocaleString('tr-TR')}</div>
-
-                                                        <div className="text-slate-500">Kalem Sayısı</div>
-                                                        <div className="font-medium text-right">{formData.items.length}</div>
+                                                {/* Özet */}
+                                                <div className="bg-slate-50 rounded-lg p-4 space-y-2 text-sm border border-slate-100">
+                                                    <div className="flex justify-between text-slate-500">
+                                                        <span>Toplam Tutar</span>
+                                                        <span className="font-bold text-slate-800">{formData.amount} ₺</span>
                                                     </div>
-
-                                                    <div className="space-y-2">
-                                                        <Label>Notlar</Label>
-                                                        <Textarea
-                                                            placeholder="Eklemek istediğiniz notlar..."
-                                                            value={formData.notes || ''}
-                                                            onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                                                            className="font-mono text-xs bg-slate-50"
-                                                        />
+                                                    <div className="flex justify-between text-slate-500">
+                                                        <span>Kalem Sayısı</span>
+                                                        <span className="font-medium">{formData.items.length}</span>
+                                                    </div>
+                                                    <div className="flex justify-between text-slate-500">
+                                                        <span>Tarih</span>
+                                                        <span className="font-medium">{formData.transaction_date ? new Date(formData.transaction_date).toLocaleString('tr-TR') : '-'}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         )}
 
-                                        {/* NAVIGATION */}
-                                        <div className="flex justify-between pt-4 border-t border-slate-100">
-                                            {step > 1 ? (
-                                                <Button type="button" variant="outline" onClick={() => setStep(step - 1)}>
+                                        {/* ── NAVIGATION ── */}
+                                        <div className="flex gap-3 pt-4 border-t border-slate-100">
+                                            {step > 1 && (
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="flex-1 h-11 font-semibold"
+                                                    onClick={() => setStep(step - 1)}
+                                                >
                                                     Geri
                                                 </Button>
-                                            ) : (
-                                                <div></div> // Spacer
                                             )}
 
                                             {step < 3 ? (
-                                                <Button type="button" className="bg-slate-800" onClick={() => setStep(step + 1)}>
+                                                <Button
+                                                    type="button"
+                                                    className="flex-[2] h-11 bg-rose-600 hover:bg-rose-700 font-bold"
+                                                    onClick={() => setStep(step + 1)}
+                                                >
                                                     Devam Et
                                                 </Button>
                                             ) : (
-                                                <Button type="submit" className="bg-rose-600 w-32">
-                                                    Kaydet
+                                                <Button
+                                                    type="submit"
+                                                    className="flex-[2] h-11 bg-rose-600 hover:bg-rose-700 font-bold"
+                                                >
+                                                    {editingId ? 'Güncelle' : 'Kaydet'}
                                                 </Button>
                                             )}
                                         </div>
                                     </form>
                                 </TabsContent>
+
+
 
                                 <TabsContent value="fixed" className="mt-0 space-y-4">
                                     <form onSubmit={handleSubmit} className="space-y-6 pt-2">
@@ -741,7 +745,7 @@ export default function ExpensesPage() {
                             </Tabs>
                         </SheetContent>
                     </Sheet>
-                </div>
+                </ div>
 
             }
         >

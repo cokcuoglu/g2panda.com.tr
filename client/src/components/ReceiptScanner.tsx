@@ -10,6 +10,7 @@ interface ScanResult {
     date: string | null;
     description: string | null;
     raw_text?: string;
+    vat_total?: number;
     items?: any[];
 }
 
@@ -77,13 +78,17 @@ export const ReceiptScanner: React.FC<ReceiptScannerProps> = ({ onScanComplete, 
             const finalData = await poll();
 
             // Transform to expected format
+            const extractedItems = finalData.items || [];
+            const calculatedVatTotal = extractedItems.reduce((acc: number, item: any) => acc + Number(item.vat_amount || 0), 0);
+
             onScanComplete({
                 ocr_id: finalData.id,
                 amount: finalData.extracted_amount,
                 date: finalData.extracted_date,
                 description: finalData.extracted_vendor,
                 raw_text: finalData.raw_text,
-                items: finalData.items || []
+                vat_total: calculatedVatTotal,
+                items: extractedItems
             });
 
         } catch (error: any) {

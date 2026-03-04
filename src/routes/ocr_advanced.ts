@@ -85,7 +85,7 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
             logger.info(`[OCR] Sending image to receipt_ai: ${imagePath}`);
 
             const form = new FormData();
-            form.append('file', fs.createReadStream(imagePath), {
+            form.append('image', fs.createReadStream(imagePath), {
                 filename: path.basename(imagePath),
                 contentType: req.file!.mimetype || 'image/jpeg'
             });
@@ -128,40 +128,58 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
             logger.info(`[OCR] receipt_ai response for job ${ocrId}:`, JSON.stringify(aiData).substring(0, 300));
 
             // 3. Map response fields (receipt_ai may vary — handle both camelCase and PascalCase)
-            const merchantName: string = aiData.merchantName || aiData.MerchantName || aiData.merchant_name || 'Bilinmeyen';
-            const totalAmount: number = parseFloat(aiData.grandTotal ?? aiData.GrandTotal ?? aiData.total ?? aiData.Total ?? aiData.amount ?? 0) || 0;
-            const vatTotal: number = parseFloat(aiData.totalVat ?? aiData.TotalVat ?? aiData.vat_total ?? aiData.vatTotal ?? 0) || 0;
+            const merchantName: string = aiData.merchant?.name || aiData.Merchant?.Name || aiData.merchantName || aiData.MerchantName || aiData.merchant_name || 'Bilinmeyen';
+            const totalAmount: number = parseFloat(aiData.financial?.total ?? aiData.Financial?.Total ?? aiData.grandTotal ?? aiData.GrandTotal ?? aiData.total ?? aiData.Total ?? aiData.amount ?? 0) || 0;
+            const vatTotal: number = parseFloat(aiData.financial?.vatAmount ?? aiData.Financial?.VatAmount ?? aiData.totalVat ?? aiData.TotalVat ?? aiData.vat_total ?? aiData.vatTotal ?? 0) || 0;
             const rawDate: string | null = aiData.date || aiData.Date || null;
             const formattedDate: string | null = formatDate(rawDate);
 
             // Items from receipt_ai
             const rawItems: any[] = aiData.items || aiData.Items || aiData.lineItems || aiData.LineItems || [];
-            const mappedItems = rawItems.map((it: any) => ({
-                name: it.name || it.Name || it.description || it.Description || 'Ürün',
-                quantity: it.quantity || it.Quantity || 1,
-                unit_price: parseFloat(it.unitPrice ?? it.UnitPrice ?? it.unit_price ?? it.price ?? 0) || 0,
-                total_price: parseFloat(it.totalPrice ?? it.TotalPrice ?? it.total_price ?? it.amount ?? 0) || 0,
-                vat_rate: it.vatRate ?? it.VatRate ?? it.vat_rate ?? 20,
-                vat_amount: parseFloat(it.vatAmount ?? it.VatAmount ?? it.vat_amount ?? 0) || 0,
-                confidence: it.confidence ?? it.Confidence ?? 0.9,
-                is_tax_deductible: true
-            }));
+            const mappedItems = rawItems.map((it: any) => {
+                const total_price = parseFloat(it.totalPrice ?? it.TotalPrice ?? it.total_price ?? it.amount ?? 0) || 0;
+                const vat_rate = it.vatRate ?? it.VatRate ?? it.vat_rate ?? 20;
+                let vat_amount = parseFloat(it.vatAmount ?? it.VatAmount ?? it.vat_amount ?? 0) || 0;
+
+                // If AI didn't explicitly extract the VAT Amount, calculate it mathematically from Total Price and VAT Rate
+                if (vat_amount === 0 && vat_rate > 0 && total_price > 0) {
+                    const net_price = total_price / (1 + (vat_rate / 100));
+                    vat_amount = Number((total_price - net_price).toFixed(2));
+                }
+
+                return {
+                    name: it.name || it.Name || it.description || it.Description || 'Ürün',
+                    quantity: it.quantity || it.Quantity || 1,
+                    unit_price: parseFloat(it.unitPrice ?? it.UnitPrice ?? it.unit_price ?? it.price ?? 0) || 0,
+                    total_price,
+                    vat_rate,
+                    vat_amount,
+                    confidence: it.confidence ?? it.Confidence ?? 0.9,
+                    is_tax_deductible: true
+                };
+            });
 
             // Build human-readable raw_text
-            let rawText = `--- FİŞ / FATURA DETAYI (receipt_ai) ---\n\n`;
-            rawText += `${merchantName}\n`;
-            rawText += `TARİH: ${formattedDate || '---'}\n`;
-            rawText += `-------------------------------------------\n`;
-            if (mappedItems.length > 0) {
-                mappedItems.forEach((it: any) => {
-                    rawText += `${String(it.name).padEnd(25).substring(0, 25)} ${it.total_price.toFixed(2).padStart(8)} TL\n`;
-                });
+            let rawText = '';
+            if (aiData.rawText || aiData.RawText) {
+                // Use the beautifully formatted text from the .NET Grammar Parser
+                rawText = aiData.rawText || aiData.RawText;
             } else {
-                rawText += 'KALEM DETAYLARI OKUNAMADI\n';
+                rawText = `--- FİŞ / FATURA DETAYI (receipt_ai) ---\n\n`;
+                rawText += `${merchantName}\n`;
+                rawText += `TARİH: ${formattedDate || '---'}\n`;
+                rawText += `-------------------------------------------\n`;
+                if (mappedItems.length > 0) {
+                    mappedItems.forEach((it: any) => {
+                        rawText += `${String(it.name).padEnd(25).substring(0, 25)} ${it.total_price.toFixed(2).padStart(8)} TL\n`;
+                    });
+                } else {
+                    rawText += 'KALEM DETAYLARI OKUNAMADI\n';
+                }
+                rawText += `-------------------------------------------\n`;
+                if (vatTotal > 0) rawText += `TOPKDV: ${vatTotal.toFixed(2).padStart(28)} TL\n`;
+                rawText += `TOPLAM: ${totalAmount.toFixed(2).padStart(28)} TL\n`;
             }
-            rawText += `-------------------------------------------\n`;
-            if (vatTotal > 0) rawText += `TOPKDV: ${vatTotal.toFixed(2).padStart(28)} TL\n`;
-            rawText += `TOPLAM: ${totalAmount.toFixed(2).padStart(28)} TL\n`;
 
             // 4. Update DB record
             await req.db.query(

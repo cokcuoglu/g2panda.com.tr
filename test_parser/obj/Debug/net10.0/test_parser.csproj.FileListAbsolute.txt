@@ -1,0 +1,14 @@
+D:\Personal_Project\g2panda_release\test_parser\bin\Debug\net10.0\test_parser.exe
+D:\Personal_Project\g2panda_release\test_parser\bin\Debug\net10.0\test_parser.deps.json
+D:\Personal_Project\g2panda_release\test_parser\bin\Debug\net10.0\test_parser.runtimeconfig.json
+D:\Personal_Project\g2panda_release\test_parser\bin\Debug\net10.0\test_parser.dll
+D:\Personal_Project\g2panda_release\test_parser\bin\Debug\net10.0\test_parser.pdb
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\test_parser.GeneratedMSBuildEditorConfig.editorconfig
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\test_parser.AssemblyInfoInputs.cache
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\test_parser.AssemblyInfo.cs
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\test_parser.csproj.CoreCompileInputs.cache
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\test_parser.dll
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\refint\test_parser.dll
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\test_parser.pdb
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\test_parser.genruntimeconfig.cache
+D:\Personal_Project\g2panda_release\test_parser\obj\Debug\net10.0\ref\test_parser.dll
