@@ -403,7 +403,7 @@ export default function ExpensesPage() {
                                                             className="mt-4 text-[11px]"
                                                             onClick={() => setFormData({
                                                                 ...formData,
-                                                                items: [...formData.items, { name: '', total_price: '0', quantity: 1, vat_rate: 20, is_tax_deductible: true }]
+                                                                items: [...formData.items, { name: '', total_price: '0', quantity: 1, unit: 'adet', vat_rate: 20, is_tax_deductible: true }]
                                                             })}
                                                         >
                                                             <Plus className="h-3 w-3 mr-1" /> Kalem Ekle
@@ -427,11 +427,38 @@ export default function ExpensesPage() {
                                                                     />
                                                                 </div>
 
-                                                                {/* Row 2: Price and Trash */}
-                                                                <div className="flex items-center justify-between gap-3 bg-slate-50/30 p-2 rounded-lg border border-slate-100/50">
+                                                                {/* Row 2: Price, Quantity, Unit and Trash */}
+                                                                <div className="flex items-center gap-3 bg-slate-50/30 p-2 rounded-lg border border-slate-100/50">
+                                                                    {/* Quantity */}
+                                                                    <div className="flex items-center gap-2 w-20">
+                                                                        <Input
+                                                                            type="number"
+                                                                            className="h-9 w-full text-[12px] text-center border-slate-200 bg-white shadow-sm px-1"
+                                                                            placeholder="Mikt."
+                                                                            value={item.quantity}
+                                                                            onChange={e => {
+                                                                                const newItems = [...formData.items];
+                                                                                newItems[idx].quantity = e.target.value;
+                                                                                setFormData({ ...formData, items: newItems });
+                                                                            }}
+                                                                        />
+                                                                    </div>
+                                                                    {/* Unit */}
+                                                                    <div className="flex items-center gap-2 w-16">
+                                                                        <Input
+                                                                            className="h-9 w-full text-[10px] text-center border-slate-200 bg-white shadow-sm px-1"
+                                                                            placeholder="Birim"
+                                                                            value={item.unit || 'adet'}
+                                                                            onChange={e => {
+                                                                                const newItems = [...formData.items];
+                                                                                newItems[idx].unit = e.target.value;
+                                                                                setFormData({ ...formData, items: newItems });
+                                                                            }}
+                                                                        />
+                                                                    </div>
+                                                                    {/* Price */}
                                                                     <div className="flex items-center gap-2 flex-1">
-                                                                        <Label className="text-[10px] text-slate-400 uppercase font-bold shrink-0">TUTAR</Label>
-                                                                        <div className="relative flex-1 max-w-[200px]">
+                                                                        <div className="relative flex-1">
                                                                             <Input
                                                                                 type="number"
                                                                                 className="h-10 w-full text-[14px] text-right font-bold pr-8 border-slate-200 bg-white shadow-sm"
@@ -497,7 +524,7 @@ export default function ExpensesPage() {
                                                             className="w-full mt-2 text-[11px] h-8 border border-dashed border-slate-200 text-slate-500"
                                                             onClick={() => setFormData({
                                                                 ...formData,
-                                                                items: [...formData.items, { name: '', total_price: '0', quantity: 1, vat_rate: 20, is_tax_deductible: true }]
+                                                                items: [...formData.items, { name: '', total_price: '0', quantity: 1, unit: 'adet', vat_rate: 20, is_tax_deductible: true }]
                                                             })}
                                                         >
                                                             <Plus className="h-3 w-3 mr-1" /> Kalem Ekle

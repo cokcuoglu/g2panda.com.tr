@@ -150,6 +150,7 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
                 return {
                     name: it.name || it.Name || it.description || it.Description || 'Ürün',
                     quantity: it.quantity || it.Quantity || 1,
+                    unit: it.unit || it.Unit || 'adet',
                     unit_price: parseFloat(it.unitPrice ?? it.UnitPrice ?? it.unit_price ?? it.price ?? 0) || 0,
                     total_price,
                     vat_rate,
@@ -200,9 +201,9 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
                 try {
                     await req.db.query(
                         `INSERT INTO transaction_items
-                            (transaction_id, ocr_record_id, name, quantity, unit_price, total_price, vat_rate, vat_amount, confidence)
-                         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-                        [null, ocrId, item.name, item.quantity, item.unit_price, item.total_price, item.vat_rate, item.vat_amount, item.confidence]
+                            (transaction_id, ocr_record_id, name, quantity, unit, unit_price, total_price, vat_rate, vat_amount, confidence)
+                         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                        [null, ocrId, item.name, item.quantity, item.unit, item.unit_price, item.total_price, item.vat_rate, item.vat_amount, item.confidence]
                     );
                 } catch (itemErr) {
                     logger.warn(`[OCR] Item insert failed for "${item.name}":`, itemErr);
