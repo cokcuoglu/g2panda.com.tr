@@ -1,20 +1,17 @@
 import express, { Request, Response } from 'express';
 import { SitemapStream, streamToPromise } from 'sitemap';
-import { createGzip } from 'zlib';
 import logger from '../config/logger';
-import { query } from '../db'; // Optional: if you actually want to pull real blog posts from DB later
+import { query } from '../db';
 
 const router = express.Router();
 
-let sitemapCache: Buffer | null = null;
+let sitemapCache: string | null = null;
 let sitemapCacheTime: number | null = null;
-const CACHE_KEY = 'sitemap_cache';
 const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour cache
 
 router.get('/', async (req: Request, res: Response) => {
     try {
         res.header('Content-Type', 'application/xml');
-        res.header('Content-Encoding', 'gzip');
 
         const now = Date.now();
 
@@ -24,14 +21,9 @@ router.get('/', async (req: Request, res: Response) => {
         }
 
         const smStream = new SitemapStream({ hostname: 'https://g2panda.com.tr' });
-        const pipeline = smStream.pipe(createGzip());
 
-        // Stream to promise to cache the result
-        const sitemapPromise = streamToPromise(pipeline).then((sm) => {
-            sitemapCache = sm;
-            sitemapCacheTime = Date.now();
-            return sm;
-        });
+        // Generate the sitemap as a Promise, converting Buffer to String immediately
+        const sitemapPromise = streamToPromise(smStream).then((sm) => sm.toString());
 
         // 1. Static Routes
         smStream.write({ url: '/', changefreq: 'daily', priority: 1.0 });
@@ -41,7 +33,7 @@ router.get('/', async (req: Request, res: Response) => {
         smStream.write({ url: '/contact', changefreq: 'monthly', priority: 0.5 });
 
         // 2. Dynamic Routes: Example Blog Posts
-        // In reality, you'd fetch this from your database:
+        // Un-comment and modify when you have a blog table:
         /*
         const { rows } = await query('SELECT slug, updated_at FROM blog_posts WHERE status = $1', ['published']);
         for (const post of rows) {
@@ -54,9 +46,9 @@ router.get('/', async (req: Request, res: Response) => {
         }
         */
 
-        // Hardcoded example for the active blog post we just built
+        // Hardcoded example for the active blog post
         smStream.write({
-            url: '/blog', // We currently have the blog detail hardcoded at /blog instead of a slug list, but let's adhere strictly to what was built
+            url: '/blog',
             lastmod: '2026-03-03T12:00:00.000Z',
             changefreq: 'weekly',
             priority: 0.7
@@ -65,8 +57,11 @@ router.get('/', async (req: Request, res: Response) => {
         smStream.end();
 
         // Send the generated sitemap
-        const sitemapBuffer = await sitemapPromise;
-        res.send(sitemapBuffer);
+        const sitemapXml = await sitemapPromise;
+        sitemapCache = sitemapXml;
+        sitemapCacheTime = Date.now();
+
+        res.send(sitemapXml);
 
     } catch (e) {
         logger.error('Sitemap Generator Error:', e);
