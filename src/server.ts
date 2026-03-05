@@ -232,6 +232,11 @@ app.use(express.static(clientDistPath));
 import sitemapRouter from './routes/sitemap';
 app.use('/sitemap.xml', sitemapRouter);
 
+app.get('/robots.txt', (req: Request, res: Response) => {
+    res.type('text/plain');
+    res.send("User-agent: *\nAllow: /\n\nSitemap: https://g2panda.com.tr/sitemap.xml\n");
+});
+
 // Handle React routing, return all other requests to React app
 app.get('*', (req: Request, res: Response) => {
     // Skip API requests to prevent returning HTML for missing API endpoints
