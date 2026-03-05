@@ -8,7 +8,7 @@ namespace ReceiptApi.Services;
 
 public class GrammarBasedOcrParser
 {
-    private readonly string[] _stopKeywords = { "TOPLAM", "KDV", "ODEME", "ÖDEME", "BANKA", "POS", "REF", "ONAY", "TUTAR", "TUTAL", "MATRAH", "ODENECEK", "ÖDENECEK", "DENECEK" };
+    private readonly string[] _stopKeywords = { "TOPLAM", "TOPKDV", "GENEL TOPLAM", "ARA TOPLAM", "ODENEN", "KDV", "ODEME", "ÖDEME", "BANKA", "POS", "REF", "ONAY", "TUTAR", "TUTAL", "MATRAH", "ODENECEK", "ÖDENECEK", "DENECEK", "KREDI", "NAKIT" };
     private readonly string[] _merchantKeywords = { "VKN", "TCKN", "ADRES", "FATURA", "MAGAZA", "MERSIS", "TEL:", "UNVAN", "SNO", "VERGI DAIRESI" };
     private readonly string[] _locationKeywords = { 
         "ISTANBUL", "İSTANBUL", "ANKARA", "IZMIR", "İZMIR", "BURSA", "ANTALYA", "ADANA", "KONYA", "GAZIANTEP", "ŞANLIURFA", "KOCAELI", "MERSIN", "DIYARBAKIR", 
@@ -93,12 +93,13 @@ public class GrammarBasedOcrParser
                 continue;
             }
 
-            // Stop condition: Only break if it STARTS with a stop keyword and no price is on the line
-            // This allows stop keywords to exist as part of product names (e.g. "ALISVERIS POSETI ... TOPLAM KDV")
-            // Stop condition: Only break if it STARTS with a stop keyword and no price is on the line
-            // This allows stop keywords to exist as part of product names (e.g. "ALISVERIS POSETI ... TOPLAM KDV")
+            // Stop condition: Break if it STARTS with a stop keyword.
+            // Or if it contains definitive summary text like TOPKDV, TOPLAM, ARA TOPLAM
             bool startsWithStop = _stopKeywords.Any(k => Regex.IsMatch(text, @"^\s*\b" + k + @"\b"));
-            if (startsWithStop && !hasPriceOnLine && items.Count > 0) break;
+            bool isDefinitiveSummary = text.Contains("TOPKDV") || text.Contains("TOPLAM") || text.Contains("ARA TOP") || text.Contains("KREDI") || text.Contains("NAKIT");
+            
+            // If it's a definitive summary line OR starts with a stop keyword without a price, we are in the totals section
+            if ((isDefinitiveSummary || (startsWithStop && !hasPriceOnLine)) && items.Count > 0) break;
 
             // Truncate row text at the first occurrence of a stop keyword if it's NOT at the start
             // Use word boundaries to avoid cutting off "POSETI" due to "POS" keyword

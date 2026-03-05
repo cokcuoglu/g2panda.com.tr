@@ -111,6 +111,12 @@ public class OcrParserService
              if (numbersInBottomHalf.Any()) data.Total = numbersInBottomHalf.First();
         }
 
+        // Logical safety netting for VAT: if VAT somehow grabbed the Grand Total box
+        if (data.Total.HasValue && data.VatAmount.HasValue && data.VatAmount.Value >= data.Total.Value)
+        {
+             data.VatAmount = 0m;
+        }
+
         // VAT Rate extraction
         var vatRateMatch = Regex.Match(fullText, @"%([0-9]{1,2})|([0-9]{1,2})\s*%");
         if (vatRateMatch.Success)
@@ -137,7 +143,7 @@ public class OcrParserService
                     for (int j = 0; j <= 3 && (i + j) < boxes.Count; j++)
                     {
                         decimal? val = TurkishNumberParser.Parse(boxes[i + j].Text);
-                        if (val.HasValue && val.Value > 0) return val;
+                        if (val.HasValue && val.Value >= 0) return val;
                     }
                 }
             }

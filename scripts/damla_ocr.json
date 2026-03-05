@@ -1,0 +1,15 @@
+{
+  "id": "115be958-1e6b-4f8c-aeac-40603d32d18e",
+  "user_id": "be8b8541-f427-4287-a00b-a0e9783e5209",
+  "image_path": "uploads\\ocr\\proc-1772709584024-557900851.jpg",
+  "raw_text": "[AI BULGULARI]\n=================\nTARIH 04/03/ SAAT 13:05: FIS NO TEKEL\nMiktar: 1 Birim Fiyat: 585.00 ₺\nToplam: 585.00 ₺ (KDV: %20)\n=================\nTEKEL TEKEL\nMiktar: 1 Birim Fiyat: 195.00 ₺\nToplam: 195.00 ₺ (KDV: %20)\n=================\nTEKEL TOPKDV\nMiktar: 1 Birim Fiyat: 0.00 ₺\nToplam: 0.00 ₺ (KDV: %20)\n=================\nTOPKDV TOPLAM\nMiktar: 1 Birim Fiyat: 780.00 ₺\nToplam: 780.00 ₺ (KDV: %20)\n=================\n\n=================\n[HAM METİN]\nDAMLA MARKET\nSABAN BACAKSIZ\nMECIDIYE MH. CEVIRMECI SK\nNO:35BESIKTAS/ISTANBUL\nTEL02122277022\n22082024538\nBESIKTAS V.D\nTARIH\n04/03/2026\nSAAT\n13:05:22\nFIS NO\n0005\nTEKEL\n%00 *585,00\nTEKEL\n%00 *195,00\nTOPKDV *0,00\n*780,00\nTOPLAM\nKREDI *780,00\nCARANTI BBVA\n************6540\nMERSIS:2208202453800017\nEK NO:0001\nZ NO:2213\nT02851546\n1:1151087\n04/03/2026-13:06 B:004230 $:044143\nAID A0909000041010APP LABELKREDI KARTI\nUERSBGTE8DU\nK.N.***++*******6540\nEMU SATIS TUTARI\n780,00 TL\nBU ISLEH TEMASSIZ BIR KART ILE\nGERCEKLESTIRILMISTIR.\nONAYHURARASI756176REF NO:606351571705\nGARANTI BBV\nHERS1S HO087900175660 0379\nWWW.GARANTIBBUA.COH.TR\nKART SAHIBINE AITTIR:\nEKO NO:0001\nZ NO2213\nMF J1 20064140\n",
+  "extracted_amount": "1560.00",
+  "extracted_date": null,
+  "extracted_vendor": "MECIDIYE MH. CEVIRMECI SK",
+  "confidence_score": 90,
+  "status": "completed",
+  "created_at": "2026-03-05T11:19:44.018Z",
+  "updated_at": "2026-03-05T11:19:44.018Z",
+  "processed_at": "2026-03-05T11:19:48.802Z",
+  "validation_summary": null
+}
