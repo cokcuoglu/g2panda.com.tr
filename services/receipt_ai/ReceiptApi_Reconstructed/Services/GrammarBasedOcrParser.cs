@@ -8,7 +8,7 @@ namespace ReceiptApi.Services;
 
 public class GrammarBasedOcrParser
 {
-    private readonly string[] _stopKeywords = { "TOPLAM", "TOPKDV", "GENEL TOPLAM", "ARA TOPLAM", "ODENEN", "KDV", "ODEME", "ÖDEME", "BANKA", "POS", "REF", "ONAY", "TUTAR", "TUTAL", "MATRAH", "ODENECEK", "ÖDENECEK", "DENECEK", "KREDI", "NAKIT" };
+    private readonly string[] _stopKeywords = { "TOPLAM", "TOPKDV", "GENEL TOPLAM", "ARA TOPLAM", "ODENEN", "KDV", "ODEME", "ÖDEME", "BANKA", "POS", "REF", "ONAY", "TUTAR", "TUTAL", "MATRAH", "ODENECEK", "ÖDENECEK", "DENECEK", "KREDI", "NAKIT", "TARIH", "TARİH", "SAAT", "FIS NO", "FİŞ NO" };
     private readonly string[] _merchantKeywords = { "VKN", "TCKN", "ADRES", "FATURA", "MAGAZA", "MERSIS", "TEL:", "UNVAN", "SNO", "VERGI DAIRESI" };
     private readonly string[] _locationKeywords = { 
         "ISTANBUL", "İSTANBUL", "ANKARA", "IZMIR", "İZMIR", "BURSA", "ANTALYA", "ADANA", "KONYA", "GAZIANTEP", "ŞANLIURFA", "KOCAELI", "MERSIN", "DIYARBAKIR", 
@@ -215,7 +215,11 @@ public class GrammarBasedOcrParser
                     if (currentNameLines.Count == 0 && !hasLettersOrPercent && string.IsNullOrWhiteSpace(inlineName)) continue; 
                     
                     var finalNameList = currentNameLines.ToList();
-                    if (!string.IsNullOrWhiteSpace(inlineName)) finalNameList.Add(inlineName);
+                    string cleanInline = CleanName(inlineName);
+                    if (!string.IsNullOrWhiteSpace(cleanInline) && !finalNameList.Any(n => n.Contains(cleanInline, StringComparison.OrdinalIgnoreCase))) 
+                    {
+                        finalNameList.Add(cleanInline);
+                    }
                     if (finalNameList.Count == 0) finalNameList.Add("Ürün");
                     
                     string finalNameStr = string.Join(" ", finalNameList);
@@ -318,7 +322,11 @@ public class GrammarBasedOcrParser
         name = Regex.Replace(name, @"%\d*", ""); 
         name = Regex.Replace(name, @"\d+[\.,]\d{2}", ""); 
         name = Regex.Replace(name, @"\d+\s*(?:AD|KG|GR|ADET)?\s*[xX]\s*", ""); 
-        name = Regex.Replace(name, @"^\s*[*\.\s,xX\*]+\s*", "").Trim(); 
+
+        // Strip metadata labels that might leak into names
+        name = Regex.Replace(name, @"\b(TARIH|TARİH|SAAT|FIS NO|FİŞ NO)\b", "", RegexOptions.IgnoreCase);
+
+        name = Regex.Replace(name, @"^\s*[*\.\s,xX\*:]+\s*", "").Trim(); 
         
         // Strip trailing digits only if they are separate words and not attached to a letter
         // This preserves "150G" but removes " 1" or " 1."
