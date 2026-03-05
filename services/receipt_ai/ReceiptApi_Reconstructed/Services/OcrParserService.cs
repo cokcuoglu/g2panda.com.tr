@@ -79,10 +79,11 @@ public class OcrParserService
 
         if (data.Items != null && data.Items.Any())
         {
-            var productText = string.Join("\n=================\n", data.Items.Select(i => 
-                $"{i.Name}\nMiktar: {i.Quantity?.ToString() ?? "1"} Birim Fiyat: {i.UnitPrice?.ToString() ?? i.TotalPrice.ToString()} ₺\nToplam: {i.TotalPrice} ₺ (KDV: %{i.VatRate?.ToString() ?? "0"})"
-            ));
-            data.RawText = $"[AI BULGULARI]\n=================\n{productText}\n=================\n\n=================\n[HAM METİN]\n{data.RawText}";
+            var productLines = data.Items.Select(i => 
+                $"{i.Name}\nMiktar: {i.Quantity?.ToString() ?? "1"} Birim Fiyat: {i.UnitPrice?.ToString() ?? i.TotalPrice.ToString()} TL\nToplam: {i.TotalPrice} TL (KDV: %{i.VatRate?.ToString() ?? "0"})"
+            );
+            string productText = string.Join("\n-----------------\n", productLines);
+            data.RawText = $"[AI BULGULARI]\n-----------------\n{productText}\n-----------------\n\n-----------------\n[HAM METIN]\n{data.RawText}";
         }
 
         // 7. Extract Financials

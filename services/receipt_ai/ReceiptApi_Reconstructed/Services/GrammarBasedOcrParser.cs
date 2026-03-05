@@ -179,22 +179,13 @@ public class GrammarBasedOcrParser
                         }
                     }
 
-                    // OCR % Sign Miss Fallback -> Extract 1, 8, 10, 18, 20 at the end of the name
-                    if (finalVat == 0m && currentNameLines.Count > 0) {
-                        var lastLine = currentNameLines.Last();
-                        var fallbackVatMatch = Regex.Match(lastLine, @"(?:\s|^)(1|8|10|18|20)[\.,]*$");
-                        if (fallbackVatMatch.Success && decimal.TryParse(fallbackVatMatch.Groups[1].Value, out decimal r3)) {
-                            finalVat = r3;
-                            currentNameLines[currentNameLines.Count - 1] = lastLine.Remove(fallbackVatMatch.Index, fallbackVatMatch.Length).Trim();
-                        }
-                    }
-
-                    // Turkish VAT Law Enforcement: Retail 0% is not allowed. Assumes missing percentages are mostly 20 or 1.
-                    if (finalVat == 0m) {
+                    // Turkish VAT Law Enforcement Check: Default to 20 or 1 if NO VAT was detected at all.
+                    // If it was explicitly 0 (like %00), we keep it as 0.
+                    if (finalVat == -1m) {
                         string combinedName = string.Join(" ", currentNameLines).ToUpperInvariant();
                         if (combinedName.Contains("POSET") || combinedName.Contains("POŞET"))
                         {
-                            finalVat = 20m; // Plastic bags always subject to standard tax
+                            finalVat = 20m;
                         }
                         else if (combinedName.Contains("SUT") || combinedName.Contains("SÜT") || combinedName.Contains("PEYN") ||
                             combinedName.Contains("EKMEK") || combinedName.Contains("SU ") || combinedName.Contains(" ET") ||
@@ -203,11 +194,11 @@ public class GrammarBasedOcrParser
                             combinedName.Contains("PİLİÇ") || combinedName.Contains("YUMURTA") || combinedName.Contains("PASTA") ||
                             combinedName.Contains("KREM"))
                         {
-                            finalVat = 1m; // 1% VAT for basic groceries
+                            finalVat = 1m;
                         }
                         else
                         {
-                            finalVat = 20m; // Generic non-food rate
+                            finalVat = 20m;
                         }
                     }
 
