@@ -45,6 +45,7 @@ public class ReceiptController : ControllerBase
 		}
 		try
 		{
+			Console.WriteLine("[API] Starting inference request...");
 			using Stream stream = image.OpenReadStream();
 			using MultipartFormDataContent content = new MultipartFormDataContent();
 			StreamContent streamContent = new StreamContent(stream);
@@ -52,6 +53,7 @@ public class ReceiptController : ControllerBase
 			content.Add(streamContent, "file", image.FileName);
 			HttpClient httpClient = _httpClientFactory.CreateClient("PythonWorker");
 			HttpResponseMessage httpResponseMessage = await httpClient.PostAsync("/infer", content);
+			Console.WriteLine($"[API] Worker responded with: {httpResponseMessage.StatusCode}");
 			if (!httpResponseMessage.IsSuccessStatusCode)
 			{
 				_logger.LogError("Python worker inference failed: {StatusCode}", httpResponseMessage.StatusCode);
@@ -62,14 +64,25 @@ public class ReceiptController : ControllerBase
 				PropertyNameCaseInsensitive = true
 			};
 			InferenceResponse inferenceResponse = await httpResponseMessage.Content.ReadFromJsonAsync<InferenceResponse>(options);
+			Console.WriteLine($"[API] Deserialized results: {inferenceResponse?.Results?.Count ?? 0} boxes");
 			if (inferenceResponse == null || !inferenceResponse.Success)
 			{
 				return StatusCode(500, "ML worker failed to process image.");
 			}
+			Console.WriteLine("[API] Starting Parsing...");
 			ReceiptData receiptData = _ocrParser.Parse(inferenceResponse.Results ?? new List<BoundingBox>());
+			Console.WriteLine("[API] Starting Validation...");
 			ValidationResult validationResult = _validationEngine.Validate(receiptData);
-			decimal num = ((inferenceResponse.Results?.Any() ?? false) ? ((decimal)inferenceResponse.Results.Average((BoundingBox b) => b.Confidence)) : 0.5m);
+			Console.WriteLine("[API] Validation Finished.");
+			
+			double rawAvgConf = (inferenceResponse.Results != null && inferenceResponse.Results.Any()) 
+                ? inferenceResponse.Results.Average(b => (double)b.Confidence) 
+                : 0.5;
+            
+            if (!double.IsFinite(rawAvgConf)) rawAvgConf = 0.5;
+            decimal num = (decimal)Math.Clamp(rawAvgConf, 0.0, 1.0);
 			string status = ((num >= 0.80m && validationResult.IsValid) ? "ok" : "needs_review");
+            Console.WriteLine($"[API] Status determined: {status} (Conf: {num})");
 			var value = new
 			{
 				ReceiptId = Guid.NewGuid(),
@@ -103,7 +116,9 @@ public class ReceiptController : ControllerBase
 		catch (Exception exception)
 		{
 			_logger.LogError(exception, "Error processing receipt.");
-			return StatusCode(500, "Internal server error during analysis.");
+            Console.WriteLine($"[API_CRITICAL_ERROR] {exception.Message}");
+            Console.WriteLine(exception.StackTrace);
+			return StatusCode(500, $"Internal server error: {exception.Message}");
 		}
 	}
 }

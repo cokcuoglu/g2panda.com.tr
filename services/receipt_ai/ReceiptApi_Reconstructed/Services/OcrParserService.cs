@@ -23,6 +23,10 @@ public class OcrParserService
         var data = new ReceiptData();
         
         if (boxes == null || boxes.Count == 0) return data;
+        
+        // Remove invalid boxes that would cause indexing crashes
+        boxes = boxes.Where(b => b != null && b.Text != null && b.Box != null && b.Box.Count > 0 && b.Box.All(p => p != null && p.Count >= 2)).ToList();
+        if (boxes.Count == 0) return data;
 
         // 0. Correct common OCR misidentifications (Turkish characters)
         TurkishOcrCorrector.CorrectBoxes(boxes);
@@ -77,28 +81,47 @@ public class OcrParserService
         // 6. Extract Items (Grammar based)
         data.Items = _grammarParser.ExtractItems(sortedBoxes);
 
+        // 7. Extract Financials
+        // Prioritize MUST-MATCH keywords for Total vs VAT to avoid collisions
+        var specificTotalKeywords = new[] { "ODENECEK KDV DAHIL TUTAR", "ODENECEK KDV DAHİL TUTAR", "ODENEN TUTAR", "GENEL TOPLAM" };
+        var genericTotalKeywords = new[] { "TOPLAM", "TUTAR", "ODENECEK", "ÖDENECEK" };
+        var kdvKeywords = new[] { "TOPLAM KDV", "TOPKDV", "KDV TUTAR", "KDV" };
+
+        // 7.1 Try specific total first
+        data.Total = ExtractValueNearKeyword(sortedBoxes, specificTotalKeywords);
+        
+        // 7.2 Extract VAT (doing it early so we can use its keywords as exclusions for generic total)
+        data.VatAmount = ExtractValueNearKeyword(sortedBoxes, kdvKeywords);
+
+        // 7.3 If specific total failed, try generic total but EXCLUDE VAT keywords to prevent partial matches like "TOPLAM" matching "TOPLAM KDV"
+        if (!data.Total.HasValue)
+        {
+            data.Total = ExtractValueNearKeyword(sortedBoxes, genericTotalKeywords, excludeKeywords: kdvKeywords);
+        }
+
+        data.Subtotal = ExtractValueNearKeyword(sortedBoxes, _araToplamKeywords);
+
+        // 7.4 Fallback: If footer keywords failed, use the sum of parsed items
+        if (!data.Total.HasValue && data.Items != null && data.Items.Any())
+        {
+             data.Total = data.Items.Sum(i => i.TotalPrice);
+        }
+
+        // Add Financial Summary to RawText for UI transparency
+        string financialSummary = $"\n==============================\nGENEL TOPLAM: {data.Total?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "Bulunamadı"} TL\nTOPLAM KDV: {data.VatAmount?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "Bulunamadı"} TL\n==============================\n";
+
         if (data.Items != null && data.Items.Any())
         {
             var productLines = data.Items.Select(i => 
                 $"{i.Name}\nMiktar: {i.Quantity?.ToString() ?? "1"} Birim Fiyat: {i.UnitPrice?.ToString() ?? i.TotalPrice.ToString()} TL\nToplam: {i.TotalPrice} TL (KDV: %{i.VatRate?.ToString() ?? "0"})"
             );
             string productText = string.Join("\n-----------------\n", productLines);
-            data.RawText = $"[AI BULGULARI]\n-----------------\n{productText}\n-----------------\n\n-----------------\n[HAM METIN]\n{data.RawText}";
-        }
-
-        // 7. Extract Financials
-        // Always trust the sum of parsed items over OCR keyword guessing for the Total
-        if (data.Items != null && data.Items.Any())
-        {
-             data.Total = data.Items.Sum(i => i.TotalPrice);
+            data.RawText = $"[AI BULGULARI]\n{financialSummary}\n-----------------\n{productText}\n-----------------\n\n-----------------\n[HAM METIN]\n{data.RawText}";
         }
         else
         {
-             data.Total = ExtractValueNearKeyword(sortedBoxes, _toplamKeywords);
+            data.RawText = $"[AI BULGULARI]\n{financialSummary}\n\n-----------------\n[HAM METIN]\n{data.RawText}";
         }
-
-        data.VatAmount = ExtractValueNearKeyword(sortedBoxes, _kdvKeywords);
-        data.Subtotal = ExtractValueNearKeyword(sortedBoxes, _araToplamKeywords);
 
         // Fallback for Total: Sometimes it's the largest number at the bottom half
         if (!data.Total.HasValue)
@@ -131,20 +154,36 @@ public class OcrParserService
         return data;
     }
 
-    private decimal? ExtractValueNearKeyword(List<BoundingBox> boxes, string[] keywords)
+    private decimal? ExtractValueNearKeyword(List<BoundingBox> boxes, string[] keywords, string[] excludeKeywords = null)
     {
+        // Sort keywords by length descending to match most specific first
+        var sortedKeywords = keywords.OrderByDescending(k => k.Length).ToList();
+        var cleanExclude = excludeKeywords?.Select(k => k.ToUpperInvariant().Replace(" ", "")).ToList();
+
         for (int i = 0; i < boxes.Count; i++)
         {
             string cleanText = boxes[i].Text.ToUpperInvariant().Replace(" ", "");
-            foreach (var k in keywords)
+            
+            // Check exclusions first (e.g., if looking for TOTAL, skip boxes that look like VAT)
+            if (cleanExclude != null && cleanExclude.Any(ex => cleanText.Contains(ex))) continue;
+
+            foreach (var k in sortedKeywords)
             {
-                if (cleanText.Contains(k.Replace(" ", "")))
+                string cleanK = k.Replace(" ", "");
+                if (cleanText.Contains(cleanK))
                 {
-                    // Look in current box, or next 3
-                    for (int j = 0; j <= 3 && (i + j) < boxes.Count; j++)
+                    // Look in current box, or next 5
+                    for (int j = 0; j <= 5 && (i + j) < boxes.Count; j++)
                     {
-                        decimal? val = TurkishNumberParser.Parse(boxes[i + j].Text);
-                        if (val.HasValue && val.Value >= 0) return val;
+                        var targetBox = boxes[i + j];
+                        var numMatch = Regex.Match(targetBox.Text, @"\d+[\.,]\d{2}");
+                        if (numMatch.Success) {
+                            decimal? val = TurkishNumberParser.Parse(numMatch.Value);
+                            if (val.HasValue && val.Value >= 0) return val;
+                        } else {
+                            decimal? val = TurkishNumberParser.Parse(targetBox.Text);
+                            if (val.HasValue && val.Value >= 0) return val;
+                        }
                     }
                 }
             }

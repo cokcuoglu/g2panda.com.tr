@@ -5,6 +5,7 @@ import fs from 'fs';
 import http from 'http';
 import FormData from 'form-data';
 import logger from '../config/logger';
+import { pool } from '../db';
 
 const router = Router();
 
@@ -56,6 +57,10 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
         return res.status(400).json({ success: false, error: 'Görüntü yüklenmedi' });
     }
 
+    if (!req.user?.id) {
+        return res.status(401).json({ success: false, error: 'Unauthorized: No user context found' });
+    }
+
     const imagePath = req.file.path;
 
     // 1. Create pending record immediately for polling
@@ -63,7 +68,7 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
     try {
         const initialRecord = await req.db.query(
             `INSERT INTO ocr_records (user_id, image_path, status) VALUES ($1, $2, 'processing') RETURNING id`,
-            [req.user?.id, imagePath]
+            [req.user.id, imagePath]
         );
         ocrId = initialRecord.rows[0].id;
     } catch (dbErr) {
@@ -81,7 +86,11 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
 
     // 2. Process in background
     (async () => {
+        let client;
         try {
+            client = await pool.connect();
+            logger.info(`[OCR] Background process started for job ${ocrId}`);
+
             logger.info(`[OCR] Sending image to receipt_ai: ${imagePath}`);
 
             const form = new FormData();
@@ -125,12 +134,22 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
 
                 form.pipe(reqHttp);
             });
-            logger.info(`[OCR] receipt_ai response for job ${ocrId}:`, JSON.stringify(aiData).substring(0, 300));
+            logger.info(`[OCR] receipt_ai response for job ${ocrId}: ${JSON.stringify(aiData)}`);
 
-            // 3. Map response fields (receipt_ai may vary — handle both camelCase and PascalCase)
+            function parseAmount(val: any): number {
+                if (val === null || val === undefined) return 0;
+                if (typeof val === 'number') return val;
+                const str = String(val).replace(',', '.');
+                const parsed = parseFloat(str);
+                return isNaN(parsed) ? 0 : parsed;
+            }
+
             const merchantName: string = aiData.merchant?.name || aiData.Merchant?.Name || aiData.merchantName || aiData.MerchantName || aiData.merchant_name || 'Bilinmeyen';
-            const totalAmount: number = parseFloat(aiData.financial?.total ?? aiData.Financial?.Total ?? aiData.grandTotal ?? aiData.GrandTotal ?? aiData.total ?? aiData.Total ?? aiData.amount ?? 0) || 0;
-            const vatTotal: number = parseFloat(aiData.financial?.vatAmount ?? aiData.Financial?.VatAmount ?? aiData.totalVat ?? aiData.TotalVat ?? aiData.vat_total ?? aiData.vatTotal ?? 0) || 0;
+            const totalAmount: number = parseAmount(aiData.financial?.total ?? aiData.Financial?.Total ?? aiData.grandTotal ?? aiData.GrandTotal ?? aiData.total ?? aiData.Total ?? aiData.amount ?? 0);
+            const vatTotal: number = parseAmount(aiData.financial?.vatAmount ?? aiData.Financial?.VatAmount ?? aiData.totalVat ?? aiData.TotalVat ?? aiData.vat_total ?? aiData.vatTotal ?? 0);
+
+            logger.info(`[OCR] Parsed for job ${ocrId} - Total: ${totalAmount}, VAT: ${vatTotal}`);
+
             const rawDate: string | null = aiData.date || aiData.Date || null;
             const formattedDate: string | null = formatDate(rawDate);
 
@@ -141,7 +160,6 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
                 const vat_rate = it.vatRate ?? it.VatRate ?? it.vat_rate ?? 20;
                 let vat_amount = parseFloat(it.vatAmount ?? it.VatAmount ?? it.vat_amount ?? 0) || 0;
 
-                // If AI didn't explicitly extract the VAT Amount, calculate it mathematically from Total Price and VAT Rate
                 if (vat_amount === 0 && vat_rate > 0 && total_price > 0) {
                     const net_price = total_price / (1 + (vat_rate / 100));
                     vat_amount = Number((total_price - net_price).toFixed(2));
@@ -160,65 +178,55 @@ router.post('/process', upload.single('image'), async (req: Request, res: Respon
                 };
             });
 
-            // Build human-readable raw_text
             let rawText = '';
             if (aiData.rawText || aiData.RawText) {
-                // Use the beautifully formatted text from the .NET Grammar Parser
                 rawText = aiData.rawText || aiData.RawText;
             } else {
-                rawText = `--- FİŞ / FATURA DETAYI (receipt_ai) ---\n\n`;
-                rawText += `${merchantName}\n`;
-                rawText += `TARİH: ${formattedDate || '---'}\n`;
-                rawText += `-------------------------------------------\n`;
-                if (mappedItems.length > 0) {
-                    mappedItems.forEach((it: any) => {
-                        rawText += `${String(it.name).padEnd(25).substring(0, 25)} ${it.total_price.toFixed(2).padStart(8)} TL\n`;
-                    });
-                } else {
-                    rawText += 'KALEM DETAYLARI OKUNAMADI\n';
-                }
-                rawText += `-------------------------------------------\n`;
-                if (vatTotal > 0) rawText += `TOPKDV: ${vatTotal.toFixed(2).padStart(28)} TL\n`;
-                rawText += `TOPLAM: ${totalAmount.toFixed(2).padStart(28)} TL\n`;
+                rawText = `--- FİŞ / FATURA DETAYI ---\n\n${merchantName}\nTARİH: ${formattedDate || '---'}\n...\n`;
             }
 
-            // 4. Update DB record
-            await req.db.query(
+            // 4. Update DB record using background client
+            await client.query(
                 `UPDATE ocr_records 
                  SET raw_text = $1,
                      extracted_amount = $2,
-                     extracted_date = $3,
-                     extracted_vendor = $4,
-                     confidence_score = $5,
+                     extracted_vat = $3,
+                     extracted_date = $4,
+                     extracted_vendor = $5,
+                     confidence_score = $6,
                      status = 'completed',
                      processed_at = NOW()
-                 WHERE id = $6`,
-                [rawText, totalAmount, rawDate, merchantName.substring(0, 255), 90, ocrId]
+                 WHERE id = $7`,
+                [rawText, totalAmount, vatTotal, rawDate, merchantName.substring(0, 255), 90, ocrId]
             );
 
-            // 5. Insert individual items (linked to OCR record, no transaction yet)
+            // 5. Insert individual items
             for (const item of mappedItems) {
                 try {
-                    await req.db.query(
+                    await client.query(
                         `INSERT INTO transaction_items
                             (transaction_id, ocr_record_id, name, quantity, unit, unit_price, total_price, vat_rate, vat_amount, confidence)
                          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
                         [null, ocrId, item.name, item.quantity, item.unit, item.unit_price, item.total_price, item.vat_rate, item.vat_amount, item.confidence]
                     );
                 } catch (itemErr) {
-                    logger.warn(`[OCR] Item insert failed for "${item.name}":`, itemErr);
+                    logger.warn(`[OCR] Item insert failed for job ${ocrId}: ${itemErr}`);
                 }
             }
 
-            logger.info(`[OCR] Job ${ocrId} completed. Total: ${totalAmount} TL, Items: ${mappedItems.length}`);
+            logger.info(`[OCR] Job ${ocrId} successfully saved to database. VAT: ${vatTotal}`);
         } catch (procErr: any) {
-            logger.error(`[OCR] Job ${ocrId} failed:`, procErr.message || procErr);
-            try {
-                await req.db.query(
-                    `UPDATE ocr_records SET status = 'failed', raw_text = $1 WHERE id = $2`,
-                    [`Hata: ${procErr.message || 'Bilinmeyen hata'}`, ocrId]
-                );
-            } catch (_) { }
+            logger.error(`[OCR] Job ${ocrId} failed:`, procErr);
+            if (client) {
+                try {
+                    await client.query(
+                        `UPDATE ocr_records SET status = 'failed', raw_text = $1 WHERE id = $2`,
+                        [`Hata: ${procErr.message || 'Bilinmeyen hata'}`, ocrId]
+                    );
+                } catch (_) { }
+            }
+        } finally {
+            if (client) client.release();
         }
     })();
 });

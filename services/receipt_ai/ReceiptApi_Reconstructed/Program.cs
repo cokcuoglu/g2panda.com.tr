@@ -24,9 +24,10 @@ builder.Services.AddSingleton<OcrParserService>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Host=localhost;Database=receipt_db;Username=postgres;Password=password;";
 builder.Services.AddDbContext<ReceiptDbContext>(options => options.UseNpgsql(connectionString));
 
-var workerUrl = builder.Configuration.GetValue<string>("WorkerBaseUrl") ?? "http://localhost:8000";
+var workerUrl = builder.Configuration.GetValue<string>("WorkerBaseUrl") ?? builder.Configuration["WORKERBASEURL"] ?? "http://localhost:8000";
 builder.Services.AddHttpClient("PythonWorker", client => {
     client.BaseAddress = new Uri(workerUrl);
+    client.Timeout = TimeSpan.FromMinutes(5);
 });
 
 var app = builder.Build();

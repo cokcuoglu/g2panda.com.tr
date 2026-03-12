@@ -79,7 +79,17 @@ export const ReceiptScanner: React.FC<ReceiptScannerProps> = ({ onScanComplete, 
 
             // Transform to expected format
             const extractedItems = finalData.items || [];
-            const calculatedVatTotal = extractedItems.reduce((acc: number, item: any) => acc + Number(item.vat_amount || 0), 0);
+
+            // Robust extraction from raw_text as primary source of truth (as user requested)
+            let vatTotal = finalData.extracted_vat;
+            if (finalData.raw_text) {
+                const vatMatch = finalData.raw_text.match(/TOPLAM KDV:\s*([\d.,]+)/i);
+                if (vatMatch && vatMatch[1]) {
+                    const cleanVat = vatMatch[1].replace(',', '.');
+                    vatTotal = parseFloat(cleanVat);
+                    console.log('[Scanner] Extracted VAT from RawText:', vatTotal);
+                }
+            }
 
             onScanComplete({
                 ocr_id: finalData.id,
@@ -87,7 +97,7 @@ export const ReceiptScanner: React.FC<ReceiptScannerProps> = ({ onScanComplete, 
                 date: finalData.extracted_date,
                 description: finalData.extracted_vendor,
                 raw_text: finalData.raw_text,
-                vat_total: calculatedVatTotal,
+                vat_total: vatTotal ?? 0,
                 items: extractedItems
             });
 
