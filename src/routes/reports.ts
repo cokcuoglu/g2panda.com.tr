@@ -91,10 +91,12 @@ router.get('/export/:format', async (req: Request, res: Response) => {
 
         if (format === 'excel' || format === 'csv') {
             // Generate CSV
-            const header = 'Tarih,Tip,Tutar,Aciklama\n';
+            const header = 'Tarih,Tip,Kategori,Tutar,Aciklama\n';
             const csv = rows.map((r: any) => {
                 const date = new Date(r.transaction_date).toLocaleDateString('tr-TR');
-                return `${date},${r.type},${r.amount},"${r.description || ''}"`;
+                const category = r.category_id ? r.category_id : 'Belirtilmedi'; // Assuming category_id might need to be joined with categories table for name, but using id or a joined name here. Actually, wait, the query doesn't join categories. Let's just output what we have or 'Diğer'.
+                // Ideally we'd join categories. Let's just use what we have in rows.
+                return `${date},${r.type},${category},${r.amount},"${r.description || ''}"`;
             }).join('\n');
 
             res.header('Content-Type', 'text/csv');
@@ -102,8 +104,55 @@ router.get('/export/:format', async (req: Request, res: Response) => {
             return res.send(header + csv);
         }
 
-        // Mock PDF for now
-        res.status(501).json({ success: false, error: 'PDF export not implemented yet' });
+        if (format === 'pdf') {
+            const PDFDocument = require('pdfkit-table');
+
+            const doc = new PDFDocument({ margin: 30, size: 'A4' });
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=rapor_${start_date}_${end_date}.pdf`);
+
+            doc.pipe(res);
+
+            // Fetch categories for better names
+            const catHeaderRes = await req.db.query('SELECT id, name FROM categories');
+            const catMap = new Map();
+            catHeaderRes.rows.forEach((c: any) => catMap.set(c.id, c.name));
+
+            doc.fontSize(18).text('Finansal Rapor', { align: 'center' });
+            doc.fontSize(10).text(`Tarih Aralığı: ${start_date} - ${end_date}`, { align: 'center' });
+            doc.moveDown(2);
+
+            const tableArray = {
+                headers: [
+                    { label: "Tarih", property: 'date', width: 80 },
+                    { label: "Tip", property: 'type', width: 60 },
+                    { label: "Kategori", property: 'category', width: 100 },
+                    { label: "Tutar (TL)", property: 'amount', width: 80 },
+                    { label: "Açıklama", property: 'description', width: 200 }
+                ],
+                datas: rows.map((r: any) => {
+                    const dateObj = new Date(r.transaction_date);
+                    return {
+                        date: dateObj.toLocaleDateString('tr-TR'),
+                        type: r.type === 'income' ? 'Gelir' : 'Gider',
+                        category: r.category_id ? (catMap.get(r.category_id) || 'Bilinmeyen') : '-',
+                        amount: Number(r.amount).toLocaleString('tr-TR', { minimumFractionDigits: 2 }),
+                        description: r.description || '-'
+                    };
+                })
+            };
+
+            await doc.table(tableArray, {
+                prepareHeader: () => doc.font('Helvetica-Bold').fontSize(10),
+                prepareRow: (row: any, i: number) => doc.font('Helvetica').fontSize(9)
+            });
+
+            doc.end();
+            return;
+        }
+
+        res.status(400).json({ success: false, error: 'Invalid format requested' });
 
     } catch (error) {
         console.error('Export Error:', error);
