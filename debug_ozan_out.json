@@ -1,0 +1,446 @@
+{
+  "products_columns": [
+    "takeaway_discount_percent",
+    "user_id",
+    "menu_category_id",
+    "sort_order",
+    "updated_at",
+    "id",
+    "price",
+    "category_id",
+    "is_active",
+    "created_at",
+    "name",
+    "image_url",
+    "description",
+    "color"
+  ],
+  "menu_category_columns": [
+    "updated_at",
+    "user_id",
+    "id",
+    "parent_id",
+    "level",
+    "sort_order",
+    "is_active",
+    "created_at",
+    "name"
+  ],
+  "categories": [
+    {
+      "id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "name": "Soğuk İçecekler",
+      "parent_id": "5fb5edae-67e5-4c28-80e3-00e899ab5223",
+      "level": 2,
+      "sort_order": 1,
+      "is_active": true,
+      "created_at": "2026-02-09T12:34:35.221Z",
+      "updated_at": "2026-02-09T12:35:01.129Z"
+    },
+    {
+      "id": "1d75df37-0c6a-44a1-a528-36a876c28f51",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "name": "Sıcak İçecekler",
+      "parent_id": "5fb5edae-67e5-4c28-80e3-00e899ab5223",
+      "level": 2,
+      "sort_order": 0,
+      "is_active": true,
+      "created_at": "2026-02-09T12:34:51.445Z",
+      "updated_at": "2026-02-09T12:34:51.445Z"
+    },
+    {
+      "id": "84a79213-5623-4e36-8114-595ead40266c",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "name": "Magnolia",
+      "parent_id": null,
+      "level": 1,
+      "sort_order": 2,
+      "is_active": true,
+      "created_at": "2026-02-09T12:34:05.827Z",
+      "updated_at": "2026-02-10T19:10:06.379Z"
+    },
+    {
+      "id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "name": "BELÇİKA ÇİKOLATALI TATLILAR",
+      "parent_id": null,
+      "level": 1,
+      "sort_order": 1,
+      "is_active": true,
+      "created_at": "2026-02-08T20:11:01.801Z",
+      "updated_at": "2026-02-09T12:35:24.389Z"
+    },
+    {
+      "id": "5fb5edae-67e5-4c28-80e3-00e899ab5223",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "name": "İçecekler",
+      "parent_id": null,
+      "level": 1,
+      "sort_order": 3,
+      "is_active": true,
+      "created_at": "2026-02-09T12:34:18.152Z",
+      "updated_at": "2026-02-09T12:35:33.546Z"
+    },
+    {
+      "id": "614fdffb-80c7-4ff7-b131-742cf972d97a",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "name": "Limonatalar",
+      "parent_id": "5fb5edae-67e5-4c28-80e3-00e899ab5223",
+      "level": 2,
+      "sort_order": 3,
+      "is_active": true,
+      "created_at": "2026-02-11T11:40:56.989Z",
+      "updated_at": "2026-02-11T11:40:56.989Z"
+    },
+    {
+      "id": "c302f79b-0e33-4bc0-99a0-558f9529faaa",
+      "user_id": "e0bce7e4-a9a2-4c0e-9841-e11cea1cff57",
+      "name": "İÇECEKLER",
+      "parent_id": "5fb5edae-67e5-4c28-80e3-00e899ab5223",
+      "level": 2,
+      "sort_order": 4,
+      "is_active": true,
+      "created_at": "2026-02-11T11:42:03.552Z",
+      "updated_at": "2026-02-11T11:42:03.552Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "e2372372-d858-4cb6-aa86-be63c4f2bc39",
+      "product_name": "Süsen",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "bf5ea433-e823-4f80-8c7a-e0d216edb82f",
+      "product_name": "Begonya",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "60f98dfe-f3eb-4bd3-b3c1-6b803bb7e612",
+      "product_name": "Manolya",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "ded948e7-dd54-4f8b-a46c-0fbef9afd547",
+      "product_name": "Çikolatalı Kruvasan",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "e67d3c7a-6125-4f50-be6f-6ebdb34134e5",
+      "product_name": "Çilek Kruvasan",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "e6c13932-2f7b-4741-82b8-f7f68195ede7",
+      "product_name": "Kruvasan",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "4f6c2669-74d5-40d7-8404-55614750b3c4",
+      "product_name": "Kare Waffle",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "4a9c492a-4a8a-4d46-9cdd-c615a61bf318",
+      "product_name": "ESPRESSO",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "c926b0c3-270e-40a0-8d56-db2dbb550ef8",
+      "product_name": "DOUBLE ESPRESSO",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "a2f054b6-0eb7-47a8-aa5b-d9f8f2c8ed04",
+      "product_name": "AMERICANO",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "f529e9c4-ea3a-442d-b9a1-350e7f4ddb9c",
+      "product_name": "MACCHIATO",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "72cbe2ff-af06-4058-b612-96562c72e77b",
+      "product_name": "CORTADO",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "cef65d01-5967-4628-8eb6-1218014b1db4",
+      "product_name": "FLAT WHITE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "2bc58ecb-cea3-4ae5-bdce-572c54d2be5b",
+      "product_name": "CAPPUCINO",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "e64e7cde-1691-45cc-a8e9-114b315bad9b",
+      "product_name": "NUT LATTE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "e8b80f5f-ae12-4953-9ef6-c8bc157c10f2",
+      "product_name": "CARAMEL LATTE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "b3909324-15dc-4853-8353-47377f176b0c",
+      "product_name": "LATTE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "791566e4-3b8d-4619-ba08-9a3ddca39b68",
+      "product_name": "MOCHA",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "07008929-20e0-4453-a6af-9cc352918088",
+      "product_name": "FİLTRE KAHVE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "c0ee0914-df52-436f-991b-d3a86fdeec7a",
+      "product_name": "TÜRK KAHVESİ",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "200e7c6e-ffa7-4301-9b3d-2f5f4ad10e49",
+      "product_name": "ICE ESPRESSO",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "058308a8-f25b-4bd2-845a-cc5668dad33b",
+      "product_name": "ICE CARAMEL LATTE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "19f4bb1a-52e2-4775-be12-2677f597f41d",
+      "product_name": "ICE VANİLYA LATTE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "cb8d130e-8106-4103-9d62-6f4fc79887a2",
+      "product_name": "ICE FİLTRE KAHVE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "dd95b529-aff3-4d10-9732-bae6813c5d38",
+      "product_name": "ICE CARAMEL FRAPPE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "4e54c015-dddb-4e9b-9938-cc4cb38b87de",
+      "product_name": "ICE VANİLYA FRAPPE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "69282fc2-73fa-4841-ba71-7345c468bbd2",
+      "product_name": "LİMONATA",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "614fdffb-80c7-4ff7-b131-742cf972d97a"
+    },
+    {
+      "id": "fad887d3-36a6-49f2-bc7e-25e70292d600",
+      "product_name": "ÇİLEKLİ LİMONATA",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "614fdffb-80c7-4ff7-b131-742cf972d97a"
+    },
+    {
+      "id": "3267597e-68b0-4cc1-9d8d-83d19adde702",
+      "product_name": "BÖĞÜRTLENLİ LİMONATA",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "614fdffb-80c7-4ff7-b131-742cf972d97a"
+    },
+    {
+      "id": "5bee60aa-dc36-4801-8c95-a6a3733b0032",
+      "product_name": "ÇAY",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa"
+    },
+    {
+      "id": "7ccb8e3d-c981-42f7-8105-1a6208b35264",
+      "product_name": "FİNCAN ÇAY",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa"
+    },
+    {
+      "id": "b4e53365-5dc8-40cb-a987-3af9a9e9ba02",
+      "product_name": "SODA",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa"
+    },
+    {
+      "id": "ba14e427-3b25-49d9-92a2-bb550b04a908",
+      "product_name": "MEYVELİ SODA",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa"
+    },
+    {
+      "id": "0d2d5710-e146-47de-8fb0-79a47419e707",
+      "product_name": "DOUBLE TÜRK KAHESİ",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "2ad182c5-589d-4848-8202-d8b29b7f4810",
+      "product_name": "SICAK ÇİKOLATA",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "1d75df37-0c6a-44a1-a528-36a876c28f51"
+    },
+    {
+      "id": "72210e2e-9687-4e25-b7b5-73bd83b52423",
+      "product_name": "ICE AMERICANO",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "adf9dff9-0ca0-4066-bf78-23127814eba4",
+      "product_name": "ICE FLAT WHITE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "d757ed97-b5f9-48d9-befa-0a42dbd49c54",
+      "product_name": "ICE LATTE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "ad63a316-8aed-4266-be81-bffa754dcd0d",
+      "product_name": "ICE MOCHA",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "46b3db56-cc55-48f8-98de-251fc0a0c4c9",
+      "product_name": "ICE CHOCOLATE",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "2dee550b-fd7d-4c5a-87e4-9403eb7504ee"
+    },
+    {
+      "id": "7a511e4a-2fb7-46f6-a332-7399c44471fc",
+      "product_name": "CHURCHILL",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa"
+    },
+    {
+      "id": "52f5f698-bdd8-4a50-815b-b8dae5df458a",
+      "product_name": "SU",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "c302f79b-0e33-4bc0-99a0-558f9529faaa"
+    },
+    {
+      "id": "044bf12a-bf84-49d0-b166-f60791cc3e71",
+      "product_name": "Nevra",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "48b59574-03d3-4a8b-8ed5-c7bf7897dfc8",
+      "product_name": "Lotus Manolya",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "3d7ab88e-d426-4d86-b8f6-d27ec047c8ae",
+      "product_name": "Mug Cup",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "84a79213-5623-4e36-8114-595ead40266c"
+    },
+    {
+      "id": "95b6ebf9-f5e9-4144-9934-d1495fd691bc",
+      "product_name": "Çilek & Muz Kruvasan",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "1339201b-b2de-4e4b-97a1-8a4424a0060c",
+      "product_name": "Muz Kruvasan",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    },
+    {
+      "id": "0a55c683-512e-44a8-a60d-cfb3b68b0607",
+      "product_name": "Kamelya",
+      "is_active": true,
+      "category_id": null,
+      "menu_category_id": "9c1b29f6-10fb-4e92-b54c-ece79b2f46ad"
+    }
+  ]
+}

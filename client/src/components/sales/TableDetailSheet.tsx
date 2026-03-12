@@ -346,9 +346,39 @@ export function TableDetailSheet({ table, open, onOpenChange, onOrderUpdated }: 
     };
 
     const filteredProducts = products.filter(p => {
-        const matchesCategory = selectedCategoryId === 'all' || p.menu_category_id === selectedCategoryId;
+        if (!p.is_active) return false;
+
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch && p.is_active;
+        if (!matchesSearch) return false;
+
+        if (selectedCategoryId === 'all') return true;
+
+        const findNode = (nodes: any[], id: string): any => {
+            for (const node of nodes) {
+                if (node.id === id) return node;
+                if (node.children) {
+                    const found = findNode(node.children, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+
+        const collectIds = (node: any): string[] => {
+            let ids = [node.id];
+            if (node.children) {
+                node.children.forEach((c: any) => ids.push(...collectIds(c)));
+            }
+            return ids;
+        };
+
+        const selectedNode = findNode(categories, selectedCategoryId);
+        if (selectedNode) {
+            const allowedIds = collectIds(selectedNode);
+            return allowedIds.includes(p.menu_category_id);
+        }
+
+        return p.menu_category_id === selectedCategoryId;
     });
 
     return (
