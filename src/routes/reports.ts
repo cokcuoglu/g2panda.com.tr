@@ -109,6 +109,14 @@ router.get('/export/:format', async (req: Request, res: Response) => {
 
             const doc = new PDFDocument({ margin: 30, size: 'A4' });
 
+            const normalizeTr = (text: string) => {
+                const trMap: { [key: string]: string } = {
+                    'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
+                    'Ç': 'C', 'Ğ': 'G', 'İ': 'I', 'Ö': 'O', 'Ş': 'S', 'Ü': 'U'
+                };
+                return text ? text.replace(/[çğıöşüÇĞİÖŞÜ]/g, m => trMap[m]) : '';
+            };
+
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename=rapor_${start_date}_${end_date}.pdf`);
 
@@ -120,7 +128,7 @@ router.get('/export/:format', async (req: Request, res: Response) => {
             catHeaderRes.rows.forEach((c: any) => catMap.set(c.id, c.name));
 
             doc.fontSize(18).text('Finansal Rapor', { align: 'center' });
-            doc.fontSize(10).text(`Tarih Aralığı: ${start_date} - ${end_date}`, { align: 'center' });
+            doc.fontSize(10).text(`Tarih Araligi: ${start_date} - ${end_date}`, { align: 'center' });
             doc.moveDown(2);
 
             const tableArray = {
@@ -129,16 +137,16 @@ router.get('/export/:format', async (req: Request, res: Response) => {
                     { label: "Tip", property: 'type', width: 60 },
                     { label: "Kategori", property: 'category', width: 100 },
                     { label: "Tutar (TL)", property: 'amount', width: 80 },
-                    { label: "Açıklama", property: 'description', width: 200 }
+                    { label: "Aciklama", property: 'description', width: 200 }
                 ],
                 datas: rows.map((r: any) => {
                     const dateObj = new Date(r.transaction_date);
                     return {
                         date: dateObj.toLocaleDateString('tr-TR'),
                         type: r.type === 'income' ? 'Gelir' : 'Gider',
-                        category: r.category_id ? (catMap.get(r.category_id) || 'Bilinmeyen') : '-',
+                        category: normalizeTr(r.category_id ? (catMap.get(r.category_id) || 'Bilinmeyen') : '-'),
                         amount: Number(r.amount).toLocaleString('tr-TR', { minimumFractionDigits: 2 }),
-                        description: r.description || '-'
+                        description: normalizeTr(r.description || '-')
                     };
                 })
             };
