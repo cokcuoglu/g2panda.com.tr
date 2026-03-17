@@ -52,12 +52,23 @@ app.use(
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                scriptSrc: ["'self'", "'unsafe-inline'", "https://static.cloudflareinsights.com"],
+                scriptSrc: [
+                    "'self'", 
+                    "'unsafe-inline'", 
+                    "https://static.cloudflareinsights.com",
+                    "https://www.googletagmanager.com"
+                ],
                 styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 imgSrc: ["'self'", "data:", "https:"],
                 mediaSrc: ["'self'", "data:", "https:"],
-                connectSrc: ["'self'", "https://cloudflareinsights.com"],
+                connectSrc: [
+                    "'self'", 
+                    "https://cloudflareinsights.com",
+                    "https://www.google-analytics.com",
+                    "https://analytics.google.com",
+                    "https://stats.g.doubleclick.net"
+                ],
             },
         },
     })

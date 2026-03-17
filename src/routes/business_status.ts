@@ -6,7 +6,7 @@ import { BusinessService } from '../services/businessService';
 const router = Router();
 
 // GET /api/business-status - Get current opening status
-router.get('/', authMiddleware, async (req: any, res: Response) => {
+router.get('/', async (req: any, res: Response) => {
     try {
         const userId = req.user.id;
         const result = await pool.query(
@@ -26,7 +26,7 @@ router.get('/', authMiddleware, async (req: any, res: Response) => {
 });
 
 // POST /api/business-status/toggle - Toggle open/closed status
-router.post('/toggle', authMiddleware, async (req: any, res: Response) => {
+router.post('/toggle', async (req: any, res: Response) => {
     try {
         const userId = req.user.id;
         const result = await BusinessService.toggleStatus(userId);

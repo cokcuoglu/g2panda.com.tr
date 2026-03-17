@@ -129,7 +129,32 @@ router.get('/export/:format', async (req: Request, res: Response) => {
 
             doc.fontSize(18).text('Finansal Rapor', { align: 'center' });
             doc.fontSize(10).text(`Tarih Araligi: ${start_date} - ${end_date}`, { align: 'center' });
-            doc.moveDown(2);
+            doc.moveDown(1);
+
+            // Calculate Summary Data
+            let totalIncome = 0;
+            let totalExpense = 0;
+            rows.forEach((r: any) => {
+                if (r.type === 'income') totalIncome += Number(r.amount);
+                if (r.type === 'expense') totalExpense += Number(r.amount);
+            });
+            const netProfit = totalIncome - totalExpense;
+
+            // Draw Summary Boxes
+            const drawSummaryBox = (x: number, y: number, title: string, amount: number, color: string, bgColor: string) => {
+                doc.roundedRect(x, y, 160, 50, 5).fillAndStroke(bgColor, bgColor); // fill with background color
+                doc.fillColor('#64748b').fontSize(10).font('Helvetica').text(title, x + 10, y + 10);
+                doc.fillColor(color).fontSize(14).font('Helvetica-Bold').text(`${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL`, x + 10, y + 28);
+            };
+
+            const boxY = doc.y;
+            drawSummaryBox(40, boxY, 'Toplam Gelir', totalIncome, '#16a34a', '#f0fdf4');
+            drawSummaryBox(215, boxY, 'Toplam Gider', totalExpense, '#dc2626', '#fef2f2');
+            drawSummaryBox(390, boxY, 'Net Sonuc', netProfit, netProfit >= 0 ? '#059669' : '#ea580c', netProfit >= 0 ? '#ecfdf5' : '#fff7ed');
+
+            // Restore fill color and move down for the table
+            doc.fillColor('#000000').font('Helvetica');
+            doc.y = boxY + 70;
 
             const tableArray = {
                 headers: [

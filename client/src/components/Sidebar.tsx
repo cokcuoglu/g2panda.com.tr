@@ -34,7 +34,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
     const { hasPendingOrders } = useBusiness();
 
     const menuItems = useMemo(() => [
-        { title: 'Özet', icon: LayoutDashboard, href: '/', roles: ['owner', 'accountant', 'staff'] },
+        { title: 'Özet', icon: LayoutDashboard, href: '/dashboard', roles: ['owner', 'accountant', 'staff'] },
         { title: 'Masa Siparişleri', icon: LayoutIcon, href: '/tables', roles: ['owner', 'staff'] },
         { title: 'Satış Menüsü', icon: ShoppingCart, href: '/sales', roles: ['owner', 'staff'] },
         { title: 'Günün Satışları', icon: TrendingUp, href: '/today-sales', roles: ['owner', 'staff'] },

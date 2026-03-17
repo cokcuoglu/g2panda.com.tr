@@ -340,7 +340,9 @@ router.get('/public/table/:tableId', async (req: Request, res: Response) => {
 // PROTECTED ENDPOINTS (Auth Required - For Merchant)
 // ----------------------------------------------------------------------
 
-router.use(authMiddleware);
+// Auth middleware is already universally applied to /api/* in server.ts
+// so we don't need to re-apply it here, which would leak a 2nd DB connection!
+// router.use(authMiddleware);
 
 // GET /api/orders
 // List orders (with filters)

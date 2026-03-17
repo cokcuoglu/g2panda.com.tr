@@ -6,7 +6,7 @@ import { pool } from '../../db';
 const router = Router();
 
 // GET /api/inventory/stats/product-performance
-router.get('/product-performance', authMiddleware, async (req: any, res) => {
+router.get('/product-performance', async (req: any, res) => {
     try {
         const userId = req.user.id;
         const limit = 5;
@@ -55,7 +55,7 @@ router.get('/product-performance', authMiddleware, async (req: any, res) => {
 });
 
 // GET /api/inventory/stats/performance
-router.get('/performance', authMiddleware, async (req: any, res) => {
+router.get('/performance', async (req: any, res) => {
     try {
         const userId = req.user.id;
         const limit = 5;
@@ -115,7 +115,7 @@ router.get('/performance', authMiddleware, async (req: any, res) => {
 });
 
 // GET /api/inventory/stats/live
-router.get('/live', authMiddleware, async (req: any, res) => {
+router.get('/live', async (req: any, res) => {
     try {
         const userId = req.user.id;
 
